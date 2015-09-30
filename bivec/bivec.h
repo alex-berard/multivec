@@ -11,6 +11,11 @@ struct BilingualConfig : Config {
 
 class BilingualModel
 {
+    friend class boost::serialization::access;
+    template<class Archive> void serialize(Archive& ar, const unsigned int version) {
+        ar & src_model & trg_model & config;
+    }
+
 private:
     // Configuration of the model (monolingual models have the same configuration)
     BilingualConfig config; // TODO: serialize configuration
@@ -51,7 +56,6 @@ public:
         src_model(config), trg_model(config) {}
 
     void train(const string& src_file, const string& trg_file);
-    void saveEmbeddings(const string& src_file, const string& trg_file) const;
-    void load(const string& src_file, const string& trg_file);
-    void save(const string& src_file, const string& trg_file) const;
+    void load(const string& filename);
+    void save(const string& filename) const;
 };

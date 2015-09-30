@@ -4,12 +4,13 @@
 #include <cmath>
 #include <vector>
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <thread>
 #include <assert.h>
+#include <boost/serialization/serialization.hpp>
 
 using namespace std;
 
@@ -69,14 +70,27 @@ struct Config {
     int max_iterations;
     int window_size;
     int n_threads;
-    float sampling;
+    float subsampling;
     bool debug;
-    bool negative_sampling; // default is hierarchical softmax
-    bool skip_gram; // default is cbow
+    bool verbose;
+    bool hierarchical_softmax;
+    bool skip_gram;
     int negative;
 
-    Config() : starting_alpha(0.05), dimension(100), min_count(5), max_iterations(5), window_size(5),
-        n_threads(4), sampling(1e-03), debug(true), negative_sampling(false), skip_gram(false), negative(5) {}
+    Config() :
+        starting_alpha(0.05),
+        dimension(100),
+        min_count(5),
+        max_iterations(5),
+        window_size(5),
+        n_threads(4),
+        subsampling(1e-03),
+        debug(false),
+        verbose(false),
+        hierarchical_softmax(false),
+        skip_gram(false),
+        negative(5)
+        {}
 
     void print() const {
         std::cout << "dimension:   " << dimension << std::endl;
@@ -85,9 +99,9 @@ struct Config {
         std::cout << "alpha:       " << starting_alpha << std::endl;
         std::cout << "iterations:  " << max_iterations << std::endl;
         std::cout << "threads:     " << n_threads << std::endl;
-        std::cout << "subsampling: " << sampling << std::endl;
-        std::cout << "CBOW:        " << !skip_gram << std::endl;
-        std::cout << "HS:          " << !negative_sampling << std::endl;
+        std::cout << "subsampling: " << subsampling << std::endl;
+        std::cout << "skip-gram:   " << skip_gram << std::endl;
+        std::cout << "HS:          " << hierarchical_softmax << std::endl;
         std::cout << "negative:    " << negative << std::endl;
     }
 };
@@ -95,6 +109,10 @@ struct Config {
 class MonolingualModel
 {
     friend class BilingualModel;
+    friend class boost::serialization::access;
+    template<class Archive> void serialize(Archive& ar, const unsigned int version) {
+        ar & config & syn0 & syn1 & train_words & vocabulary;
+    }
 
 private:
     mat syn0; // input weights
@@ -103,7 +121,7 @@ private:
     long long total_word_count;
     float alpha;
     Config config;
-    unordered_map<string, HuffmanNode> vocabulary;
+    map<string, HuffmanNode> vocabulary;
     vector<HuffmanNode*> unigram_table;
 
     void addWordToVocab(const string& word);

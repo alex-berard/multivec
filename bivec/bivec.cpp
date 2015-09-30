@@ -1,7 +1,8 @@
 #include "bivec.h"
+#include "serialization.h"
 
 void BilingualModel::train(const string& src_file, const string& trg_file) {
-    if (config.debug)
+    if (config.verbose)
         cout << "Reading vocabulary" << endl;
 
     src_model.readVocab(src_file);
@@ -15,7 +16,7 @@ void BilingualModel::train(const string& src_file, const string& trg_file) {
     auto src_chunks = MonolingualModel::chunkify(src_file, config.n_threads);
     auto trg_chunks = MonolingualModel::chunkify(trg_file, config.n_threads);
 
-    if (config.debug)
+    if (config.verbose)
         cout << "Starting training" << endl;
 
     vector<thread> threads;
@@ -29,7 +30,7 @@ void BilingualModel::train(const string& src_file, const string& trg_file) {
         it->join();
     }
 
-    if (config.debug)
+    if (config.verbose)
         cout << endl << "Finished training" << endl;
 }
 
@@ -72,7 +73,7 @@ void BilingualModel::trainChunk(const string& src_file,
                 alpha = starting_alpha * (1 - static_cast<float>(total_word_count) / (max_iterations * train_words));
                 alpha = std::max(alpha, starting_alpha * 0.0001f);
 
-                if (config.debug) {
+                if (config.verbose) {
                     printf("\rAlpha: %f  Progress: %.2f%%", alpha, 100.0 * total_word_count /
                                     (max_iterations * train_words));
                     fflush(stdout);
@@ -119,7 +120,7 @@ int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent
     words += src_nodes.size() - count(src_nodes.begin(), src_nodes.end(), HuffmanNode::UNK);
     words += trg_nodes.size() - count(trg_nodes.begin(), trg_nodes.end(), HuffmanNode::UNK);
 
-    if (config.sampling > 0) {
+    if (config.subsampling > 0) {
         src_model.subsample(src_nodes); // puts <UNK> tokens in place of the discarded tokens
         trg_model.subsample(trg_nodes);
     }
@@ -207,10 +208,10 @@ void BilingualModel::trainWordCBOW(MonolingualModel& src_model, MonolingualModel
     }
 
     vec error; // compute error & update output weights
-    if (config.negative_sampling) {
-        error = src_model.negSamplingUpdate(cur_node, hidden, alpha);
-    } else {
+    if (config.hierarchical_softmax) {
         error = src_model.hierarchicalUpdate(cur_node, hidden, alpha);
+    } else {
+        error = src_model.negSamplingUpdate(cur_node, hidden, alpha);
     }
 
     // Update input weights
@@ -234,10 +235,10 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
         HuffmanNode output_word = trg_nodes[pos];
 
         vec error;
-        if (config.negative_sampling) {
-            error = trg_model.negSamplingUpdate(output_word, src_model.syn0[input_word.index], alpha);
-        } else {
+        if (config.hierarchical_softmax) {
             error = trg_model.hierarchicalUpdate(output_word, src_model.syn0[input_word.index], alpha);
+        } else {
+            error = trg_model.negSamplingUpdate(output_word, src_model.syn0[input_word.index], alpha);
         }
 
         for (int c = 0; c < config.dimension; ++c) {
@@ -246,19 +247,30 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
     }
 }
 
-void BilingualModel::saveEmbeddings(const string& src_file, const string& trg_file) const {
-    src_model.saveEmbeddings(src_file);
-    trg_model.saveEmbeddings(trg_file);
+void BilingualModel::load(const string& filename) {
+    ifstream infile(filename);
+
+    if (!infile.is_open()) {
+        throw runtime_error("couldn't open file " + filename);
+    }
+
+    if (config.verbose)
+        cout << "Loading model" << endl;
+
+    boost::archive::text_iarchive ia(infile);
+    ia >> *this;
 }
 
-void BilingualModel::load(const string& src_file, const string& trg_file) {
-    src_model.load(src_file);
-    trg_model.load(trg_file);
+void BilingualModel::save(const string& filename) const {
+    ofstream outfile(filename);
 
-    config.dimension = src_model.config.dimension;
-}
+    if (!outfile.is_open()) {
+        throw runtime_error("couldn't open file " + filename);
+    }
 
-void BilingualModel::save(const string& src_file, const string& trg_file) const {
-    src_model.save(src_file);
-    trg_model.save(trg_file);
+    if (config.verbose)
+        cout << "Saving model" << endl;
+
+    boost::archive::text_oarchive oa(outfile);
+    oa << *this;
 }

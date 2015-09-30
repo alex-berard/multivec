@@ -227,13 +227,27 @@ static PyObject * bivec_train(Bivec *self, PyObject *args) {
     }
 }
 
-static PyObject * bivec_load(Bivec *self, PyObject *args) {
-    const char *src_file, *trg_file;
-    if (!PyArg_ParseTuple(args, "ss", &src_file, &trg_file))
+static PyObject * bivec_save(Bivec *self, PyObject *args) {
+    const char *filename;
+    if (!PyArg_ParseTuple(args, "s", &filename))
         return NULL;
 
     try {
-        self->model->load(string(src_file), string(trg_file));
+        self->model->save(string(filename));
+        return Py_None;
+    } catch (...) {
+        PyErr_SetString(PyExc_Exception, "Couldn't save model");
+        return NULL;
+    }
+}
+
+static PyObject * bivec_load(Bivec *self, PyObject *args) {
+    const char *filename;
+    if (!PyArg_ParseTuple(args, "s", &filename))
+        return NULL;
+
+    try {
+        self->model->load(string(filename));
         return Py_None;
     } catch (...) {
         PyErr_SetString(PyExc_Exception, "Couldn't load model");
@@ -248,7 +262,8 @@ static PyMemberDef bivec_members[] = {
 
 static PyMethodDef bivec_methods[] = {
     {"train", (PyCFunction)bivec_train, METH_VARARGS, "Train a bilingual model"},
-    {"load", (PyCFunction)bivec_load, METH_VARARGS, "Load full model from disk"},
+    {"save", (PyCFunction)bivec_save, METH_VARARGS, "Save model to disk"},
+    {"load", (PyCFunction)bivec_load, METH_VARARGS, "Load model from disk"},
     {NULL}  /* Sentinel */
 };
 

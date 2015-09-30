@@ -1,4 +1,5 @@
 #include "word2vec.h"
+#include "serialization.h"
 
 vector<string> split(const string& sentence) {
     istringstream iss(sentence);
@@ -162,8 +163,8 @@ void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
     for (auto it = nodes.begin(); it != nodes.end(); ++it) {
         auto node = *it;
         float f = static_cast<float>(node.count) / train_words; // frequency of this word
-        //float p = 1 - sqrt(config.sampling / f); // formula used in the word2vec paper
-        float p = 1 - (1 + sqrt(f / config.sampling)) * config.sampling / f; // formula used in word2vec
+        //float p = 1 - sqrt(config.subsampling / f); // formula used in the word2vec paper
+        float p = 1 - (1 + sqrt(f / config.subsampling)) * config.subsampling / f; // formula used in word2vec
         float r = static_cast<float>(rand()) / RAND_MAX;
 
         // the higher the frequency the most likely to be discarded (p can be less than 0)
@@ -193,107 +194,33 @@ void MonolingualModel::saveEmbeddings(const string& filename) const {
     }
 }
 
-HuffmanNode MonolingualModel::loadWord(ifstream& infile) {
-    int arr[5];
-    char buffer[1024]; // fixed-size, boo!
-
-    infile.read(reinterpret_cast<char*>(arr), sizeof(int) * 5);
-
-    int index = arr[0];
-    int count = arr[1];
-    int word_size = arr[2];
-    int parent_size = arr[3];
-    int code_size = arr[4];
-
-    infile.read(buffer, word_size);
-
-    HuffmanNode node(index, string(buffer));
-    node.count = count;
-
-    int* buffer_ptr = reinterpret_cast<int*>(buffer);
-
-    infile.read(buffer, sizeof(int) * parent_size);
-    node.parents = vector<int>(buffer_ptr, buffer_ptr + parent_size);
-
-    infile.read(buffer, sizeof(int) * code_size);
-    node.code = vector<int>(buffer_ptr, buffer_ptr + code_size);
-
-    return node;
-}
-
-void MonolingualModel::saveWord(ofstream& outfile, const HuffmanNode& node) const {
-    int arr[] = {node.index,
-                 node.count,
-                 static_cast<int>(node.word.size() + 1), // include the '\0' character
-                 static_cast<int>(node.parents.size()),
-                 static_cast<int>(node.code.size())};
-
-    outfile.write(reinterpret_cast<char*>(arr), sizeof(int) * 5);
-    outfile.write(node.word.c_str(), node.word.size() + 1);
-
-    outfile.write(reinterpret_cast<const char*>(node.parents.data()), sizeof(int) * node.parents.size());
-    outfile.write(reinterpret_cast<const char*>(node.code.data()), sizeof(int) * node.code.size());
-}
-
 void MonolingualModel::load(const string& filename) {
-    ifstream infile(filename, ios::binary);
+    if (config.verbose)
+        cout << "Loading model" << endl;
+
+    ifstream infile(filename);
 
     if (!infile.is_open()) {
-        throw "couldn't open file " + filename;
+        throw runtime_error("couldn't open file " + filename);
     }
 
-    int vocab_size;
-
-    infile.read(reinterpret_cast<char*>(&vocab_size), sizeof(int));
-    infile.read(reinterpret_cast<char*>(&train_words), sizeof(long long));
-    infile.read(reinterpret_cast<char*>(&config.dimension), sizeof(int));
-
-    vocabulary.clear();
-
-    for (int i = 0; i < vocab_size; ++i) {
-        HuffmanNode node = loadWord(infile);
-        vocabulary.insert({node.word, node});
-    }
-
+    boost::archive::text_iarchive ia(infile);
+    ia >> *this;
     initUnigramTable();
-
-    syn0.resize(vocab_size);
-    for (auto it = syn0.begin(); it < syn0.end(); ++it) {
-        it->resize(config.dimension);
-        infile.read(reinterpret_cast<char*>(it->data()), sizeof(float) * config.dimension);
-    }
-
-    syn1.resize(vocab_size);
-    for (auto it = syn1.begin(); it < syn1.end(); ++it) {
-        it->resize(config.dimension);
-        infile.read(reinterpret_cast<char*>(it->data()), sizeof(float) * config.dimension);
-    }
 }
 
 void MonolingualModel::save(const string& filename) const {
-    ofstream outfile(filename, ios::binary | ios::out);
+    if (config.verbose)
+        cout << "Saving model" << endl;
+
+    ofstream outfile(filename);
 
     if (!outfile.is_open()) {
-        throw "couldn't open file " + filename;
+        throw runtime_error("couldn't open file " + filename);
     }
 
-    int vocab_size = vocabulary.size();
-
-    outfile.write(reinterpret_cast<char*>(&vocab_size), sizeof(int));
-    outfile.write(reinterpret_cast<const char*>(&train_words), sizeof(long long));
-    outfile.write(reinterpret_cast<const char*>(&config.dimension), sizeof(int));
-
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
-        saveWord(outfile, it->second);
-    }
-
-    for (auto it = syn0.begin(); it < syn0.end(); ++it) {
-        outfile.write(reinterpret_cast<const char*>(it->data()), sizeof(float) * config.dimension);
-    }
-
-    for (auto it = syn1.begin(); it < syn1.end(); ++it) {
-        outfile.write(reinterpret_cast<const char*>(it->data()), sizeof(float) * config.dimension);
-    }
+    boost::archive::text_oarchive oa(outfile);
+    oa << *this;
 }
 
 vec MonolingualModel::wordVec(const string& word) const {
@@ -346,12 +273,12 @@ vec MonolingualModel::sentVec(const string& sentence) {
             }
 
             vec temp_vec;
-            if (config.negative_sampling) {
+            if (config.hierarchical_softmax) {
                 temp_vec = hierarchicalUpdate(cur_node, hidden, alpha, false);
             } else {
                 temp_vec = negSamplingUpdate(cur_node, hidden, alpha, false);
             }
-            
+
             for (int c = 0; c < dimension; ++c) {
                 sent_vec[c] += temp_vec[c];
             }
@@ -362,10 +289,10 @@ vec MonolingualModel::sentVec(const string& sentence) {
 }
 
 void MonolingualModel::train(const string& training_file) {
-    if (config.debug)
+    if (config.verbose)
         config.print();
 
-    if (config.debug)
+    if (config.verbose)
         cout << "Reading vocabulary" << endl;
 
     train_words = 0;
@@ -377,7 +304,7 @@ void MonolingualModel::train(const string& training_file) {
     // read files to find out the beginning of each chunk
     auto chunks = chunkify(training_file, config.n_threads);
 
-    if (config.debug)
+    if (config.verbose)
         cout << "Starting training" << endl;
 
     if (config.n_threads == 1) {
@@ -395,7 +322,7 @@ void MonolingualModel::train(const string& training_file) {
         }
     }
 
-    if (config.debug)
+    if (config.verbose)
         cout << endl << "Finished training" << endl;
 }
 
@@ -453,7 +380,7 @@ void MonolingualModel::trainChunk(const string& training_file,
                 alpha = starting_alpha * (1 - static_cast<float>(total_word_count) / (max_iterations * train_words));
                 alpha = std::max(alpha, starting_alpha * 0.0001f);
 
-                if (config.debug) {
+                if (config.verbose) {
                     printf("\rAlpha: %f  Progress: %.2f%%", alpha, 100.0 * total_word_count /
                                     (max_iterations * train_words));
                     fflush(stdout);
@@ -475,7 +402,7 @@ int MonolingualModel::trainSentence(const string& sent) {
     // counts the number of words that are in the vocabulary
     int words = nodes.size() - count(nodes.begin(), nodes.end(), HuffmanNode::UNK);
 
-    if (config.sampling > 0) {
+    if (config.subsampling > 0) {
         subsample(nodes); // puts <UNK> tokens in place of the discarded tokens
     }
 
@@ -526,10 +453,10 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
     }
 
     vec error(dimension, 0);
-    if (config.negative_sampling) {
-        error = negSamplingUpdate(cur_node, hidden, alpha);
-    } else {
+    if (config.hierarchical_softmax) {
         error = hierarchicalUpdate(cur_node, hidden, alpha);
+    } else {
+        error = negSamplingUpdate(cur_node, hidden, alpha);
     }
 
     // update input weights
@@ -551,10 +478,10 @@ void MonolingualModel::trainWordSkipGram(const vector<HuffmanNode>& nodes, int w
         HuffmanNode output_word = nodes[pos];
 
         vec error(config.dimension, 0);
-        if (config.negative_sampling) {
-            error = negSamplingUpdate(output_word, syn0[input_word.index], alpha);
-        } else {
+        if (config.hierarchical_softmax) {
             error = hierarchicalUpdate(output_word, syn0[input_word.index], alpha);
+        } else {
+            error = negSamplingUpdate(output_word, syn0[input_word.index], alpha);
         }
 
         for (int c = 0; c < config.dimension; ++c) {
