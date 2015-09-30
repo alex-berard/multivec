@@ -38,7 +38,7 @@ void BilingualModel::trainChunk(const string& src_file,
                                 const string& trg_file,
                                 const vector<long long>& src_chunks,
                                 const vector<long long>& trg_chunks,
-                                int thread_id) {
+                                int chunk_id) {
     ifstream src_infile(src_file);
     ifstream trg_infile(trg_file);
     float starting_alpha = config.starting_alpha;
@@ -58,8 +58,8 @@ void BilingualModel::trainChunk(const string& src_file,
 
         src_infile.clear();
         trg_infile.clear();
-        src_infile.seekg(src_chunks[thread_id], src_infile.beg);
-        trg_infile.seekg(trg_chunks[thread_id], trg_infile.beg);
+        src_infile.seekg(src_chunks[chunk_id], src_infile.beg);
+        trg_infile.seekg(trg_chunks[chunk_id], trg_infile.beg);
 
         string src_sent, trg_sent;
         while (getline(src_infile, src_sent) && getline(trg_infile, trg_sent)) {
@@ -81,7 +81,7 @@ void BilingualModel::trainChunk(const string& src_file,
             }
 
             // stop when reaching the end of a chunk
-            if (thread_id < src_chunks.size() - 1 && src_infile.tellg() >= src_chunks[thread_id + 1])
+            if (chunk_id < src_chunks.size() - 1 && src_infile.tellg() >= src_chunks[chunk_id + 1])
                 break;
         }
 

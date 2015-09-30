@@ -134,7 +134,7 @@ static PyMethodDef word2vec_methods[] = {
     {"save", (PyCFunction)word2vec_save, METH_VARARGS, "Save model to disk"},
     {"sent_vec", (PyCFunction)word2vec_sent_vec, METH_VARARGS, "Inference step for paragraphs"},
     {"word_vec", (PyCFunction)word2vec_word_vec, METH_VARARGS, "Word embedding"},
-    {"save_embeddings", (PyCFunction)word2vec_save_embeddings, METH_VARARGS, "Save word embeddings in a word2vec compliant format"},
+    {"save_embeddings", (PyCFunction)word2vec_save_embeddings, METH_VARARGS, "Save word embeddings in the word2vec format"},
     {NULL}  /* Sentinel */
 };
 

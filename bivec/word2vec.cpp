@@ -44,7 +44,7 @@ void MonolingualModel::readVocab(const string& training_file) {
     ifstream infile(training_file);
 
     if (!infile.is_open()) {
-        throw "couldn't open file " + training_file;
+        throw runtime_error("couldn't open file " + training_file);
     }
 
     vocabulary.clear();
@@ -175,10 +175,13 @@ void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
 }
 
 void MonolingualModel::saveEmbeddings(const string& filename) const {
+    if (config.verbose)
+        cout << "Saving embeddings" << endl;
+    
     ofstream outfile(filename, ios::binary | ios::out);
 
     if (!outfile.is_open()) {
-        throw "couldn't open file " + filename;
+        throw runtime_error("couldn't open file " + filename);
     }
 
     outfile << vocabulary.size() << " " << config.dimension << endl;
@@ -227,7 +230,7 @@ vec MonolingualModel::wordVec(const string& word) const {
     auto it = vocabulary.find(word);
 
     if (it == vocabulary.end()) {
-        throw "out of vocabulary";
+        throw runtime_error("out of vocabulary");
     } else {
         return syn0[it->second.index];
     }
@@ -243,7 +246,7 @@ vec MonolingualModel::sentVec(const string& sentence) {
         nodes.end()); // remove UNK tokens
 
     if (nodes.empty())
-        throw "too short sentence, or OOV words";
+        throw runtime_error("too short sentence, or OOV words");
 
     vec sent_vec(dimension, 0);
 
@@ -330,7 +333,7 @@ vector<long long> MonolingualModel::chunkify(const string& filename, int n_chunk
     ifstream infile(filename);
 
     if (!infile.is_open()) {
-        throw "couldn't open file " + filename;
+        throw runtime_error("couldn't open file " + filename);
     }
 
     vector<long long> chunks;
@@ -359,7 +362,7 @@ void MonolingualModel::trainChunk(const string& training_file,
     int max_iterations = config.max_iterations;
 
     if (!infile.is_open()) {
-        throw "couldn't open file " + training_file;
+        throw runtime_error("couldn't open file " + training_file);
     }
 
     for (int k = 0; k < max_iterations; ++k) {
@@ -378,7 +381,7 @@ void MonolingualModel::trainChunk(const string& training_file,
                 last_count = word_count;
 
                 alpha = starting_alpha * (1 - static_cast<float>(total_word_count) / (max_iterations * train_words));
-                alpha = std::max(alpha, starting_alpha * 0.0001f);
+                alpha = max(alpha, starting_alpha * 0.0001f);
 
                 if (config.verbose) {
                     printf("\rAlpha: %f  Progress: %.2f%%", alpha, 100.0 * total_word_count /

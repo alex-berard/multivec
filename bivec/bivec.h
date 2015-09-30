@@ -37,13 +37,13 @@ private:
         const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes,
         int src_pos, int trg_pos, float alpha);
 
-    void trainWordCBOW(MonolingualModel& src_params, MonolingualModel& trg_params,
-        const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes,
-        int src_pos, int trg_pos, float alpha);
+    void trainWordCBOW(MonolingualModel&, MonolingualModel&,
+        const vector<HuffmanNode>&, const vector<HuffmanNode>&,
+        int, int, float);
 
-    void trainWordSkipGram(MonolingualModel& src_params, MonolingualModel& trg_params,
-        const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes,
-        int src_pos, int trg_pos, float alpha);
+    void trainWordSkipGram(MonolingualModel&, MonolingualModel&,
+        const vector<HuffmanNode>&, const vector<HuffmanNode>&,
+        int, int, float);
 
 public:
     // A bilingual model is comprised of two monolingual models

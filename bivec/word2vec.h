@@ -10,6 +10,7 @@
 #include <sstream>
 #include <thread>
 #include <assert.h>
+//#include <iomanip> // setprecision
 #include <boost/serialization/serialization.hpp>
 
 using namespace std;
@@ -17,18 +18,23 @@ using namespace std;
 vector<string> split(const string& sentence);
 
 const float MAX_EXP = 6;
-const int UNIGRAM_TABLE_SIZE = 1e8; // approximate size of the frequency table
+const int UNIGRAM_TABLE_SIZE = 1e8; // size of the frequency table
 
 inline float sigmoid(float x) {
     assert(x > -MAX_EXP && x < MAX_EXP); // we don't want NaN values hanging around
     return 1 / (1 + exp(-x));
 }
 
+//inline string lower(string s) {
+//    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+//    return s;
+//}
+
 typedef vector<float> vec;
 typedef vector<vec> mat;
 
 struct HuffmanNode {
-    static const HuffmanNode UNK; // node for OOV words, initialized in bivec.cpp
+    static const HuffmanNode UNK; // node for out-of-vocabulary words
 
     string word;
 
@@ -162,7 +168,11 @@ public:
 
     void train(const string& training_file); // training from scratch (resets vocabulary and weights)
 
-    void saveEmbeddings(const string& filename) const; // save the word embeddings in a word2vec compatible format
-    void load(const string& filename); // loads the entire model, but not the configuration (except dimension parameter)
-    void save(const string& filename) const; // save the entire model, but not the configuration
+    void saveEmbeddings(const string& filename) const; // saves the word embeddings in the word2vec binary format
+
+    void load(const string& filename); // loads the entire model
+    void save(const string& filename) const; // saves the entire model
+
+    //void computeAccuracy(istream& infile, int max_vocabulary_size = 0) const;
+    //static void computeAccuracy(istream& infile, const string& filename, int max_vocabulary_size = 0);
 };
