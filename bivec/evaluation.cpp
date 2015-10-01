@@ -1,8 +1,8 @@
 #include "word2vec.h"
 //#include <future>
 
-pair<int, int> evaluateTopic(const string& topic, const vector<string>& lines,
-    const map<string, vec>& embeddings) {
+void evaluateTopic(const string& topic, const vector<string>& lines,
+    const map<string, vec>& embeddings, pair<int, int>* res) {
 
     int total = 0, correct = 0;
 
@@ -22,7 +22,6 @@ pair<int, int> evaluateTopic(const string& topic, const vector<string>& lines,
         }
 
         // w4 = w2 - w1 + w3 (find w4)
-        //vec v = it2->second - it1->second + it3->second;
         vec v = it2->second;
         for (int c = 0; c < v.size(); ++c) {
             v[c] += it3->second[c] - it1->second[c];
@@ -38,10 +37,9 @@ pair<int, int> evaluateTopic(const string& topic, const vector<string>& lines,
                 continue;
             }
 
-            //float sim = arma::dot(pair.second, v);
             float sim = 0;
             for (int c = 0; c < v.size(); ++c) {
-                sim += it->second[c] + v[c];
+                sim += it->second[c] * v[c];
             }
 
             if (sim >= similarity) {
@@ -56,7 +54,8 @@ pair<int, int> evaluateTopic(const string& topic, const vector<string>& lines,
         ++total;
     }
 
-    return pair<int, int>(correct, total);
+    //return pair<int, int>(correct, total);
+    *res = pair<int, int>(correct, total);
 }
 
 void computeAccuracy(istream& infile, map<string, vec>& embeddings, int max_vocabulary_size, bool verbose)
@@ -73,7 +72,6 @@ void computeAccuracy(istream& infile, map<string, vec>& embeddings, int max_voca
         for (int c = 0; c < it->second.size(); ++c) {
             it->second[c] /= norm;
         }
-        //pair.second /= arma::norm(pair.second);
     }
 
     map<string, vector<string>> topics;
@@ -88,20 +86,34 @@ void computeAccuracy(istream& infile, map<string, vec>& embeddings, int max_voca
         }
     }
 
-    //vector<std::future<pair<int, int>>> results;
-    //for (auto pair = topics.begin(); pair != topics.end(); ++pair) {
-    //    results.push_back(std::async(std::launch::async, evaluateTopic, pair->first, pair->second, embeddings));
-    //}
+    vector<pair<int, int>> results(topics.size());
+    vector<thread> threads;
+    int i = 0;
+    for (auto it = topics.begin(); it != topics.end(); ++it, ++i) {
+        threads.push_back(thread(evaluateTopic, it->first, it->second, embeddings, &results[i]));
+    }
+
+    /*
+    vector<thread> threads;
+
+    for (int i = 0; i < config.n_threads; ++i) {
+        threads.push_back(thread(&MonolingualModel::trainChunk, this,
+            training_file, chunks, i));
+    }
+    */
+
+    for (auto it = threads.begin(); it != threads.end(); ++it) {
+        it->join();
+    }
 
     int correct = 0, total = 0, questions = 0;
     int gram_correct = 0, gram_total = 0;
 
-    //auto res_it = results.begin();
-    //auto topic_it = topics.begin();
-    //for (; topic_it != topics.end() && res_it != results.end() ; ++topic_it, ++res_it) {
-    for (auto topic_it = topics.begin(); topic_it != topics.end(); ++topic_it) {
-        //pair<int, int> res = res_it->get();
-        pair<int, int> res = evaluateTopic(topic_it->first, topic_it->second, embeddings);
+    auto res_it = results.begin();
+    auto topic_it = topics.begin();
+    for (; topic_it != topics.end() && res_it != results.end() ; ++topic_it, ++res_it) {
+        pair<int, int> res = *res_it;
+        //pair<int, int> res = evaluateTopic(topic_it->first, topic_it->second, embeddings);
 
         string topic = topic_it->first;
         int topic_correct = res.first, topic_total = res.second;
