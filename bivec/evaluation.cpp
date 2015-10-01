@@ -1,5 +1,5 @@
 #include "word2vec.h"
-#include <future>
+//#include <future>
 
 pair<int, int> evaluateTopic(const string& topic, const vector<string>& lines,
     const map<string, vec>& embeddings) {
@@ -88,18 +88,20 @@ void computeAccuracy(istream& infile, map<string, vec>& embeddings, int max_voca
         }
     }
 
-    vector<std::future<pair<int, int>>> results;
-    for (auto pair = topics.begin(); pair != topics.end(); ++pair) {
-        results.push_back(std::async(std::launch::async, evaluateTopic, pair->first, pair->second, embeddings));
-    }
+    //vector<std::future<pair<int, int>>> results;
+    //for (auto pair = topics.begin(); pair != topics.end(); ++pair) {
+    //    results.push_back(std::async(std::launch::async, evaluateTopic, pair->first, pair->second, embeddings));
+    //}
 
     int correct = 0, total = 0, questions = 0;
     int gram_correct = 0, gram_total = 0;
 
-    auto res_it = results.begin();
-    auto topic_it = topics.begin();
-    for (; topic_it != topics.end() && res_it != results.end() ; ++topic_it, ++res_it) {
-        pair<int, int> res = res_it->get();
+    //auto res_it = results.begin();
+    //auto topic_it = topics.begin();
+    //for (; topic_it != topics.end() && res_it != results.end() ; ++topic_it, ++res_it) {
+    for (auto topic_it = topics.begin(); topic_it != topics.end(); ++topic_it) {
+        //pair<int, int> res = res_it->get();
+        pair<int, int> res = evaluateTopic(topic_it->first, topic_it->second, embeddings);
 
         string topic = topic_it->first;
         int topic_correct = res.first, topic_total = res.second;
@@ -131,8 +133,8 @@ void MonolingualModel::computeAccuracy(istream& infile, int max_vocabulary_size)
 
     vector<const HuffmanNode*> nodes;
 
-    for (auto& pair : vocabulary) {
-        nodes.push_back(&pair.second);
+    for (auto pair = vocabulary.begin(); pair != vocabulary.end(); ++pair) {
+        nodes.push_back(&pair->second);
     }
 
     // keep only the most frequent words (kind of biased...)
