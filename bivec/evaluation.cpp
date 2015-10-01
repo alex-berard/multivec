@@ -32,20 +32,20 @@ pair<int, int> evaluateTopic(const string& topic, const vector<string>& lines,
         float similarity = 0;
         string closest_word;
 
-        for (auto pair = embeddings.begin(); pair != embeddings.end(); ++pair) {
+        for (auto it = embeddings.begin(); it != embeddings.end(); ++it) {
             // cheating...
-            if (pair->first == words[0] || pair->first == words[1] || pair->first == words[2]) {
+            if (it->first == words[0] || it->first == words[1] || it->first == words[2]) {
                 continue;
             }
 
             //float sim = arma::dot(pair.second, v);
             float sim = 0;
             for (int c = 0; c < v.size(); ++c) {
-                sim += pair->second[c] + v[c];
+                sim += it->second[c] + v[c];
             }
 
             if (sim >= similarity) {
-                closest_word = pair->first;
+                closest_word = it->first;
                 similarity = sim;
             }
         }
@@ -62,16 +62,16 @@ pair<int, int> evaluateTopic(const string& topic, const vector<string>& lines,
 void computeAccuracy(istream& infile, map<string, vec>& embeddings, int max_vocabulary_size, bool verbose)
 {
     // normalize
-    for (auto pair = embeddings.begin(); pair != embeddings.end(); ++pair) {
+    for (auto it = embeddings.begin(); it != embeddings.end(); ++it) {
         float norm = 0;
-        for (int c = 0; c < pair->second.size(); ++c) {
-            float x = pair->second[c];
+        for (int c = 0; c < it->second.size(); ++c) {
+            float x = it->second[c];
             norm += x * x;
         }
         norm = sqrt(norm);
 
-        for (int c = 0; c < pair->second.size(); ++c) {
-            pair->second[c] /= norm;
+        for (int c = 0; c < it->second.size(); ++c) {
+            it->second[c] /= norm;
         }
         //pair.second /= arma::norm(pair.second);
     }
@@ -133,8 +133,8 @@ void MonolingualModel::computeAccuracy(istream& infile, int max_vocabulary_size)
 
     vector<const HuffmanNode*> nodes;
 
-    for (auto pair = vocabulary.begin(); pair != vocabulary.end(); ++pair) {
-        nodes.push_back(&pair->second);
+    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+        nodes.push_back(&it->second);
     }
 
     // keep only the most frequent words (kind of biased...)
