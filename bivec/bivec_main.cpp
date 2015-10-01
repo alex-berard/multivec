@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     po::options_description desc("Options");
 
     desc.add_options()
-        ("help", "Print help message")
+        ("help,h", "Print help message")
         ("alpha",       po::value<float>(&config.starting_alpha),   "Learning rate")
         ("dimension",   po::value<int>(&config.dimension),          "Dimension of the embeddings")
         ("min-count",   po::value<int>(&config.min_count),          "Minimum count of each word in the vocabulary")

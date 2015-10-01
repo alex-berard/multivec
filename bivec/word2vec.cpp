@@ -59,10 +59,6 @@ void MonolingualModel::readVocab(const string& training_file) {
     initUnigramTable();
 }
 
-bool compHuffmanNodes(const HuffmanNode* v1, const HuffmanNode* v2) {
-    return (v1->count) > (v2->count);
-}
-
 void MonolingualModel::createBinaryTree() {
     vector<HuffmanNode*> heap;
     vector<HuffmanNode> parent_nodes;
@@ -72,7 +68,7 @@ void MonolingualModel::createBinaryTree() {
         heap.push_back(&it->second);
     }
 
-    sort(heap.begin(), heap.end(), compHuffmanNodes);
+    sort(heap.begin(), heap.end(), HuffmanNode::comp);
 
     for (int i = 0; heap.size() > 1; i++) {
         HuffmanNode* left = heap.back();
@@ -84,7 +80,7 @@ void MonolingualModel::createBinaryTree() {
         parent_nodes.push_back({i, left, right});
 
         HuffmanNode* parent = &parent_nodes.back();
-        auto it = lower_bound(heap.begin(), heap.end(), parent, compHuffmanNodes);
+        auto it = lower_bound(heap.begin(), heap.end(), parent, HuffmanNode::comp);
         heap.insert(it, parent);
     }
 
@@ -177,7 +173,7 @@ void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
 void MonolingualModel::saveEmbeddings(const string& filename) const {
     if (config.verbose)
         cout << "Saving embeddings" << endl;
-    
+
     ofstream outfile(filename, ios::binary | ios::out);
 
     if (!outfile.is_open()) {

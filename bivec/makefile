@@ -13,10 +13,10 @@ all: bivec word2vec
 $(BUILD)/%.o: $(SOURCE)
 	mkdir -p $(BUILD) && $(CC) -c -o $@ $< $(CCFLAGS)
 
-bivec: $(BUILD)/bivec_main.o $(BUILD)/bivec.o $(BUILD)/word2vec.o
+bivec: $(BUILD)/bivec_main.o $(BUILD)/bivec.o $(BUILD)/word2vec.o $(BUILD)/evaluation.o
 	$(CC) -o $@ $^ $(LFLAGS)
 
-word2vec: $(BUILD)/word2vec_main.o $(BUILD)/word2vec.o
+word2vec: $(BUILD)/word2vec_main.o $(BUILD)/word2vec.o $(BUILD)/evaluation.o
 	$(CC) -o $@ $^ $(LFLAGS)
 
 clean:

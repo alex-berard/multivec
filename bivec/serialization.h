@@ -17,8 +17,8 @@ namespace serialization {
            & cfg.window_size
            & cfg.n_threads
            & cfg.subsampling
-           & cfg.debug
-           & cfg.verbose
+           //& cfg.debug
+           //& cfg.verbose
            & cfg.hierarchical_softmax
            & cfg.skip_gram
            & cfg.negative;

@@ -10,7 +10,7 @@
 #include <sstream>
 #include <thread>
 #include <assert.h>
-//#include <iomanip> // setprecision
+#include <iomanip> // setprecision
 #include <boost/serialization/serialization.hpp>
 
 using namespace std;
@@ -25,10 +25,10 @@ inline float sigmoid(float x) {
     return 1 / (1 + exp(-x));
 }
 
-//inline string lower(string s) {
-//    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
-//    return s;
-//}
+inline string lower(string s) {
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+    return s;
+}
 
 typedef vector<float> vec;
 typedef vector<vec> mat;
@@ -66,6 +66,10 @@ struct HuffmanNode {
 
     bool operator!=(const HuffmanNode& node) const {
         return !(operator==(node));
+    }
+
+    static bool comp(const HuffmanNode* v1, const HuffmanNode* v2) {
+        return (v1->count) > (v2->count);
     }
 };
 
@@ -131,7 +135,9 @@ private:
     vector<HuffmanNode*> unigram_table;
 
     void addWordToVocab(const string& word);
-    void reduceVocab();
+    void reduceVocab();bool compHuffmanNodes(const HuffmanNode* v1, const HuffmanNode* v2) {
+    return (v1->count) > (v2->count);
+}
     void createBinaryTree();
     void assignCodes(HuffmanNode* node, vector<int> code, vector<int> parents) const;
     void initUnigramTable();
@@ -173,6 +179,5 @@ public:
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model
 
-    //void computeAccuracy(istream& infile, int max_vocabulary_size = 0) const;
-    //static void computeAccuracy(istream& infile, const string& filename, int max_vocabulary_size = 0);
+    void computeAccuracy(istream& infile, int max_vocabulary_size = 0) const;
 };

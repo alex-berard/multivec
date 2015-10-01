@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
     po::options_description desc("Options");
 
     desc.add_options()
-        ("help", "Print help message")
+        ("help,h", "Print help message")
         ("alpha",       po::value<float>(&config.starting_alpha),  "Learning rate")
         ("dimension",   po::value<int>(&config.dimension),         "Dimension of the embeddings")
         ("min-count",   po::value<int>(&config.min_count),         "Minimum count of each word in the vocabulary")
@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         ("load",        po::value<std::string>(),                  "Load existing model")
         ("save",        po::value<std::string>(),                  "Save entire model")
         ("train",       po::value<std::string>(),                  "Training file")
-        //("evaluate",    po::value<int>(),                          "Compute accuracy of the model with max vocabulary size")
+        ("evaluate",    po::value<int>(),                          "Compute accuracy of the model with max vocabulary size")
         ("save-embeddings", po::value<std::string>(),              "Save embeddings")
         ;
 
@@ -64,9 +64,9 @@ int main(int argc, char **argv) {
     if (vm.count("save")) {
         model.save(vm["save"].as<std::string>());
     }
-    //if (vm.count("evaluate")) {
-    //    model.computeAccuracy(std::cin, vm["evaluate"].as<int>());
-    //}
+    if (vm.count("evaluate")) {
+        model.computeAccuracy(std::cin, vm["evaluate"].as<int>());
+    }
 
     return 0;
 }
