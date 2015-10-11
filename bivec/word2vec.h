@@ -12,8 +12,11 @@
 #include <assert.h>
 #include <iomanip> // setprecision
 #include <boost/serialization/serialization.hpp>
+#include <chrono>
+#include <random>
 
 using namespace std;
+using namespace std::chrono;
 
 vector<string> split(const string& sentence);
 
@@ -133,11 +136,24 @@ private:
     Config config;
     map<string, HuffmanNode> vocabulary;
     vector<HuffmanNode*> unigram_table;
+    static __thread unsigned long long next_random;
+
+    static unsigned long long rand() {
+    //static int rand() {
+        //static __thread std::mt19937 random_generator;
+        //std::uniform_int_distribution<int> distribution(0, RAND_MAX);
+        //return distribution(random_generator);
+
+        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11;
+        return next_random;
+    }
+    static float randf() {
+        //return  MonolingualModel::rand() / static_cast<float>(RAND_MAX);
+        return  (MonolingualModel::rand() & 0xFFFF) / 65536.0f;
+    }
 
     void addWordToVocab(const string& word);
-    void reduceVocab();bool compHuffmanNodes(const HuffmanNode* v1, const HuffmanNode* v2) {
-    return (v1->count) > (v2->count);
-}
+    void reduceVocab();
     void createBinaryTree();
     void assignCodes(HuffmanNode* node, vector<int> code, vector<int> parents) const;
     void initUnigramTable();

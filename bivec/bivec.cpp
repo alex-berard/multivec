@@ -191,7 +191,7 @@ void BilingualModel::trainWordCBOW(MonolingualModel& src_model, MonolingualModel
     vec hidden(dimension, 0);
     HuffmanNode cur_node = src_nodes[src_pos];
 
-    int this_window_size = 1 + rand() % config.window_size;
+    int this_window_size = 1 + MonolingualModel::rand() % config.window_size;
     int count = 0;
 
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
@@ -228,7 +228,7 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
                                        int src_pos, int trg_pos, float alpha) {
     HuffmanNode input_word = src_nodes[src_pos];
 
-    int this_window_size = 1 + rand() % config.window_size;
+    int this_window_size = 1 + MonolingualModel::rand() % config.window_size;
 
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= trg_nodes.size() || pos == trg_pos) continue;

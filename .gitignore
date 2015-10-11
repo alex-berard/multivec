@@ -35,3 +35,5 @@ bivec/bivec
 bivec/word2vec
 *.bin
 callgrind*
+word2vec/compute-accuracy
+word2vec/word2vec

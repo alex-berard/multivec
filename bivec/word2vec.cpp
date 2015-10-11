@@ -13,6 +13,7 @@ vector<string> split(const string& sentence) {
     return words;
 }
 
+__thread unsigned long long MonolingualModel::next_random(0);
 const HuffmanNode HuffmanNode::UNK;
 
 void MonolingualModel::addWordToVocab(const string& word) {
@@ -118,7 +119,8 @@ void MonolingualModel::initUnigramTable() {
 }
 
 HuffmanNode* MonolingualModel::getRandomHuffmanNode() {
-    int index = rand() % unigram_table.size();
+    int index = (MonolingualModel::rand() >> 16) % unigram_table.size();
+    //int index = MonolingualModel::rand() % unigram_table.size();
     return unigram_table[index];
 }
 
@@ -130,7 +132,7 @@ void MonolingualModel::initNet() {
 
     for (int row = 0; row < v; ++row) {
         for (int col = 0; col < d; ++col) {
-            syn0[row][col] = (static_cast<float>(rand()) / RAND_MAX - 0.5f) / d;
+            syn0[row][col] = (MonolingualModel::randf() - 0.5f) / d;
         }
     }
 
@@ -161,7 +163,7 @@ void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
         float f = static_cast<float>(node.count) / train_words; // frequency of this word
         //float p = 1 - sqrt(config.subsampling / f); // formula used in the word2vec paper
         float p = 1 - (1 + sqrt(f / config.subsampling)) * config.subsampling / f; // formula used in word2vec
-        float r = static_cast<float>(rand()) / RAND_MAX;
+        float r =  MonolingualModel::randf();
 
         // the higher the frequency the most likely to be discarded (p can be less than 0)
         if (p >= r) {
@@ -251,7 +253,7 @@ vec MonolingualModel::sentVec(const string& sentence) {
             vec hidden(dimension, 0);
             HuffmanNode cur_node = nodes[word_pos];
 
-            int this_window_size = 1 + rand() % config.window_size;
+            int this_window_size = 1 + MonolingualModel::rand() % config.window_size;
             int count = 0;
 
             for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
@@ -306,6 +308,7 @@ void MonolingualModel::train(const string& training_file) {
     if (config.verbose)
         cout << "Starting training" << endl;
 
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
     if (config.n_threads == 1) {
         trainChunk(training_file, chunks, 0);
     } else {
@@ -320,9 +323,12 @@ void MonolingualModel::train(const string& training_file) {
             it->join();
         }
     }
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(t2 - t1).count();
 
     if (config.verbose)
         cout << endl << "Finished training" << endl;
+    cout << "Training time: " << static_cast<float>(duration) / 1000000 << endl;
 }
 
 vector<long long> MonolingualModel::chunkify(const string& filename, int n_chunks) {
@@ -356,6 +362,8 @@ void MonolingualModel::trainChunk(const string& training_file,
     ifstream infile(training_file);
     float starting_alpha = config.starting_alpha;
     int max_iterations = config.max_iterations;
+
+    next_random = chunk_id + 1;
 
     if (!infile.is_open()) {
         throw runtime_error("couldn't open file " + training_file);
@@ -435,7 +443,7 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
     vec hidden(dimension, 0);
     HuffmanNode cur_node = nodes[word_pos];
 
-    int this_window_size = 1 + rand() % config.window_size;
+    int this_window_size = 1 + MonolingualModel::rand() % config.window_size;
     int count = 0;
 
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
@@ -470,7 +478,7 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
 void MonolingualModel::trainWordSkipGram(const vector<HuffmanNode>& nodes, int word_pos) {
     HuffmanNode input_word = nodes[word_pos]; // use this word to predict surrounding words
 
-    int this_window_size = 1 + rand() % config.window_size;
+    int this_window_size = 1 + MonolingualModel::rand() % config.window_size;
 
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
