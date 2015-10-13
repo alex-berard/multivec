@@ -54,6 +54,8 @@ int main(int argc, char **argv)
     float min_distance = 1;
     float max_distance = -1;
 
+    srand(time(NULL));
+
     for (int i = 0; i < n; ++i) {
         int word1 = rand() % words; // for n random words
 

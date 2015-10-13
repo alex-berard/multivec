@@ -8,7 +8,7 @@ HEADER = %.h
 
 BUILD = build
 
-all: word2vec compute-accuracy
+all: word2vec compute-accuracy test-distance
 
 $(BUILD)/%.o: $(SOURCE)
 	mkdir -p $(BUILD) && $(CC) -c -o $@ $< $(CCFLAGS)
@@ -18,8 +18,12 @@ word2vec: $(BUILD)/word2vec_main.o $(BUILD)/word2vec.o
 
 compute-accuracy: $(BUILD)/compute-accuracy.o
 	$(CC) -o $@ $^ $(LFLAGS)
+
+test-distance:
+	gcc test-distance.c -o test-distance -std=c99 -lm -O3
+
 #compute-accuracy:
 	#$(CC) compute-accuracy.c -o compute-accuracy -lm
 
 clean:
-	rm -rf build word2vec compute-accuracy
+	rm -rf build word2vec compute-accuracy test-distance
