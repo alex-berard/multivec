@@ -201,6 +201,8 @@ public:
 
     vec wordVec(const string& word) const; // word embedding
     vec sentVec(const string& sentence); // paragraph vector (Le & Mikolov)
+    
+    bool wordInVocab(const string& word) const; // Test whether the word is in the vocabulary
 
     void train(const string& training_file); // training from scratch (resets vocabulary and weights)
 
@@ -208,6 +210,9 @@ public:
 
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model
+    void loadW2V(const string& filename); // loads the entire model
+    float getSimilarity(const string& word1, const string& word2);
+    float getDistance(const string& word1, const string& word2);
 
     void computeAccuracy(istream& infile, int max_vocabulary_size = 0) const;
 };

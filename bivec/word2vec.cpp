@@ -239,6 +239,16 @@ vec MonolingualModel::wordVec(const string& word) const {
     }
 }
 
+bool MonolingualModel::wordInVocab(const string& word) const {
+    auto it = vocabulary.find(word);
+
+    if (it == vocabulary.end()) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
 vec MonolingualModel::sentVec(const string& sentence) {
     int dimension = config.dimension;
     float alpha = config.starting_alpha;  // TODO: decreasing learning rate
@@ -579,3 +589,24 @@ vec MonolingualModel::hierarchicalUpdate(const HuffmanNode& node, const vec& hid
 
     return temp;
 }
+float MonolingualModel::getSimilarity(const string& word1, const string& word2)
+{
+    if (! wordInVocab(word1)) {return 0;}
+    if (! wordInVocab(word2)) {return 0;}
+    float sim = 0.0;
+    vec v1 = wordVec(word1);
+    vec v2 = wordVec(word1);
+    int l_vInc;
+    for (l_vInc=0; l_vInc < (int)v1.size(); l_vInc++)
+    {
+	sim = sim + ( v1.at(l_vInc) * v2.at(l_vInc) );
+    }
+    return sim;
+}
+
+float MonolingualModel::getDistance(const string& word1, const string& word2)
+{
+    return 1.0-getSimilarity(word1, word2);
+}
+
+
