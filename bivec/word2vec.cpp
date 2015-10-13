@@ -290,7 +290,7 @@ vec MonolingualModel::sentVec(const string& sentence) {
 }
 
 void MonolingualModel::train(const string& training_file) {
-    if (config.verbose)
+    //if (config.verbose)
         config.print();
 
     if (config.verbose)

@@ -60,6 +60,8 @@ int main(int argc, char **argv)
         int word1 = rand() % words; // for n random words
 
         for (int word2 = 0; word2 < words; ++word2) { // compute their cosine similarity with all other words
+            if (word2 == word1) continue;
+
             float distance = 0;
             float norm_x = 0;
             float norm_y = 0;

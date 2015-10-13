@@ -19,7 +19,6 @@ int main(int argc, char **argv) {
         ("hs",          po::bool_switch(&config.hierarchical_softmax), "Hierarchical softmax (negative sampling by default)")
         ("verbose,v",   po::bool_switch(&config.verbose),          "Verbose mode")
         ("negative",    po::value<int>(&config.negative),          "Number of negative samples")
-        ("sent-ids",    po::bool_switch(&config.sent_ids),         "Paragraph vector (training file includes sentence ids)")
         ("train",       po::value<std::string>(),  "Training file")
         ("save-embeddings", po::value<std::string>(),"Output file")
         ;

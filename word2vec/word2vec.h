@@ -18,7 +18,6 @@ struct Config {
     bool hierarchical_softmax;
     bool skip_gram;
     int negative;
-    bool sent_ids;
     bool binary;
 
     Config() :
@@ -38,6 +37,7 @@ struct Config {
         {}
 
     void print() const {
+        std::cout << "Word2vec" << endl;
         std::cout << "dimension:   " << dimension << std::endl;
         std::cout << "window size: " << window_size << std::endl;
         std::cout << "min count:   " << min_count << std::endl;

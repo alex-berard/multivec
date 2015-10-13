@@ -36,12 +36,11 @@ struct vocab_word {
 };
 
 char train_file[MAX_STRING], output_file[MAX_STRING];
-char save_vocab_file[MAX_STRING], read_vocab_file[MAX_STRING];
 struct vocab_word *vocab;
 int binary = 0, cbow = 1, debug_mode = 2, window = 5, min_count = 5, num_threads = 12, min_reduce = 1;
 int *vocab_hash;
 long long vocab_max_size = 1000, vocab_size = 0, layer1_size = 100;
-long long train_words = 0, word_count_actual = 0, iter = 5, file_size = 0, classes = 0;
+long long train_words = 0, word_count_actual = 0, iter = 5, file_size = 0;
 real alpha = 0.025, starting_alpha, sample = 1e-3;
 real *syn0, *syn1, *syn1neg, *expTable;
 clock_t start;
@@ -296,46 +295,6 @@ void LearnVocabFromTrainFile() {
   fclose(fin);
 }
 
-void SaveVocab() {
-  long long i;
-  FILE *fo = fopen(save_vocab_file, "wb");
-  for (i = 0; i < vocab_size; i++) fprintf(fo, "%s %lld\n", vocab[i].word, vocab[i].cn);
-  fclose(fo);
-}
-
-void ReadVocab() {
-  long long a, i = 0;
-  char c;
-  char word[MAX_STRING];
-  FILE *fin = fopen(read_vocab_file, "rb");
-  if (fin == NULL) {
-    printf("Vocabulary file not found\n");
-    exit(1);
-  }
-  for (a = 0; a < vocab_hash_size; a++) vocab_hash[a] = -1;
-  vocab_size = 0;
-  while (1) {
-    ReadWord(word, fin);
-    if (feof(fin)) break;
-    a = AddWordToVocab(word);
-    fscanf(fin, "%lld%c", &vocab[a].cn, &c);
-    i++;
-  }
-  SortVocab();
-  if (debug_mode > 0) {
-    printf("Vocab size: %lld\n", vocab_size);
-    printf("Words in train file: %lld\n", train_words);
-  }
-  fin = fopen(train_file, "rb");
-  if (fin == NULL) {
-    printf("ERROR: training data file not found!\n");
-    exit(1);
-  }
-  fseek(fin, 0, SEEK_END);
-  file_size = ftell(fin);
-  fclose(fin);
-}
-
 void InitNet() {
   long long a, b;
   unsigned long long next_random = 1;
@@ -543,14 +502,13 @@ void *TrainModelThread(void *id) {
 }
 
 void TrainModel() {
-  long a, b, c, d;
+  long a, b;
   FILE *fo;
   pthread_t *pt = (pthread_t *)malloc(num_threads * sizeof(pthread_t));
   if (debug_mode > 0)
     printf("Starting training using file %s\n", train_file);
   starting_alpha = alpha;
-  if (read_vocab_file[0] != 0) ReadVocab(); else LearnVocabFromTrainFile();
-  if (save_vocab_file[0] != 0) SaveVocab();
+  LearnVocabFromTrainFile();
   if (output_file[0] == 0) return;
   InitNet();
   if (negative > 0) InitUnigramTable();
@@ -564,88 +522,28 @@ void TrainModel() {
       printf("\n");
   cout << "Training time: " << static_cast<float>(duration) / 1000000 << endl;
   fo = fopen(output_file, "wb");
-  if (classes == 0) {
-    // Save the word vectors
-    fprintf(fo, "%lld %lld\n", vocab_size, layer1_size);
-    for (a = 0; a < vocab_size; a++) {
-      fprintf(fo, "%s ", vocab[a].word);
-      if (binary) for (b = 0; b < layer1_size; b++) fwrite(&syn0[a * layer1_size + b], sizeof(real), 1, fo);
-      else for (b = 0; b < layer1_size; b++) fprintf(fo, "%lf ", syn0[a * layer1_size + b]);
-      fprintf(fo, "\n");
-    }
-  } else {
-    // Run K-means on the word vectors
-    int clcn = classes, iter = 10, closeid;
-    int *centcn = (int *)malloc(classes * sizeof(int));
-    int *cl = (int *)calloc(vocab_size, sizeof(int));
-    real closev, x;
-    real *cent = (real *)calloc(classes * layer1_size, sizeof(real));
-    for (a = 0; a < vocab_size; a++) cl[a] = a % clcn;
-    for (a = 0; a < iter; a++) {
-      for (b = 0; b < clcn * layer1_size; b++) cent[b] = 0;
-      for (b = 0; b < clcn; b++) centcn[b] = 1;
-      for (c = 0; c < vocab_size; c++) {
-        for (d = 0; d < layer1_size; d++) cent[layer1_size * cl[c] + d] += syn0[c * layer1_size + d];
-        centcn[cl[c]]++;
-      }
-      for (b = 0; b < clcn; b++) {
-        closev = 0;
-        for (c = 0; c < layer1_size; c++) {
-          cent[layer1_size * b + c] /= centcn[b];
-          closev += cent[layer1_size * b + c] * cent[layer1_size * b + c];
-        }
-        closev = sqrt(closev);
-        for (c = 0; c < layer1_size; c++) cent[layer1_size * b + c] /= closev;
-      }
-      for (c = 0; c < vocab_size; c++) {
-        closev = -10;
-        closeid = 0;
-        for (d = 0; d < clcn; d++) {
-          x = 0;
-          for (b = 0; b < layer1_size; b++) x += cent[layer1_size * d + b] * syn0[c * layer1_size + b];
-          if (x > closev) {
-            closev = x;
-            closeid = d;
-          }
-        }
-        cl[c] = closeid;
-      }
-    }
-    // Save the K-means classes
-    for (a = 0; a < vocab_size; a++) fprintf(fo, "%s %d\n", vocab[a].word, cl[a]);
-    free(centcn);
-    free(cent);
-    free(cl);
+
+  // Save the word vectors
+  fprintf(fo, "%lld %lld\n", vocab_size, layer1_size);
+  for (a = 0; a < vocab_size; a++) {
+    fprintf(fo, "%s ", vocab[a].word);
+    if (binary) for (b = 0; b < layer1_size; b++) fwrite(&syn0[a * layer1_size + b], sizeof(real), 1, fo);
+    else for (b = 0; b < layer1_size; b++) fprintf(fo, "%lf ", syn0[a * layer1_size + b]);
+    fprintf(fo, "\n");
   }
   fclose(fo);
 }
 
-int ArgPos(char *str, int argc, char **argv) {
-  int a;
-  for (a = 1; a < argc; a++) if (!strcmp(str, argv[a])) {
-    if (a == argc - 1) {
-      printf("Argument missing for %s\n", str);
-      exit(1);
-    }
-    return a;
-  }
-  return -1;
-}
-
 void Main(string train_file_, string output_file_, Config config) {
-  int i;
-  output_file[0] = 0;
-  save_vocab_file[0] = 0;
-  read_vocab_file[0] = 0;
   vocab = (struct vocab_word *)calloc(vocab_max_size, sizeof(struct vocab_word));
   vocab_hash = (int *)calloc(vocab_hash_size, sizeof(int));
   expTable = (real *)malloc((EXP_TABLE_SIZE + 1) * sizeof(real));
-  for (i = 0; i < EXP_TABLE_SIZE; i++) {
+  for (int i = 0; i < EXP_TABLE_SIZE; i++) {
     expTable[i] = exp((i / (real)EXP_TABLE_SIZE * 2 - 1) * MAX_EXP); // Precompute the exp() table
     expTable[i] = expTable[i] / (expTable[i] + 1);                   // Precompute f(x) = x / (x + 1)
   }
 
-  if (config.verbose)
+  //if (config.verbose)
     config.print();
 
   debug_mode = 2 * config.verbose;

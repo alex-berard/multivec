@@ -4,13 +4,13 @@ CCFLAGS = -c $(DEBUG) -O3 -std=c++0x -Wall -Wno-sign-compare
 LFLAGS = $(DEBUG) -pthread -lm -lboost_program_options -lboost_serialization
 
 SOURCE = %.cpp
-HEADER = %.h
+HEADER = bivec.h word2vec.h serialization.h
 
 BUILD = build
 
 all: bivec word2vec
 
-$(BUILD)/%.o: $(SOURCE)
+$(BUILD)/%.o: $(SOURCE) $(HEADER)
 	mkdir -p $(BUILD) && $(CC) -c -o $@ $< $(CCFLAGS)
 
 bivec: $(BUILD)/bivec_main.o $(BUILD)/bivec.o $(BUILD)/word2vec.o $(BUILD)/evaluation.o

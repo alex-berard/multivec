@@ -4,13 +4,13 @@ CCFLAGS = -c $(DEBUG) -O3 -std=c++0x -Wall -Wno-sign-compare
 LFLAGS = $(DEBUG) -pthread -lm -lboost_program_options -lboost_serialization
 
 SOURCE = %.cpp
-HEADER = %.h
+HEADER = word2vec.h
 
 BUILD = build
 
 all: word2vec compute-accuracy test-distance
 
-$(BUILD)/%.o: $(SOURCE)
+$(BUILD)/%.o: $(SOURCE) $(HEADER)
 	mkdir -p $(BUILD) && $(CC) -c -o $@ $< $(CCFLAGS)
 
 word2vec: $(BUILD)/word2vec_main.o $(BUILD)/word2vec.o
