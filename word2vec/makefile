@@ -19,11 +19,8 @@ word2vec: $(BUILD)/word2vec_main.o $(BUILD)/word2vec.o
 compute-accuracy: $(BUILD)/compute-accuracy.o
 	$(CC) -o $@ $^ $(LFLAGS)
 
-test-distance:
-	gcc test-distance.c -o test-distance -std=c99 -lm -O3
-
-#compute-accuracy:
-	#$(CC) compute-accuracy.c -o compute-accuracy -lm
+test-distance: $(BUILD)/test-distance.o
+	$(CC) -o $@ $^ $(LFLAGS)
 
 clean:
 	rm -rf build word2vec compute-accuracy test-distance

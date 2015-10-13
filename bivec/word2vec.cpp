@@ -107,9 +107,14 @@ void MonolingualModel::assignCodes(HuffmanNode* node, vector<int> code, vector<i
 void MonolingualModel::initUnigramTable() {
     unigram_table.clear();
 
+    float power = 0.75; // weird word2vec tweak ('normal' value would be 1.0)
+    float total_count = 0.0;
     for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
-        int count = it->second.count;
-        float f = static_cast<float>(count) / train_words; // frequency of this word
+        total_count += pow(it->second.count, power);
+    }
+
+    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+        float f = pow(it->second.count, power) / total_count;
 
         int d = static_cast<int>(f * UNIGRAM_TABLE_SIZE);
         for (int i = 0; i < d; ++i) {

@@ -22,9 +22,24 @@ vector<string> split(const string& sentence);
 
 const float MAX_EXP = 6;
 const int UNIGRAM_TABLE_SIZE = 1e8; // size of the frequency table
+//const int EXP_TABLE_SIZE = 1000;
+
+/*
+static vector<float> initExpTable() {
+    auto exp_table = vector<float>(EXP_TABLE_SIZE);
+    for (int i = 0; i < EXP_TABLE_SIZE; i++) {
+        float x = exp((i / static_cast<float>(EXP_TABLE_SIZE) * 2 - 1) * MAX_EXP); // Precompute the exp() table
+        exp_table[i] = x / (x + 1);  // Precompute f(x) = x / (x + 1)
+    }
+    return exp_table;
+}
+*/
 
 inline float sigmoid(float x) {
-    assert(x > -MAX_EXP && x < MAX_EXP); // we don't want NaN values hanging around
+    assert(x > -MAX_EXP && x < MAX_EXP);
+
+    //static auto exp_table = initExpTable(); // C++ static magic
+    //return exp_table[static_cast<int>((x + MAX_EXP) * EXP_TABLE_SIZE / MAX_EXP / 2)];
     return 1 / (1 + exp(-x));
 }
 
@@ -84,7 +99,6 @@ struct Config {
     int window_size;
     int n_threads;
     float subsampling;
-    bool debug;
     bool verbose;
     bool hierarchical_softmax;
     bool skip_gram;
@@ -98,7 +112,6 @@ struct Config {
         window_size(5),
         n_threads(4),
         subsampling(1e-03),
-        debug(false),
         verbose(false),
         hierarchical_softmax(false),
         skip_gram(false),
@@ -129,7 +142,7 @@ class MonolingualModel
     }
 
 private:
-    mat syn0; // input weights
+    mat syn0; // input weights, TODO: syn1neg + more explicit names
     mat syn1; // output weights
     long long train_words; // total number of words in training file (used to compute word frequencies)
     long long total_word_count;
@@ -141,7 +154,7 @@ private:
 
     static unsigned long long rand() {
     //static int rand() {
-        //static __thread std::mt19937 random_generator;
+        //static thread_local std::mt19937 random_generator;
         //std::uniform_int_distribution<int> distribution(0, RAND_MAX);
         //return distribution(random_generator);
 

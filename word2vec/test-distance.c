@@ -4,6 +4,7 @@
 #include <math.h>
 #include <malloc.h>
 #include <ctype.h>
+#include <time.h>
 
 const long long max_w = 50;              // max length of vocabulary entries
 
