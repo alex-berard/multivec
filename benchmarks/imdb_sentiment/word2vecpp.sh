@@ -5,12 +5,9 @@ liblinear=benchmarks/imdb_sentiment/liblinear-2.1
 rm -rf $output_dir
 mkdir $output_dir
 
-#cd ../../bivec
-#make -j8
-#cd benchmarks/imdb_sentiment
-cp bivec/word2vec $output_dir
+cp bin/word2vecpp $output_dir
 
-$output_dir/word2vec --train $data_dir/alldata-id.txt --save-embeddings-txt $output_dir/vectors.txt --sg --dimension 100 --window-size 10 --negative 5 --subsampling 1e-4 --threads 40 --iter 20 --min-count 1 --sent-ids
+$output_dir/word2vecpp --train $data_dir/alldata-id.txt --save-embeddings-txt $output_dir/vectors.txt --dimension 100 --window-size 10 --negative 5 --subsampling 1e-4 --threads 40 --iter 20 --min-count 1 --sent-ids
 grep '_\*' $output_dir/vectors.txt | sed s/^..// | sort -nk 1,1 > $output_dir/sentence_vectors.txt
 
 head $output_dir/sentence_vectors.txt -n 25000 | awk 'BEGIN{a=0;}{if (a<12500) printf "1 "; else printf "-1 "; for (b=1; b<NF; b++) printf b ":" $(b+1) " "; print ""; a++;}' > $output_dir/train.txt

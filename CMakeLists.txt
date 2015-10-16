@@ -4,6 +4,7 @@ project(word2vecpp)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+set(CMAKE_BUILD_TYPE Release)
 
 find_package( Boost REQUIRED COMPONENTS program_options serialization )
 find_package( Threads )
@@ -22,3 +23,6 @@ target_link_libraries( bivec ${DEPENDENCIES} )
 
 add_executable(word2vec ${SOURCE_WORD2VEC} ${HEADERS_WORD2VEC})
 target_link_libraries( word2vec ${DEPENDENCIES} )
+
+add_executable(compute-accuracy ${SOURCE_COMPUTE_ACC})
+target_link_libraries( compute-accuracy ${DEPENDENCIES} )

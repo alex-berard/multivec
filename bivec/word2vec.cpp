@@ -539,9 +539,9 @@ void MonolingualModel::trainWordSkipGram(const vector<HuffmanNode>& nodes, int w
 
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size + config.sent_ids; ++pos) {
         int p = pos;
-        if (pos == word_pos) continue;
-        if (config.sent_ids && pos == word_pos + this_window_size + config.sent_ids) p = 0;
-        if (pos < 0 || pos >= nodes.size()) continue;
+        if (p == word_pos) continue;
+        if (config.sent_ids && p == word_pos + this_window_size + config.sent_ids) p = 0;
+        if (p < 0 || p >= nodes.size()) continue;
         HuffmanNode output_word = nodes[p];
 
         vec error(dimension, 0);
