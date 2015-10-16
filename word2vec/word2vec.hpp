@@ -13,11 +13,11 @@ struct Config {
     int window_size;
     int n_threads;
     float subsampling;
-    bool debug;
     bool verbose;
     bool hierarchical_softmax;
     bool skip_gram;
     int negative;
+    bool sent_ids;
     bool binary;
 
     Config() :
@@ -28,16 +28,17 @@ struct Config {
         window_size(5),
         n_threads(4),
         subsampling(1e-03),
-        debug(false),
         verbose(false),
         hierarchical_softmax(false),
         skip_gram(false),
         negative(5),
+        sent_ids(false),
         binary(true)
         {}
 
     void print() const {
-        std::cout << "Word2vec" << endl;
+        std::cout << std::boolalpha; // to print false/true instead of 0/1
+        std::cout << "Word2vec"    << std::endl;
         std::cout << "dimension:   " << dimension << std::endl;
         std::cout << "window size: " << window_size << std::endl;
         std::cout << "min count:   " << min_count << std::endl;
@@ -46,7 +47,9 @@ struct Config {
         std::cout << "threads:     " << n_threads << std::endl;
         std::cout << "subsampling: " << subsampling << std::endl;
         std::cout << "skip-gram:   " << skip_gram << std::endl;
+        std::cout << "HS:          " << hierarchical_softmax << std::endl;
         std::cout << "negative:    " << negative << std::endl;
+        std::cout << "sent ids:    " << sent_ids << std::endl;
     }
 };
 

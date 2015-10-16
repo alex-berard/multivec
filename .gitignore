@@ -38,3 +38,4 @@ callgrind*
 word2vec/compute-accuracy
 word2vec/word2vec
 word2vec/test-distance
+bin/

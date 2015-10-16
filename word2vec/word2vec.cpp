@@ -17,7 +17,7 @@
 #include <string.h>
 #include <math.h>
 #include <pthread.h>
-#include "word2vec.h"
+#include "word2vec.hpp"
 
 #define MAX_STRING 100
 #define EXP_TABLE_SIZE 1000
@@ -39,7 +39,7 @@ char train_file[MAX_STRING], output_file[MAX_STRING];
 struct vocab_word *vocab;
 int binary = 0, cbow = 1, debug_mode = 2, window = 5, min_count = 5, num_threads = 12, min_reduce = 1;
 int *vocab_hash;
-long long vocab_max_size = 1000, vocab_size = 0, layer1_size = 100;
+long long vocab_max_size = 1000, vocab_size = 0, layer1_size = 100, sentence_vectors = 0;
 long long train_words = 0, word_count_actual = 0, iter = 5, file_size = 0;
 real alpha = 0.025, starting_alpha, sample = 1e-3;
 real *syn0, *syn1, *syn1neg, *expTable;
@@ -386,7 +386,14 @@ void *TrainModelThread(void *id) {
         c = sentence_position - window + a;
         if (c < 0) continue;
         if (c >= sentence_length) continue;
+        if (sentence_vectors && (c == 0)) continue;
         last_word = sen[c];
+        if (last_word == -1) continue;
+        for (c = 0; c < layer1_size; c++) neu1[c] += syn0[c + last_word * layer1_size];
+        cw++;
+      }
+      if (sentence_vectors) {
+        last_word = sen[0];
         if (last_word == -1) continue;
         for (c = 0; c < layer1_size; c++) neu1[c] += syn0[c + last_word * layer1_size];
         cw++;
@@ -438,10 +445,16 @@ void *TrainModelThread(void *id) {
           if (last_word == -1) continue;
           for (c = 0; c < layer1_size; c++) syn0[c + last_word * layer1_size] += neu1e[c];
         }
+        if (sentence_vectors) {
+          last_word = sen[0];
+          if (last_word == -1) continue;
+          for (c = 0; c < layer1_size; c++) syn0[c + last_word * layer1_size] += neu1e[c];
+        }
       }
     } else {  //train skip-gram
-      for (a = b; a < window * 2 + 1 - b; a++) if (a != window) {
+      for (a = b; a < window * 2 + 1 + sentence_vectors - b; a++) if (a != window) {
         c = sentence_position - window + a;
+        if (sentence_vectors) if (a >= window * 2 + sentence_vectors - b) c = 0;
         if (c < 0) continue;
         if (c >= sentence_length) continue;
         last_word = sen[c];
@@ -505,8 +518,8 @@ void TrainModel() {
   long a, b;
   FILE *fo;
   pthread_t *pt = (pthread_t *)malloc(num_threads * sizeof(pthread_t));
-  if (debug_mode > 0)
-    printf("Starting training using file %s\n", train_file);
+  //if (debug_mode > 0)
+    printf("Training file: %s\n", train_file);
   starting_alpha = alpha;
   LearnVocabFromTrainFile();
   if (output_file[0] == 0) return;
@@ -543,8 +556,7 @@ void Main(string train_file_, string output_file_, Config config) {
     expTable[i] = expTable[i] / (expTable[i] + 1);                   // Precompute f(x) = x / (x + 1)
   }
 
-  //if (config.verbose)
-    config.print();
+  config.print();
 
   debug_mode = 2 * config.verbose;
   min_count = config.min_count;
@@ -559,6 +571,7 @@ void Main(string train_file_, string output_file_, Config config) {
   hs = config.hierarchical_softmax;
   layer1_size = config.dimension;
   binary = config.binary;
+  sentence_vectors = config.sent_ids;
 
   strcpy(train_file, train_file_.c_str());
   strcpy(output_file, output_file_.c_str());

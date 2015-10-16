@@ -1,5 +1,5 @@
-#include "bivec.h"
-#include "serialization.h"
+#include "bivec.hpp"
+#include "serialization.hpp"
 
 void BilingualModel::train(const string& src_file, const string& trg_file) {
     if (config.verbose)
@@ -16,22 +16,25 @@ void BilingualModel::train(const string& src_file, const string& trg_file) {
     auto src_chunks = MonolingualModel::chunkify(src_file, config.n_threads);
     auto trg_chunks = MonolingualModel::chunkify(trg_file, config.n_threads);
 
-    if (config.verbose)
-        cout << "Starting training" << endl;
+    high_resolution_clock::time_point start = high_resolution_clock::now();
+    if (config.n_threads == 1) {
+        trainChunk(src_file, trg_file, src_chunks, trg_chunks, 0);
+    } else {
+        vector<thread> threads;
 
-    vector<thread> threads;
+        for (int i = 0; i < config.n_threads; ++i) {
+            threads.push_back(thread(&BilingualModel::trainChunk, this,
+                src_file, trg_file, src_chunks, trg_chunks, i));
+        }
 
-    for (int i = 0; i < config.n_threads; ++i) {
-        threads.push_back(thread(&BilingualModel::trainChunk, this,
-            src_file, trg_file, src_chunks, trg_chunks, i));
+        for (auto it = threads.begin(); it != threads.end(); ++it) {
+            it->join();
+        }
     }
+    high_resolution_clock::time_point end = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(end - start).count();
 
-    for (auto it = threads.begin(); it != threads.end(); ++it) {
-        it->join();
-    }
-
-    if (config.verbose)
-        cout << endl << "Finished training" << endl;
+    cout << "Training time: " << static_cast<float>(duration) / 1000000 << endl;
 }
 
 void BilingualModel::trainChunk(const string& src_file,
@@ -234,11 +237,14 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
         if (pos < 0 || pos >= trg_nodes.size() || pos == trg_pos) continue;
         HuffmanNode output_word = trg_nodes[pos];
 
-        vec error;
+        vec error(config.dimension, 0);
         if (config.hierarchical_softmax) {
-            error = trg_model.hierarchicalUpdate(output_word, src_model.syn0[input_word.index], alpha);
-        } else {
-            error = trg_model.negSamplingUpdate(output_word, src_model.syn0[input_word.index], alpha);
+            vec err = trg_model.hierarchicalUpdate(output_word, src_model.syn0[input_word.index], alpha);
+            for (int c = 0; c < config.dimension; ++c) error[c] += err[c];
+        }
+        if (config.negative > 0) {
+            vec err = trg_model.negSamplingUpdate(output_word, src_model.syn0[input_word.index], alpha);
+            for (int c = 0; c < config.dimension; ++c) error[c] += err[c];
         }
 
         for (int c = 0; c < config.dimension; ++c) {

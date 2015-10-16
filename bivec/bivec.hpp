@@ -1,6 +1,6 @@
 #pragma once
 
-#include "word2vec.h"
+#include "word2vec.hpp"
 
 using namespace std;
 

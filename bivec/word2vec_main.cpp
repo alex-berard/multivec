@@ -1,4 +1,4 @@
-#include "word2vec.h"
+#include "word2vec.hpp"
 #include "boost/program_options.hpp"
 
 int main(int argc, char **argv) {
@@ -25,6 +25,8 @@ int main(int argc, char **argv) {
         ("train",       po::value<std::string>(),                  "Training file")
         ("evaluate",    po::value<int>(),                          "Compute accuracy of the model with max vocabulary size")
         ("save-embeddings", po::value<std::string>(),              "Save embeddings")
+        ("save-embeddings-txt", po::value<std::string>(),          "Save embeddings in the txt format")
+        ("sent-ids",    po::bool_switch(&config.sent_ids),         "Training file includes sentence ids")
         ;
 
     po::variables_map vm;
@@ -60,6 +62,9 @@ int main(int argc, char **argv) {
 
     if (vm.count("save-embeddings")) {
         model.saveEmbeddings(vm["save-embeddings"].as<std::string>());
+    }
+    if (vm.count("save-embeddings-txt")) {
+        model.saveEmbeddingsTxt(vm["save-embeddings-txt"].as<std::string>());
     }
     if (vm.count("save")) {
         model.save(vm["save"].as<std::string>());

@@ -14,6 +14,10 @@
 #include <boost/serialization/serialization.hpp>
 #include <chrono>
 #include <random>
+//#include "mat.hpp"
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/io.hpp>
+
 
 using namespace std;
 using namespace std::chrono;
@@ -35,6 +39,9 @@ static vector<float> initExpTable() {
 }
 */
 
+typedef vector<float> vec;
+typedef vector<vec> mat;
+
 inline float sigmoid(float x) {
     assert(x > -MAX_EXP && x < MAX_EXP);
 
@@ -47,9 +54,6 @@ inline string lower(string s) {
     std::transform(s.begin(), s.end(), s.begin(), ::tolower);
     return s;
 }
-
-typedef vector<float> vec;
-typedef vector<vec> mat;
 
 struct HuffmanNode {
     static const HuffmanNode UNK; // node for out-of-vocabulary words
@@ -67,15 +71,16 @@ struct HuffmanNode {
 
     bool is_leaf;
     bool is_unk;
+    bool is_sent_id;
 
-    HuffmanNode() : index(-1), is_unk(true) {}
+    HuffmanNode() : index(-1), is_unk(true), is_sent_id(false) {}
 
-    HuffmanNode(int index, const string& word) :
-            word(word), index(index), count(1), is_leaf(true), is_unk(false)
+    HuffmanNode(int index, const string& word, bool is_sent_id = false) :
+            word(word), index(index), count(1), is_leaf(true), is_unk(false), is_sent_id(is_sent_id)
     {}
 
     HuffmanNode(int index, HuffmanNode* left, HuffmanNode* right) :
-            left(left), right(right), index(index), count(left->count + right->count), is_leaf(false), is_unk(false)
+            left(left), right(right), index(index), count(left->count + right->count), is_leaf(false), is_unk(false), is_sent_id(false)
     {}
 
     bool operator==(const HuffmanNode& node) const {
@@ -103,6 +108,7 @@ struct Config {
     bool hierarchical_softmax;
     bool skip_gram;
     int negative;
+    bool sent_ids;
 
     Config() :
         starting_alpha(0.05),
@@ -115,11 +121,13 @@ struct Config {
         verbose(false),
         hierarchical_softmax(false),
         skip_gram(false),
-        negative(5)
+        negative(5),
+        sent_ids(false)
         {}
 
     void print() const {
-        std::cout << "Word2vec++" << endl;
+        std::cout << std::boolalpha; // to print false/true instead of 0/1
+        std::cout << "Word2vec++"    << std::endl;
         std::cout << "dimension:   " << dimension << std::endl;
         std::cout << "window size: " << window_size << std::endl;
         std::cout << "min count:   " << min_count << std::endl;
@@ -130,6 +138,7 @@ struct Config {
         std::cout << "skip-gram:   " << skip_gram << std::endl;
         std::cout << "HS:          " << hierarchical_softmax << std::endl;
         std::cout << "negative:    " << negative << std::endl;
+        std::cout << "sent ids:    " << sent_ids << std::endl;
     }
 };
 
@@ -205,6 +214,7 @@ public:
     void train(const string& training_file); // training from scratch (resets vocabulary and weights)
 
     void saveEmbeddings(const string& filename) const; // saves the word embeddings in the word2vec binary format
+    void saveEmbeddingsTxt(const string& filename) const; // saves the word embeddings in the word2vec text format
 
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model

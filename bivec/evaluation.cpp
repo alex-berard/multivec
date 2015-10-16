@@ -1,4 +1,4 @@
-#include "word2vec.h"
+#include "word2vec.hpp"
 //#include <future>
 
 void evaluateTopic(const string& topic, const vector<string>& lines,

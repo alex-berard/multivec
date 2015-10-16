@@ -1,4 +1,4 @@
-#include "word2vec.h"
+#include "word2vec.hpp"
 #include "boost/program_options.hpp"
 
 int main(int argc, char **argv) {
@@ -19,8 +19,10 @@ int main(int argc, char **argv) {
         ("hs",          po::bool_switch(&config.hierarchical_softmax), "Hierarchical softmax (negative sampling by default)")
         ("verbose,v",   po::bool_switch(&config.verbose),          "Verbose mode")
         ("negative",    po::value<int>(&config.negative),          "Number of negative samples")
-        ("train",       po::value<std::string>(),  "Training file")
-        ("save-embeddings", po::value<std::string>(),"Output file")
+        ("train",       po::value<std::string>(),                  "Training file")
+        ("save-embeddings", po::value<std::string>(),              "Save embeddings")
+        ("save-embeddings-txt", po::value<std::string>(),          "Save embeddings in the txt format")
+        ("sent-ids",    po::bool_switch(&config.sent_ids),         "Training file includes sentence ids")
         ;
 
     po::variables_map vm;
@@ -44,9 +46,18 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    if (vm.count("train") && vm.count("save-embeddings")) {
+    if (vm.count("train")) {
         string training_file = vm["train"].as<std::string>();
-        string output_file = vm["save-embeddings"].as<std::string>();
+        string output_file;
+
+        if (vm.count("save-embeddings")) {
+            output_file = vm["save-embeddings"].as<std::string>();
+        } else if (vm.count("save-embeddings-txt")) {
+            output_file = vm["save-embeddings-txt"].as<std::string>();
+            config.binary = false;
+        } else {
+            return 0;
+        }
 
         Main(training_file, output_file, config);
     }
