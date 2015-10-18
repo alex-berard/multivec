@@ -147,19 +147,21 @@ class MonolingualModel
     friend class BilingualModel;
     friend class boost::serialization::access;
     template<class Archive> void serialize(Archive& ar, const unsigned int version) {
-        ar & config & syn0 & syn1 & train_words & vocabulary;
+        ar & config & input_weights & output_weights & output_weights_hs & train_words & vocabulary;
     }
 
 private:
-    mat syn0; // input weights, TODO: syn1neg + more explicit names
-    mat syn1; // output weights
+    mat input_weights;
+    mat output_weights; // output weights for negative sampling
+    mat output_weights_hs; // output weights for hierarchical softmax
+
     long long train_words; // total number of words in training file (used to compute word frequencies)
     long long total_word_count;
     float alpha;
     Config config;
     map<string, HuffmanNode> vocabulary;
     vector<HuffmanNode*> unigram_table;
-    static __thread unsigned long long next_random;
+    static __thread unsigned long long next_random; // replace with thread_local in C++11
 
     static unsigned long long rand() {
     //static int rand() {
@@ -198,9 +200,6 @@ private:
 
     vec hierarchicalUpdate(const HuffmanNode& node, const vec& hidden, float alpha, bool update = true);
     vec negSamplingUpdate(const HuffmanNode& node, const vec& hidden, float alpha, bool update = true);
-
-    HuffmanNode loadWord(ifstream& infile);
-    void saveWord(ofstream& outfile, const HuffmanNode& node) const;
 
     vector<long long> static chunkify(const string& filename, int n_chunks);
 

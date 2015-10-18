@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 output_dir=`mktemp -d`
 data_dir=benchmarks/imdb_sentiment/data
@@ -7,7 +8,7 @@ mkdir $output_dir
 
 cp bin/word2vecpp $output_dir
 
-$output_dir/word2vecpp --train $data_dir/alldata-id.txt --save-embeddings-txt $output_dir/vectors.txt --dimension 100 --window-size 10 --negative 5 --subsampling 1e-4 --threads 40 --iter 20 --min-count 1 --sent-ids
+$output_dir/word2vecpp --train $data_dir/alldata-id.txt --save-embeddings-txt $output_dir/vectors.txt --min-count 1 --sent-ids $@
 grep '_\*' $output_dir/vectors.txt | sed s/^..// | sort -nk 1,1 > $output_dir/sentence_vectors.txt
 
 head $output_dir/sentence_vectors.txt -n 25000 | awk 'BEGIN{a=0;}{if (a<12500) printf "1 "; else printf "-1 "; for (b=1; b<NF; b++) printf b ":" $(b+1) " "; print ""; a++;}' > $output_dir/train.txt

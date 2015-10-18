@@ -158,7 +158,7 @@ void MonolingualModel::computeAccuracy(istream& infile, int max_vocabulary_size)
     map<string, vec> embeddings;
     for (auto it = nodes.begin(); it != nodes.end(); ++it) {
         const HuffmanNode* node = *it;
-        vec v = syn0[node->index];
+        vec v = input_weights[node->index];
         embeddings.insert({lower(node->word), v}); // lowercase
     }
 

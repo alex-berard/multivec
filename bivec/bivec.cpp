@@ -200,7 +200,7 @@ void BilingualModel::trainWordCBOW(MonolingualModel& src_model, MonolingualModel
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= trg_nodes.size() || pos == trg_pos) continue;
         for (int c = 0; c < dimension; ++c) {
-          hidden[c] += trg_model.syn0[trg_nodes[pos].index][c];
+          hidden[c] += trg_model.input_weights[trg_nodes[pos].index][c];
         }
         ++count;
     }
@@ -221,7 +221,7 @@ void BilingualModel::trainWordCBOW(MonolingualModel& src_model, MonolingualModel
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= trg_nodes.size() || pos == trg_pos) continue;
         for (int c = 0; c < dimension; ++c) {
-            trg_model.syn0[trg_nodes[pos].index][c] += error[c];
+            trg_model.input_weights[trg_nodes[pos].index][c] += error[c];
         }
     }
 }
@@ -239,16 +239,16 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
 
         vec error(config.dimension, 0);
         if (config.hierarchical_softmax) {
-            vec err = trg_model.hierarchicalUpdate(output_word, src_model.syn0[input_word.index], alpha);
+            vec err = trg_model.hierarchicalUpdate(output_word, src_model.input_weights[input_word.index], alpha);
             for (int c = 0; c < config.dimension; ++c) error[c] += err[c];
         }
         if (config.negative > 0) {
-            vec err = trg_model.negSamplingUpdate(output_word, src_model.syn0[input_word.index], alpha);
+            vec err = trg_model.negSamplingUpdate(output_word, src_model.input_weights[input_word.index], alpha);
             for (int c = 0; c < config.dimension; ++c) error[c] += err[c];
         }
 
         for (int c = 0; c < config.dimension; ++c) {
-            src_model.syn0[input_word.index][c] += error[c];
+            src_model.input_weights[input_word.index][c] += error[c];
         }
     }
 }
