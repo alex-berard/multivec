@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 data_dir=data
 
 #this function will convert text to lowercase and will disconnect punctuation and special symbols from words
@@ -27,6 +28,7 @@ mv aclImdb/train/unsup/norm.txt $data_dir/train-unsup.txt
 
 cat $data_dir/train-pos.txt $data_dir/train-neg.txt $data_dir/test-pos.txt $data_dir/test-neg.txt $data_dir/train-unsup.txt > $data_dir/alldata.txt
 awk 'BEGIN{a=0;}{print "_*" a " " $0; a++;}' < $data_dir/alldata.txt > $data_dir/alldata-id.txt
+shuf $data_dir/alldata-id.txt > $data_dir/alldata-id.shuf.txt
 
 #mkdir rnnlm
 #cd rnnlm

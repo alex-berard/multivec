@@ -10,8 +10,8 @@ echo "Output directory: $output_dir"
 
 cp bin/word2vec $output_dir
 
-$output_dir/word2vec --train $data_dir/alldata-id.shuf.txt --save-embeddings-txt $output_dir/vectors.txt --min-count 1 --sent-ids $@
-grep '_\*' $output_dir/vectors.txt | sed s/^..// | sort -nk 1,1 > $output_dir/sentence_vectors.txt
+$output_dir/word2vecpp --train $data_dir/alldata-id.txt --save $output_dir/model.bin --sent-ids $@
+scripts/sent_vectors.py $output_dir/model.bin < $data_dir/alldata.txt > $output_dir/sentence_vectors.txt
 
 head $output_dir/sentence_vectors.txt -n 25000 | awk 'BEGIN{a=0;}{if (a<12500) printf "1 "; else printf "-1 "; for (b=1; b<NF; b++) printf b ":" $(b+1) " "; print ""; a++;}' > $output_dir/train.txt
 head $output_dir/sentence_vectors.txt -n 50000 | tail -n 25000 | awk 'BEGIN{a=0;}{if (a<12500) printf "1 "; else printf "-1 "; for (b=1; b<NF; b++) printf b ":" $(b+1) " "; print ""; a++;}' > $output_dir/test.txt
