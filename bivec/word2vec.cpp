@@ -13,7 +13,6 @@ vector<string> split(const string& sentence) {
     return words;
 }
 
-__thread unsigned long long MonolingualModel::next_random(0);
 const HuffmanNode HuffmanNode::UNK;
 
 void MonolingualModel::addWordToVocab(const string& word) {
@@ -135,13 +134,11 @@ void MonolingualModel::initUnigramTable() {
 }
 
 HuffmanNode* MonolingualModel::getRandomHuffmanNode() {
-    auto index = (MonolingualModel::rand() >> 16) % unigram_table.size();
-    //int index = MonolingualModel::rand() % unigram_table.size();
+    auto index = MonolingualModel::rand() % unigram_table.size();
     return unigram_table[index];
 }
 
 void MonolingualModel::initNet() {
-    next_random = 1; // same as word2vec
     int v = static_cast<int>(vocabulary.size());
     int d = config.dimension;
 
@@ -401,8 +398,6 @@ void MonolingualModel::trainChunk(const string& training_file,
     ifstream infile(training_file);
     float starting_alpha = config.starting_alpha;
     int max_iterations = config.max_iterations;
-
-    next_random = static_cast<unsigned long long>(chunk_id);
 
     if (!infile.is_open()) {
         throw runtime_error("couldn't open file " + training_file);

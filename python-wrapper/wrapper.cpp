@@ -1,6 +1,6 @@
 #include <Python.h>
 #include "structmember.h"
-#include "bivec.h"
+#include "bivec.hpp"
 #include "numpy/arrayobject.h"
 
 // Word2vec class

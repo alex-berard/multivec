@@ -18,7 +18,7 @@ class BilingualModel
 
 private:
     // Configuration of the model (monolingual models have the same configuration)
-    BilingualConfig config; // TODO: serialize configuration
+    BilingualConfig config;
 
     long long total_word_count; // number of words processed so far
     float alpha;
@@ -29,6 +29,7 @@ private:
                     const vector<long long>& trg_chunks,
                     int thread_id);
 
+    // TODO: unsupervised alignment (GIZA)
     vector<int> uniformAlignment(const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes);
 
     int trainSentence(const string& trg_sent, const string& src_sent);

@@ -14,6 +14,7 @@
 #include <boost/serialization/serialization.hpp>
 #include <chrono>
 #include <random>
+#include <iterator>
 //#include "mat.hpp"
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/io.hpp>
@@ -26,27 +27,12 @@ vector<string> split(const string& sentence);
 
 const float MAX_EXP = 6;
 const int UNIGRAM_TABLE_SIZE = 1e8; // size of the frequency table
-//const int EXP_TABLE_SIZE = 1000;
-
-/*
-static vector<float> initExpTable() {
-    auto exp_table = vector<float>(EXP_TABLE_SIZE);
-    for (int i = 0; i < EXP_TABLE_SIZE; i++) {
-        float x = exp((i / static_cast<float>(EXP_TABLE_SIZE) * 2 - 1) * MAX_EXP); // Precompute the exp() table
-        exp_table[i] = x / (x + 1);  // Precompute f(x) = x / (x + 1)
-    }
-    return exp_table;
-}
-*/
 
 typedef vector<float> vec;
 typedef vector<vec> mat;
 
 inline float sigmoid(float x) {
     assert(x > -MAX_EXP && x < MAX_EXP);
-
-    //static auto exp_table = initExpTable(); // C++ static magic
-    //return exp_table[static_cast<int>((x + MAX_EXP) * EXP_TABLE_SIZE / MAX_EXP / 2)];
     return 1 / (1 + exp(-x));
 }
 
@@ -161,19 +147,13 @@ private:
     Config config;
     map<string, HuffmanNode> vocabulary;
     vector<HuffmanNode*> unigram_table;
-    static __thread unsigned long long next_random; // replace with thread_local in C++11
 
     static unsigned long long rand() {
-    //static int rand() {
-        //static thread_local std::mt19937 random_generator;
-        //std::uniform_int_distribution<int> distribution(0, RAND_MAX);
-        //return distribution(random_generator);
-
-        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11;
-        return next_random;
+        static unsigned long long next_random(time(NULL));
+        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11; // possible race conditions, but who cares...
+        return next_random >> 16;
     }
     static float randf() {
-        //return  MonolingualModel::rand() / static_cast<float>(RAND_MAX);
         return  (MonolingualModel::rand() & 0xFFFF) / 65536.0f;
     }
 

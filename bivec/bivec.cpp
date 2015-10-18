@@ -94,7 +94,6 @@ void BilingualModel::trainChunk(const string& src_file,
 
 vector<int> BilingualModel::uniformAlignment(const vector<HuffmanNode>& src_nodes,
                                              const vector<HuffmanNode>& trg_nodes) {
-    // TODO: add GIZA alignment
     vector<int> alignment; // index = position in src_nodes, value = position in trg_nodes (or -1)
 
     vector<int> trg_mapping; // maps positions in trg_sent to positions in trg_nodes (or -1)
