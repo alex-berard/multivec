@@ -229,7 +229,7 @@ void MonolingualModel::saveEmbeddings(const string &filename, int policy) const 
         for (int c = 0; c < config.dimension - 1; ++c) {
             outfile << embedding[c] << " ";
         }
-        outfile << embedding[config.dimension - 1] << endl;
+        outfile << embedding.back() << endl;
     }
 }
 
@@ -263,14 +263,12 @@ void MonolingualModel::save(const string& filename) const {
 }
 
 vec MonolingualModel::wordVec(int index, int policy) const {
-    vec res;
-
     if (policy == 1 && config.negative > 0) // concat input and output
     {
-        vec input = input_weights[index]; // this must be a copy
+        vec res(input_weights[index]);
         vec output = output_weights[index];
-        input.insert(input.end(), output.begin(), output.end());
-        return input;
+        res.insert(res.end(), output.begin(), output.end());
+        return res;
     }
     else if (policy == 2 && config.negative > 0) // sum input and output
     {
@@ -295,11 +293,28 @@ vec MonolingualModel::wordVec(const string& word, int policy) const {
         throw runtime_error("out of vocabulary");
     } else {
         return wordVec(it->second.index, policy);
-        //return input_weights[it->second.index];
+    }
+}
+
+void MonolingualModel::sentVec(istream& input, int policy) {
+    string line;
+    while(getline(input, line)) {
+        vec embedding(config.dimension, 0);
+        try {
+            embedding = sentVec(line, policy);
+        } catch (runtime_error) {
+            // in case of error (empty sentence, or all words are OOV), print a vector of 0s
+        };
+
+        for (int c = 0; c < embedding.size() - 1; ++c) {
+            cout << embedding[c] << " ";
+        }
+        cout << embedding.back() << endl;
     }
 }
 
 vec MonolingualModel::sentVec(const string& sentence, int policy) {
+    // TODO: integrate this in the normal training procedure
     int dimension = config.dimension;
     float alpha = config.starting_alpha;  // TODO: decreasing learning rate
 

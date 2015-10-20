@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
         ("load",        po::value<std::string>(),                  "Load existing model")
         ("save",        po::value<std::string>(),                  "Save entire model")
         ("train",       po::value<std::string>(),                  "Training file")
+        ("sent-vecs",   po::bool_switch(),                         "Compute sentence vectors for all lines in the standard input")
         ("evaluate",    po::value<int>(),                          "Compute accuracy of the model with max vocabulary size")
         ("save-vectors-bin", po::value<std::string>(),             "Save embeddings in the binary format")
         ("save-vectors", po::value<std::string>(),                 "Save embeddings in the txt format")
@@ -75,8 +76,12 @@ int main(int argc, char **argv) {
     if (vm.count("save")) {
         model.save(vm["save"].as<std::string>());
     }
+
     if (vm.count("evaluate")) {
         model.computeAccuracy(std::cin, vm["evaluate"].as<int>());
+    }
+    else if (vm.count("sent-vecs")) { // those two are exclusive, as they both use the standard input
+        model.sentVec(std::cin, saving_policy);
     }
 
     return 0;

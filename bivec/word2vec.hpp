@@ -190,6 +190,7 @@ public:
     vec wordVec(int index, int policy) const;
     vec wordVec(const string& word, int policy = 0) const; // word embedding
     vec sentVec(const string& sentence, int policy = 0); // paragraph vector (Le & Mikolov)
+    void sentVec(istream& infile, int policy); // compute paragraph vector for all lines in a stream
 
     void train(const string& training_file); // training from scratch (resets vocabulary and weights)
 
