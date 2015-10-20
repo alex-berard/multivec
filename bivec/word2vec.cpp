@@ -502,6 +502,8 @@ int MonolingualModel::trainSentence(const string& sent) {
 
     // Monolingual training
     for (int pos = 0; pos < nodes.size(); ++pos) {
+        // TODO: check that it does not impact the results
+        if (config.sent_ids && pos == 0) continue; // in this case the first word is the sentence id
         trainWord(nodes, pos);
     }
 
