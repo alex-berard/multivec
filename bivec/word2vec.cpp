@@ -187,7 +187,7 @@ void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
     }
 }
 
-void MonolingualModel::saveEmbeddings(const string& filename) const {
+void MonolingualModel::saveEmbeddingsBin(const string &filename, int policy) const {
     if (config.verbose)
         cout << "Saving embeddings" << endl;
 
@@ -202,15 +202,15 @@ void MonolingualModel::saveEmbeddings(const string& filename) const {
     for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
         string word = string(it->second.word);
         word.push_back(' ');
-        int index = it->second.index;
+        vec embedding = wordVec(it->second.index, policy);
 
         outfile.write(word.c_str(), word.size());
-        outfile.write(reinterpret_cast<const char*>(input_weights[index].data()), sizeof(float) * config.dimension);
+        outfile.write(reinterpret_cast<const char*>(embedding.data()), sizeof(float) * config.dimension);
         outfile << endl;
     }
 }
 
-void MonolingualModel::saveEmbeddingsTxt(const string& filename) const {
+void MonolingualModel::saveEmbeddings(const string &filename, int policy) const {
     if (config.verbose)
         cout << "Saving embeddings" << endl;
 
@@ -224,10 +224,12 @@ void MonolingualModel::saveEmbeddingsTxt(const string& filename) const {
 
     for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
         outfile << it->second.word << " ";
-        for (int c = 0; c < config.dimension; ++c) {
-            outfile << input_weights[it->second.index][c] << " ";
+        vec embedding = wordVec(it->second.index, policy);
+
+        for (int c = 0; c < config.dimension - 1; ++c) {
+            outfile << embedding[c] << " ";
         }
-        outfile << endl;
+        outfile << embedding[config.dimension - 1] << endl;
     }
 }
 
@@ -260,17 +262,44 @@ void MonolingualModel::save(const string& filename) const {
     oa << *this;
 }
 
-vec MonolingualModel::wordVec(const string& word) const {
+vec MonolingualModel::wordVec(int index, int policy) const {
+    vec res;
+
+    if (policy == 1 && config.negative > 0) // concat input and output
+    {
+        vec input = input_weights[index]; // this must be a copy
+        vec output = output_weights[index];
+        input.insert(input.end(), output.begin(), output.end());
+        return input;
+    }
+    else if (policy == 2 && config.negative > 0) // sum input and output
+    {
+        vec res(config.dimension);
+        for (int c = 0; c < config.dimension; ++c) res[c] = input_weights[index][c] + output_weights[index][c];
+        return res;
+    }
+    else if (policy == 3 && config.negative > 0) // only output weights
+    {
+        return output_weights[index];
+    }
+    else // only input weights
+    {
+        return input_weights[index];
+    }
+}
+
+vec MonolingualModel::wordVec(const string& word, int policy) const {
     auto it = vocabulary.find(word);
 
     if (it == vocabulary.end()) {
         throw runtime_error("out of vocabulary");
     } else {
-        return input_weights[it->second.index];
+        return wordVec(it->second.index, policy);
+        //return input_weights[it->second.index];
     }
 }
 
-vec MonolingualModel::sentVec(const string& sentence) {
+vec MonolingualModel::sentVec(const string& sentence, int policy) {
     int dimension = config.dimension;
     float alpha = config.starting_alpha;  // TODO: decreasing learning rate
 

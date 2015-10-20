@@ -187,13 +187,14 @@ public:
     MonolingualModel() : train_words(0), total_word_count(0) {} // model with default configuration
     MonolingualModel(Config config) : train_words(0), total_word_count(0), config(config) {}
 
-    vec wordVec(const string& word) const; // word embedding
-    vec sentVec(const string& sentence); // paragraph vector (Le & Mikolov)
+    vec wordVec(int index, int policy) const;
+    vec wordVec(const string& word, int policy = 0) const; // word embedding
+    vec sentVec(const string& sentence, int policy = 0); // paragraph vector (Le & Mikolov)
 
     void train(const string& training_file); // training from scratch (resets vocabulary and weights)
 
-    void saveEmbeddings(const string& filename) const; // saves the word embeddings in the word2vec binary format
-    void saveEmbeddingsTxt(const string& filename) const; // saves the word embeddings in the word2vec text format
+    void saveEmbeddingsBin(const string &filename, int policy = 0) const; // saves the word embeddings in the word2vec binary format
+    void saveEmbeddings(const string &filename, int policy = 0) const; // saves the word embeddings in the word2vec text format
 
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model
