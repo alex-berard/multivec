@@ -33,7 +33,7 @@ struct Config {
         skip_gram(false),
         negative(5),
         sent_ids(false),
-        binary(true)
+        binary(false)
         {}
 
     void print() const {

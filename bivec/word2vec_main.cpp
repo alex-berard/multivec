@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
         ("evaluate",    po::value<int>(),                          "Compute accuracy of the model with max vocabulary size")
         ("save-vectors-bin", po::value<std::string>(),             "Save embeddings in the binary format")
         ("save-vectors", po::value<std::string>(),                 "Save embeddings in the txt format")
-        ("output-weights", po::value<int>(),                       "Save output weights (0: none, 1: concat, 2: sum, 3: only)"),
+        ("output-weights", po::value<int>(),                       "Save output weights (0: none, 1: concat, 2: sum, 3: only)")
         ("sent-ids",    po::bool_switch(&config.sent_ids),         "Training file includes sentence ids")
         ;
 
@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
     }
 
     if (vm.count("save-vectors")) {
-        model.saveEmbeddingsBin(vm["save-vectors"].as<std::string>(), saving_policy);
+        model.saveEmbeddings(vm["save-vectors"].as<std::string>(), saving_policy);
     }
     if (vm.count("save-vectors-bin")) {
         model.saveEmbeddingsBin(vm["save-vectors-bin"].as<std::string>(), saving_policy);
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
     if (vm.count("evaluate")) {
         model.computeAccuracy(std::cin, vm["evaluate"].as<int>());
     }
-    else if (vm.count("sent-vecs")) { // those two are exclusive, as they both use the standard input
+    else if (vm.count("sent-vecs") && vm["sent-vecs"].as<bool>()) { // those two are exclusive, as they both use the standard input
         model.sentVec(std::cin, saving_policy);
     }
 

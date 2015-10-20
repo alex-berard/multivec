@@ -20,8 +20,8 @@ int main(int argc, char **argv) {
         ("verbose,v",   po::bool_switch(&config.verbose),          "Verbose mode")
         ("negative",    po::value<int>(&config.negative),          "Number of negative samples")
         ("train",       po::value<std::string>(),                  "Training file")
-        ("save-embeddings", po::value<std::string>(),              "Save embeddings")
-        ("save-embeddings-txt", po::value<std::string>(),          "Save embeddings in the txt format")
+        ("save-vectors-bin", po::value<std::string>(),             "Save embeddings in the binary format")
+        ("save-vectors", po::value<std::string>(),                 "Save embeddings in the txt format")
         ("sent-ids",    po::bool_switch(&config.sent_ids),         "Training file includes sentence ids")
         ;
 
@@ -50,11 +50,11 @@ int main(int argc, char **argv) {
         string training_file = vm["train"].as<std::string>();
         string output_file;
 
-        if (vm.count("save-embeddings")) {
-            output_file = vm["save-embeddings"].as<std::string>();
-        } else if (vm.count("save-embeddings-txt")) {
-            output_file = vm["save-embeddings-txt"].as<std::string>();
-            config.binary = false;
+        if (vm.count("save-vectors")) {
+            output_file = vm["save-vectors"].as<std::string>();
+        } else if (vm.count("save-vectors-bin")) {
+            output_file = vm["save-vectors-bin"].as<std::string>();
+            config.binary = true;
         } else {
             return 0;
         }

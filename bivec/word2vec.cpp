@@ -189,7 +189,7 @@ void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
 
 void MonolingualModel::saveEmbeddingsBin(const string &filename, int policy) const {
     if (config.verbose)
-        cout << "Saving embeddings" << endl;
+        cout << "Saving embeddings in binary format to " << filename << endl;
 
     ofstream outfile(filename, ios::binary | ios::out);
 
@@ -212,7 +212,7 @@ void MonolingualModel::saveEmbeddingsBin(const string &filename, int policy) con
 
 void MonolingualModel::saveEmbeddings(const string &filename, int policy) const {
     if (config.verbose)
-        cout << "Saving embeddings" << endl;
+        cout << "Saving embeddings in text format to " << filename << endl;
 
     ofstream outfile(filename, ios::binary | ios::out);
 
