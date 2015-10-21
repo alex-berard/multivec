@@ -94,7 +94,8 @@ struct Config {
     bool hierarchical_softmax;
     bool skip_gram;
     int negative;
-    bool sent_ids;
+    bool sent_vector;
+    bool freeze;
 
     Config() :
         starting_alpha(0.05),
@@ -108,12 +109,13 @@ struct Config {
         hierarchical_softmax(false),
         skip_gram(false),
         negative(5),
-        sent_ids(false)
+        sent_vector(false),
+        freeze(false)
         {}
 
     void print() const {
         std::cout << std::boolalpha; // to print false/true instead of 0/1
-        std::cout << "Word2vec++"    << std::endl;
+        std::cout << "MultiVec"    << std::endl;
         std::cout << "dimension:   " << dimension << std::endl;
         std::cout << "window size: " << window_size << std::endl;
         std::cout << "min count:   " << min_count << std::endl;
@@ -124,7 +126,7 @@ struct Config {
         std::cout << "skip-gram:   " << skip_gram << std::endl;
         std::cout << "HS:          " << hierarchical_softmax << std::endl;
         std::cout << "negative:    " << negative << std::endl;
-        std::cout << "sent ids:    " << sent_ids << std::endl;
+        std::cout << "sent vector: " << sent_vector << std::endl;
     }
 };
 
@@ -133,16 +135,20 @@ class MonolingualModel
     friend class BilingualModel;
     friend class boost::serialization::access;
     template<class Archive> void serialize(Archive& ar, const unsigned int version) {
-        ar & config & input_weights & output_weights & output_weights_hs & train_words & vocabulary;
+        ar & config & input_weights & output_weights & output_weights_hs & sent_weights & vocabulary;
     }
 
 private:
     mat input_weights;
     mat output_weights; // output weights for negative sampling
     mat output_weights_hs; // output weights for hierarchical softmax
+    mat sent_weights;
+    mat online_sent_weights;
 
-    long long train_words; // total number of words in training file (used to compute word frequencies)
-    long long total_word_count;
+    long long training_words; // total number of words in training file (used to compute word frequencies)
+    long long training_lines;
+    long long words_processed;
+
     float alpha;
     Config config;
     map<string, HuffmanNode> vocabulary;
@@ -170,22 +176,23 @@ private:
 
     void readVocab(const string& training_file);
     void initNet();
+    void initSentWeights();
 
     void trainChunk(const string& training_file, const vector<long long>& chunks, int chunk_id);
-    int trainSentence(const string& sent);
 
-    void trainWord(const vector<HuffmanNode>& nodes, int word_pos);
-    void trainWordCBOW(const vector<HuffmanNode>& nodes, int word_pos);
-    void trainWordSkipGram(const vector<HuffmanNode>& nodes, int word_pos);
+    int trainSentence(const string& sent, int sent_id);
+    void trainWord(const vector<HuffmanNode>& nodes, int word_pos, int sent_id);
+    void trainWordCBOW(const vector<HuffmanNode>& nodes, int word_pos, int sent_id);
+    void trainWordSkipGram(const vector<HuffmanNode>& nodes, int word_pos, int sent_id);
 
-    vec hierarchicalUpdate(const HuffmanNode& node, const vec& hidden, float alpha, bool update = true);
-    vec negSamplingUpdate(const HuffmanNode& node, const vec& hidden, float alpha, bool update = true);
+    vec hierarchicalUpdate(const HuffmanNode& node, const vec& hidden, float alpha);
+    vec negSamplingUpdate(const HuffmanNode& node, const vec& hidden, float alpha);
 
-    vector<long long> static chunkify(const string& filename, int n_chunks);
+    vector<long long> chunkify(const string& filename, int n_chunks);
 
 public:
-    MonolingualModel() : train_words(0), total_word_count(0) {} // model with default configuration
-    MonolingualModel(Config config) : train_words(0), total_word_count(0), config(config) {}
+    MonolingualModel() : training_words(0), training_lines(0), words_processed(0) {} // model with default configuration
+    MonolingualModel(Config config) : training_words(0), training_lines(0), words_processed(0), config(config) {}
 
     vec wordVec(int index, int policy) const;
     vec wordVec(const string& word, int policy = 0) const; // word embedding
@@ -196,6 +203,7 @@ public:
 
     void saveEmbeddingsBin(const string &filename, int policy = 0) const; // saves the word embeddings in the word2vec binary format
     void saveEmbeddings(const string &filename, int policy = 0) const; // saves the word embeddings in the word2vec text format
+    void saveSentEmbeddings(const string &filename) const;
 
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model

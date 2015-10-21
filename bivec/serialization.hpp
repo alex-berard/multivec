@@ -21,7 +21,9 @@ namespace serialization {
            //& cfg.verbose
            & cfg.hierarchical_softmax
            & cfg.skip_gram
-           & cfg.negative;
+           & cfg.negative
+           //& cfg.sent_vector
+           ;
     }
 
     template<class Archive>

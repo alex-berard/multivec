@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-data_dir=data
+cur_dir=`pwd`
+root_dir=benchmarks/imdb_sentiment
+data_dir=data # relative to root dir
+
+cd $root_dir
 
 #this function will convert text to lowercase and will disconnect punctuation and special symbols from words
 function normalize_text {
@@ -11,15 +15,19 @@ function normalize_text {
 #wget http://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz
 #tar -xvf aclImdb_v1.tar.gz
 
+cd aclImdb
+
 for j in train/pos train/neg test/pos test/neg train/unsup; do
   rm -f temp
-  for i in `ls aclImdb/$j`; do cat aclImdb/$j/$i >> temp; awk 'BEGIN{print;}' >> temp; done
+  for i in `ls $j`; do cat $j/$i >> temp; awk 'BEGIN{print;}' >> temp; done
   normalize_text temp
-  mv temp-norm aclImdb/$j/norm.txt
+  mv temp-norm $j/norm.txt
 done
 
 rm -f temp
+cd ..
 
+mkdir -p $data_dir
 mv aclImdb/train/pos/norm.txt $data_dir/train-pos.txt
 mv aclImdb/train/neg/norm.txt $data_dir/train-neg.txt
 mv aclImdb/test/pos/norm.txt $data_dir/test-pos.txt
@@ -29,6 +37,15 @@ mv aclImdb/train/unsup/norm.txt $data_dir/train-unsup.txt
 cat $data_dir/train-pos.txt $data_dir/train-neg.txt $data_dir/test-pos.txt $data_dir/test-neg.txt $data_dir/train-unsup.txt > $data_dir/alldata.txt
 awk 'BEGIN{a=0;}{print "_*" a " " $0; a++;}' < $data_dir/alldata.txt > $data_dir/alldata-id.txt
 shuf $data_dir/alldata-id.txt > $data_dir/alldata-id.shuf.txt
+cut -d " " -f1,1 $data_dir/alldata-id.shuf.txt | sed s/^..// > $data_dir/just-ids.shuf.txt
+cut -d " " -f2- $data_dir/alldata-id.shuf.txt > $data_dir/alldata.shuf.txt
+
+liblinear=liblinear-2.1
+wget http://www.csie.ntu.edu.tw/~cjlin/liblinear/${liblinear}.zip
+unzip ${liblinear}.zip
+cd ${liblinear}
+make
+cd $cur_dir
 
 #mkdir rnnlm
 #cd rnnlm
@@ -51,10 +68,3 @@ shuf $data_dir/alldata-id.txt > $data_dir/alldata-id.shuf.txt
 #./rnnlm -rnnlm model-neg -test test-id.txt -debug 0 -nbest > model-neg-score
 #paste model-pos-score model-neg-score | awk '{print $1 " " $2 " " $1/$2;}' > ../RNNLM-SCORE
 #cd ..
-
-liblinear=liblinear-2.1
-wget http://www.csie.ntu.edu.tw/~cjlin/liblinear/${liblinear}.zip
-unzip ${liblinear}.zip
-cd ${liblinear}
-make
-cd ..

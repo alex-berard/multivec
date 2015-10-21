@@ -13,8 +13,8 @@ void BilingualModel::train(const string& src_file, const string& trg_file) {
     alpha = config.starting_alpha;
 
     // read files to find out the beginning of each chunk
-    auto src_chunks = MonolingualModel::chunkify(src_file, config.n_threads);
-    auto trg_chunks = MonolingualModel::chunkify(trg_file, config.n_threads);
+    auto src_chunks = src_model.chunkify(src_file, config.n_threads);
+    auto trg_chunks = trg_model.chunkify(trg_file, config.n_threads);
 
     high_resolution_clock::time_point start = high_resolution_clock::now();
     if (config.n_threads == 1) {
@@ -46,7 +46,7 @@ void BilingualModel::trainChunk(const string& src_file,
     ifstream trg_infile(trg_file);
     float starting_alpha = config.starting_alpha;
     int max_iterations = config.max_iterations;
-    long long train_words = src_model.train_words + trg_model.train_words;
+    long long training_words = src_model.training_words + trg_model.training_words;
 
     if (!src_infile.is_open()) {
         throw "couldn't open file " + src_file;
@@ -73,12 +73,12 @@ void BilingualModel::trainChunk(const string& src_file,
                 total_word_count += word_count - last_count; // asynchronous update
                 last_count = word_count;
 
-                alpha = starting_alpha * (1 - static_cast<float>(total_word_count) / (max_iterations * train_words));
+                alpha = starting_alpha * (1 - static_cast<float>(total_word_count) / (max_iterations * training_words));
                 alpha = std::max(alpha, starting_alpha * 0.0001f);
 
                 if (config.verbose) {
                     printf("\rAlpha: %f  Progress: %.2f%%", alpha, 100.0 * total_word_count /
-                                    (max_iterations * train_words));
+                                    (max_iterations * training_words));
                     fflush(stdout);
                 }
             }

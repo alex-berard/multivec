@@ -23,12 +23,13 @@ int main(int argc, char **argv) {
         ("load",        po::value<std::string>(),                  "Load existing model")
         ("save",        po::value<std::string>(),                  "Save entire model")
         ("train",       po::value<std::string>(),                  "Training file")
-        ("sent-vecs",   po::bool_switch(),                         "Compute sentence vectors for all lines in the standard input")
         ("evaluate",    po::value<int>(),                          "Compute accuracy of the model with max vocabulary size")
         ("save-vectors-bin", po::value<std::string>(),             "Save embeddings in the binary format")
         ("save-vectors", po::value<std::string>(),                 "Save embeddings in the txt format")
+        ("save-sent-vectors", po::value<std::string>(),            "Save sentence embeddings in the txt format")
         ("output-weights", po::value<int>(),                       "Save output weights (0: none, 1: concat, 2: sum, 3: only)")
-        ("sent-ids",    po::bool_switch(&config.sent_ids),         "Training file includes sentence ids")
+        ("sent-vector", po::bool_switch(&config.sent_vector),      "Train sentence vectors")
+        ("online-sent-vector", po::bool_switch(),                  "Compute sentence vectors for all lines in the standard input")
         ;
 
     po::variables_map vm;
@@ -54,12 +55,12 @@ int main(int argc, char **argv) {
 
     MonolingualModel model(config);
 
-    if (vm.count("train")) {
-        model.train(vm["train"].as<std::string>());
-    } else if (vm.count("load")) {
+    if (vm.count("load")) {
         model.load(vm["load"].as<std::string>());
+    } else if (vm.count("train")) {
+        model.train(vm["train"].as<std::string>());
     } else {
-        return 0; // either train a new model or load an existing model
+        return 0;
     }
 
     int saving_policy = 0;
@@ -70,17 +71,19 @@ int main(int argc, char **argv) {
     if (vm.count("save-vectors")) {
         model.saveEmbeddings(vm["save-vectors"].as<std::string>(), saving_policy);
     }
+    if (vm.count("save-sent-vectors")) {
+        model.saveSentEmbeddings(vm["save-sent-vectors"].as<std::string>());
+    }
     if (vm.count("save-vectors-bin")) {
         model.saveEmbeddingsBin(vm["save-vectors-bin"].as<std::string>(), saving_policy);
     }
     if (vm.count("save")) {
         model.save(vm["save"].as<std::string>());
     }
-
     if (vm.count("evaluate")) {
         model.computeAccuracy(std::cin, vm["evaluate"].as<int>());
     }
-    else if (vm.count("sent-vecs") && vm["sent-vecs"].as<bool>()) { // those two are exclusive, as they both use the standard input
+    else if (vm.count("online-sent-vector") && vm["online-sent-vector"].as<bool>()) { // those two are exclusive, as they both use the standard input
         model.sentVec(std::cin, saving_policy);
     }
 
