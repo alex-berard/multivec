@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
         ("train",       po::value<std::string>(),                  "Training file")
         ("save-vectors-bin", po::value<std::string>(),             "Save embeddings in the binary format")
         ("save-vectors", po::value<std::string>(),                 "Save embeddings in the txt format")
-        ("sent-ids",    po::bool_switch(&config.sent_ids),         "Training file includes sentence ids")
+        ("sent-vector", po::bool_switch(&config.sent_vector),      "Training file includes sentence ids")
         ;
 
     po::variables_map vm;

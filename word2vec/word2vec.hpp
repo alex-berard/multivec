@@ -17,7 +17,7 @@ struct Config {
     bool hierarchical_softmax;
     bool skip_gram;
     int negative;
-    bool sent_ids;
+    bool sent_vector;
     bool binary;
 
     Config() :
@@ -32,7 +32,7 @@ struct Config {
         hierarchical_softmax(false),
         skip_gram(false),
         negative(5),
-        sent_ids(false),
+        sent_vector(false),
         binary(false)
         {}
 
@@ -49,7 +49,7 @@ struct Config {
         std::cout << "skip-gram:   " << skip_gram << std::endl;
         std::cout << "HS:          " << hierarchical_softmax << std::endl;
         std::cout << "negative:    " << negative << std::endl;
-        std::cout << "sent ids:    " << sent_ids << std::endl;
+        std::cout << "sent vector: " << sent_vector << std::endl;
     }
 };
 

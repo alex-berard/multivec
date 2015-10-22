@@ -571,7 +571,7 @@ void Main(string train_file_, string output_file_, Config config) {
   hs = config.hierarchical_softmax;
   layer1_size = config.dimension;
   binary = config.binary;
-  sentence_vectors = config.sent_ids;
+  sentence_vectors = config.sent_vector;
 
   strcpy(train_file, train_file_.c_str());
   strcpy(output_file, output_file_.c_str());
