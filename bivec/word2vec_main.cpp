@@ -23,13 +23,15 @@ int main(int argc, char **argv) {
         ("load",        po::value<std::string>(),                  "Load existing model")
         ("save",        po::value<std::string>(),                  "Save entire model")
         ("train",       po::value<std::string>(),                  "Training file")
+        ("online-sent-vector", po::value<std::string>(),           "Train online paragraph vector")
         ("evaluate",    po::value<int>(),                          "Compute accuracy of the model with max vocabulary size")
         ("save-vectors-bin", po::value<std::string>(),             "Save embeddings in the binary format")
         ("save-vectors", po::value<std::string>(),                 "Save embeddings in the txt format")
         ("save-sent-vectors", po::value<std::string>(),            "Save sentence embeddings in the txt format")
         ("output-weights", po::value<int>(),                       "Save output weights (0: none, 1: concat, 2: sum, 3: only)")
         ("sent-vector", po::bool_switch(&config.sent_vector),      "Train sentence vectors")
-        ("online-sent-vector", po::bool_switch(),                  "Compute sentence vectors for all lines in the standard input")
+        //("online-sent-vector", po::bool_switch(),                  "Compute sentence vectors for all lines in the standard input")
+        //("freeze",      po::bool_switch(&config.freeze),           "Freeze vocabulary and weights")
         ;
 
     po::variables_map vm;
@@ -53,14 +55,28 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    if (vm.count("online-sent-vector")) {
+        config.freeze = true;
+        config.sent_vector = true;
+    }
+
     MonolingualModel model(config);
 
+    if (!vm.count("load") && !vm.count("train")) {
+        return 0;
+    }
     if (vm.count("load")) {
         model.load(vm["load"].as<std::string>());
     } else if (vm.count("train")) {
         model.train(vm["train"].as<std::string>());
-    } else {
-        return 0;
+    }
+
+    if (vm.count("online-sent-vector")) {
+        if (vm.count("load")) {
+            model.train(vm["online-sent-vector"].as<std::string>());
+        } else {
+            std::cerr << "Option 'online-sent-vector' requires loading a model" << std::endl;
+        }
     }
 
     int saving_policy = 0;
@@ -83,9 +99,9 @@ int main(int argc, char **argv) {
     if (vm.count("evaluate")) {
         model.computeAccuracy(std::cin, vm["evaluate"].as<int>());
     }
-    else if (vm.count("online-sent-vector") && vm["online-sent-vector"].as<bool>()) { // those two are exclusive, as they both use the standard input
-        model.sentVec(std::cin, saving_policy);
-    }
+    //else if (vm.count("online-sent-vector") && vm["online-sent-vector"].as<bool>()) { // those two are exclusive, as they both use the standard input
+    //    model.sentVec(std::cin, saving_policy);
+    //}
 
     return 0;
 }

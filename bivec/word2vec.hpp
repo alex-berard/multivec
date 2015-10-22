@@ -105,12 +105,12 @@ struct Config {
         window_size(5),
         n_threads(4),
         subsampling(1e-03),
-        verbose(false),
+        verbose(false), // no serialized
         hierarchical_softmax(false),
         skip_gram(false),
         negative(5),
         sent_vector(false),
-        freeze(false)
+        freeze(false) // not serialized
         {}
 
     virtual void print() const {
@@ -126,6 +126,7 @@ struct Config {
         std::cout << "HS:          " << hierarchical_softmax << std::endl;
         std::cout << "negative:    " << negative << std::endl;
         std::cout << "sent vector: " << sent_vector << std::endl;
+        std::cout << "freeze:      " << freeze << std::endl;
     }
 };
 

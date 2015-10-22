@@ -31,7 +31,7 @@ On Ubuntu/Debian:
 ## TODO
 * better software architecture for paragraph vector/online paragraph vector
 * paragraph vector: DBOW model (similar to skip-gram)
-* paragraph vector: option to concatenate, sum or average with word vectors.
+* paragraph vector: option to concatenate, sum or average with word vectors on projection layer.
 * incremental training: possibility to train without erasing the model
 * GIZA alignment for bilingual model
 * write a small linear algebra module

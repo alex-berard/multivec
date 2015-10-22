@@ -405,17 +405,20 @@ void MonolingualModel::train(const string& training_file) {
     config.print();
     cout << "Training file: " << training_file << endl;
 
-    // reads vocab and counts words
-    readVocab(training_file); // TODO: incremental training
-    if (config.verbose)
-        cout << "Total number of words: " << training_words << endl;
+    if (!config.freeze) {
+        // reads vocab and counts words
+        readVocab(training_file); // TODO: incremental training
+        if (config.verbose)
+            cout << "Total number of words: " << training_words << endl;
+    }
 
     words_processed = 0;
     alpha = config.starting_alpha;
 
     // read files to find out the beginning of each chunk
     auto chunks = chunkify(training_file, config.n_threads); // also counts the number of lines
-    initNet();
+    if (!config.freeze)
+        initNet();
     if (config.sent_vector)
         initSentWeights();
 
@@ -491,7 +494,6 @@ void MonolingualModel::trainChunk(const string& training_file,
 
         string sent;
         while (getline(infile, sent)) {
-            // TODO: sent_id
             word_count += trainSentence(sent, sent_id++); // asynchronous update (possible race conditions)
 
             // update learning rate
@@ -499,13 +501,15 @@ void MonolingualModel::trainChunk(const string& training_file,
                 words_processed += word_count - last_count; // asynchronous update
                 last_count = word_count;
 
-                alpha = starting_alpha * (1 - static_cast<float>(words_processed) / (max_iterations * training_words));
-                alpha = max(alpha, starting_alpha * 0.0001f);
+                if (!config.freeze) { // FIXME: online training: no decreasing learning rate
+                    alpha = starting_alpha * (1 - static_cast<float>(words_processed) / (max_iterations * training_words));
+                    alpha = max(alpha, starting_alpha * 0.0001f);
 
-                if (config.verbose) {
-                    printf("\rAlpha: %f  Progress: %.2f%%", alpha, 100.0 * words_processed /
-                                    (max_iterations * training_words));
-                    fflush(stdout);
+                    if (config.verbose) {
+                        printf("\rAlpha: %f  Progress: %.2f%%", alpha, 100.0 * words_processed /
+                                        (max_iterations * training_words));
+                        fflush(stdout);
+                    }
                 }
             }
 
@@ -593,6 +597,7 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
 
     // update input weights
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
+        if (config.freeze) break;
         if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
         for (int c = 0; c < dimension; ++c) {
             input_weights[nodes[pos].index][c] += error[c];
@@ -628,8 +633,10 @@ void MonolingualModel::trainWordSkipGram(const vector<HuffmanNode>& nodes, int w
             for (int c = 0; c < dimension; ++c) error[c] += err[c];
         }
 
-        for (int c = 0; c < dimension; ++c) {
-            input_weights[input_word.index][c] += error[c];
+        if (!config.freeze) {
+            for (int c = 0; c < dimension; ++c) {
+                input_weights[input_word.index][c] += error[c];
+            }
         }
     }
 }
@@ -670,7 +677,7 @@ vec MonolingualModel::negSamplingUpdate(const HuffmanNode& node, const vec& hidd
             temp[c] += error * output_weights[target->index][c];
         }
 
-        if (update) {
+        if (update && !config.freeze) {
             for (int c = 0; c < dimension; ++c) {
                 output_weights[target->index][c] += error * hidden[c];
             }
@@ -703,7 +710,7 @@ vec MonolingualModel::hierarchicalUpdate(const HuffmanNode& node, const vec& hid
             temp[c] += error * output_weights_hs[parent_index][c];
         }
 
-        if (update) {
+        if (update && !config.freeze) {
             for (int c = 0; c < dimension; ++c) {
                 output_weights_hs[parent_index][c] += error * hidden[c];
             }

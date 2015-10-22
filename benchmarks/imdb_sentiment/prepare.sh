@@ -35,8 +35,11 @@ mv aclImdb/test/neg/norm.txt $data_dir/test-neg.txt
 mv aclImdb/train/unsup/norm.txt $data_dir/train-unsup.txt
 
 cat $data_dir/train-pos.txt $data_dir/train-neg.txt $data_dir/test-pos.txt $data_dir/test-neg.txt $data_dir/train-unsup.txt > $data_dir/alldata.txt
+cat $data_dir/train-pos.txt $data_dir/train-neg.txt $data_dir/train-unsup.txt > $data_dir/train.txt
+
 awk 'BEGIN{a=0;}{print "_*" a " " $0; a++;}' < $data_dir/alldata.txt > $data_dir/alldata-id.txt
 shuf $data_dir/alldata-id.txt > $data_dir/alldata-id.shuf.txt
+shuf $data_dir/train.txt > $data_dir/train.shuf.txt
 cut -d " " -f1,1 $data_dir/alldata-id.shuf.txt | sed s/^..// > $data_dir/just-ids.shuf.txt
 cut -d " " -f2- $data_dir/alldata-id.shuf.txt > $data_dir/alldata.shuf.txt
 
