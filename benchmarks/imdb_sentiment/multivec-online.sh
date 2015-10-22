@@ -10,7 +10,7 @@ echo "Output directory: $output_dir"
 
 cp bin/word2vecpp $output_dir
 
-$output_dir/word2vecpp --train $data_dir/train.shuf.txt $@ --save $output_dir/model.bin
+$output_dir/word2vecpp --train $data_dir/train.shuf.txt $@ --save $output_dir/model.bin --min-count 1
 $output_dir/word2vecpp --load $output_dir/model.bin --online-sent-vector $data_dir/alldata.shuf.txt --save-sent-vectors $output_dir/vectors.txt
 #$output_dir/word2vecpp --train $data_dir/alldata.shuf.txt $@ --save $output_dir/model.bin
 #$output_dir/word2vecpp --load $output_dir/model.bin --online-sent-vector < $data_dir/alldata.shuf.txt > $output_dir/vectors.txt
