@@ -185,8 +185,8 @@ private:
     void trainWordCBOW(const vector<HuffmanNode>& nodes, int word_pos, int sent_id);
     void trainWordSkipGram(const vector<HuffmanNode>& nodes, int word_pos, int sent_id);
 
-    vec hierarchicalUpdate(const HuffmanNode& node, const vec& hidden, float alpha);
-    vec negSamplingUpdate(const HuffmanNode& node, const vec& hidden, float alpha);
+    vec hierarchicalUpdate(const HuffmanNode& node, const vec& hidden, float alpha, bool update = true);
+    vec negSamplingUpdate(const HuffmanNode& node, const vec& hidden, float alpha, bool update = true);
 
     vector<long long> chunkify(const string& filename, int n_chunks);
 
