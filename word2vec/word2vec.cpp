@@ -556,6 +556,7 @@ void Main(string train_file_, string output_file_, Config config) {
     expTable[i] = expTable[i] / (expTable[i] + 1);                   // Precompute f(x) = x / (x + 1)
   }
 
+  cout << "Word2vec" << endl;
   config.print();
 
   debug_mode = 2 * config.verbose;

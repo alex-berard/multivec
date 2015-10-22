@@ -2,6 +2,10 @@
 #include "serialization.hpp"
 
 void BilingualModel::train(const string& src_file, const string& trg_file) {
+    cout << "MultiVec-bi" << endl;
+    config.print();
+    cout << "Training files: " << src_file << ", " << trg_file << endl;
+
     if (config.verbose)
         cout << "Reading vocabulary" << endl;
 
@@ -33,6 +37,9 @@ void BilingualModel::train(const string& src_file, const string& trg_file) {
     }
     high_resolution_clock::time_point end = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(end - start).count();
+
+    if (config.verbose)
+        cout << endl;
 
     cout << "Training time: " << static_cast<float>(duration) / 1000000 << endl;
 }

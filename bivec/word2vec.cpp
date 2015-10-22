@@ -401,6 +401,7 @@ vec MonolingualModel::sentVec(const string& sentence, int policy) {
 }
 
 void MonolingualModel::train(const string& training_file) {
+    cout << "MultiVec-mono" << endl;
     config.print();
     cout << "Training file: " << training_file << endl;
 

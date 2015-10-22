@@ -38,7 +38,6 @@ struct Config {
 
     void print() const {
         std::cout << std::boolalpha; // to print false/true instead of 0/1
-        std::cout << "Word2vec"    << std::endl;
         std::cout << "dimension:   " << dimension << std::endl;
         std::cout << "window size: " << window_size << std::endl;
         std::cout << "min count:   " << min_count << std::endl;
