@@ -1,4 +1,4 @@
-#include "word2vec.hpp"
+#include "multivec-mono.hpp"
 #include "boost/program_options.hpp"
 
 int main(int argc, char **argv) {

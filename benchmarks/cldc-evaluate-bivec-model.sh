@@ -4,9 +4,9 @@ model=$1
 klementiev=../document-representations
 
 echo "Output dir: $temp_dir"
-./bin/bivec --load $model --save-src $temp_dir/src-model.bin --save-trg $temp_dir/trg-model.bin > /dev/null
-./bin/word2vecpp --load $temp_dir/src-model.bin --save-vectors $temp_dir/src-model.txt > /dev/null
-./bin/word2vecpp --load $temp_dir/trg-model.bin --save-vectors $temp_dir/trg-model.txt > /dev/null
+./bin/multivec-bi --load $model --save-src $temp_dir/src-model.bin --save-trg $temp_dir/trg-model.bin > /dev/null
+./bin/multivec-mono --load $temp_dir/src-model.bin --save-vectors $temp_dir/src-model.txt > /dev/null
+./bin/multivec-mono --load $temp_dir/trg-model.bin --save-vectors $temp_dir/trg-model.txt > /dev/null
 
 rm -f $klementiev/data/embeddings/my-embeddings-de-en.en $klementiev/data/embeddings/my-embeddings-de-en.de
 rm -f $klementiev/data/doc-reprs/*

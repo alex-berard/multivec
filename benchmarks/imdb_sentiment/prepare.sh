@@ -12,8 +12,8 @@ function normalize_text {
   -e 's/\;/ \; /g' -e 's/\:/ \: /g' > $1-norm
 }
 
-#wget http://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz
-#tar -xvf aclImdb_v1.tar.gz
+wget http://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz
+tar -xvf aclImdb_v1.tar.gz
 
 cd aclImdb
 

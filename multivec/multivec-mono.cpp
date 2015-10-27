@@ -1,4 +1,4 @@
-#include "word2vec.hpp"
+#include "multivec-mono.hpp"
 #include "serialization.hpp"
 
 vector<string> split(const string& sentence) {

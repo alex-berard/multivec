@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bivec.hpp"
+#include "multivec-bi.hpp"
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/archive/text_oarchive.hpp>

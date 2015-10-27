@@ -10,16 +10,16 @@ find_package( Boost REQUIRED COMPONENTS program_options serialization )
 find_package( Threads )
 include_directories( ${Boost_INCLUDE_DIRS} )
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/bivec")
+add_subdirectory("${PROJECT_SOURCE_DIR}/multivec")
 add_subdirectory("${PROJECT_SOURCE_DIR}/word2vec")
 
 set(DEPENDENCIES ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_SERIALIZATION_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
 
-add_executable(word2vecpp ${SOURCE_WORD2VECPP} ${HEADERS_WORD2VECPP})
-target_link_libraries( word2vecpp ${DEPENDENCIES} )
+add_executable(multivec-mono ${SOURCE_MULTIVEC_MONO} ${HEADERS_MULTIVEC_MONO})
+target_link_libraries( multivec-mono ${DEPENDENCIES} )
 
-add_executable(bivec ${SOURCE_BIVEC} ${HEADERS_BIVEC})
-target_link_libraries( bivec ${DEPENDENCIES} )
+add_executable(multivec-bi ${SOURCE_MULTIVEC_BI} ${HEADERS_MULTIVEC_BI})
+target_link_libraries( multivec-bi ${DEPENDENCIES} )
 
 add_executable(word2vec ${SOURCE_WORD2VEC} ${HEADERS_WORD2VEC})
 target_link_libraries( word2vec ${DEPENDENCIES} )

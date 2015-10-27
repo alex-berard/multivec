@@ -15,9 +15,6 @@
 #include <chrono>
 #include <random>
 #include <iterator>
-//#include "mat.hpp"
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/io.hpp>
 
 
 using namespace std;

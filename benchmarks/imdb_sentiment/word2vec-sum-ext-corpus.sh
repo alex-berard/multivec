@@ -8,9 +8,7 @@ mkdir $output_dir
 
 echo "Output directory: $output_dir"
 
-cp bin/word2vec $output_dir
-
-$output_dir/word2vec --save-vectors $output_dir/word-vectors.txt --min-count 1 $@
+bin/word2vec --save-vectors $output_dir/word-vectors.txt --min-count 1 $@
 scripts/vector-sum.py $output_dir/word-vectors.txt $data_dir/alldata.shuf.txt > $output_dir/vectors.txt
 paste -d " " $data_dir/just-ids.shuf.txt $output_dir/vectors.txt | sort -nk 1,1 > $output_dir/sentence_vectors.txt
 

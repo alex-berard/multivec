@@ -1,6 +1,6 @@
 #pragma once
 
-#include "word2vec.hpp"
+#include "multivec-mono.hpp"
 
 using namespace std;
 

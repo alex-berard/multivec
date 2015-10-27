@@ -1,7 +1,7 @@
 
 set(SOURCE_WORD2VEC
         ${SOURCE}
-        ${CMAKE_CURRENT_SOURCE_DIR}/word2vec_main.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/word2vec-main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/word2vec.cpp
         PARENT_SCOPE
 )

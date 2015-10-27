@@ -1,5 +1,4 @@
-#include "word2vec.hpp"
-//#include <future>
+#include "multivec-mono.hpp"
 
 void evaluateTopic(const string& topic, const vector<string>& lines,
     const map<string, vec>& embeddings, pair<int, int>* res) {
