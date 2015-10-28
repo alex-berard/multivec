@@ -11,7 +11,7 @@ struct option_plus {
     const char *desc;
 };
 
-static option_plus option_arr[] = {
+static std::vector<option_plus> options_plus = {
     {"help",              no_argument,       0, 'h', "print this help message"},
     {"verbose",           no_argument,       0, 'v', "verbose mode"},
     {"dimension",         required_argument, 0, 'a', "dimension of the word embeddings"},
@@ -31,8 +31,6 @@ static option_plus option_arr[] = {
     {0, 0, 0, 0, 0}
 };
 
-static std::vector<option_plus> options_plus(option_arr, option_arr + sizeof(option_arr) / sizeof(option_arr[0]));
-
 void print_usage() {
     std::cout << "Options:" << std::endl;
     for (auto it = options_plus.begin(); it != options_plus.end(); ++it) {
@@ -47,7 +45,8 @@ void print_usage() {
 int main(int argc, char **argv) {
     std::vector<option> options;
     for (auto it = options_plus.begin(); it != options_plus.end(); ++it) {
-        options.push_back({it->name, it->has_arg, it->flag, it-> val});
+        option op = {it->name, it->has_arg, it->flag, it->val};
+        options.push_back(op);
     }
 
     Config config;
