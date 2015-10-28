@@ -1,18 +1,6 @@
 #include "multivec-mono.hpp"
 #include "serialization.hpp"
 
-vector<string> split(const string& sentence) {
-    istringstream iss(sentence);
-    vector<string> words;
-    string word;
-
-    while (iss >> word) {
-        words.push_back(word);
-    }
-
-    return words;
-}
-
 const HuffmanNode HuffmanNode::UNK;
 
 void MonolingualModel::addWordToVocab(const string& word) {
@@ -132,7 +120,7 @@ void MonolingualModel::initUnigramTable() {
 }
 
 HuffmanNode* MonolingualModel::getRandomHuffmanNode() {
-    auto index = MonolingualModel::rand() % unigram_table.size();
+    auto index = multivec::rand() % unigram_table.size();
     return unigram_table[index];
 }
 
@@ -144,7 +132,7 @@ void MonolingualModel::initNet() {
 
     for (size_t row = 0; row < v; ++row) {
         for (size_t col = 0; col < d; ++col) {
-            input_weights[row][col] = (MonolingualModel::randf() - 0.5f) / d;
+            input_weights[row][col] = (multivec::randf() - 0.5f) / d;
         }
     }
 
@@ -158,17 +146,18 @@ void MonolingualModel::initSentWeights() {
 
     for (size_t row = 0; row < training_lines; ++row) {
         for (size_t col = 0; col < d; ++col) {
-            sent_weights[row][col] = (MonolingualModel::randf() - 0.5f) / d;
+            sent_weights[row][col] = (multivec::randf() - 0.5f) / d;
         }
     }
 }
 
 vector<HuffmanNode> MonolingualModel::getNodes(const string& sentence) const {
     vector<HuffmanNode> nodes;
-    auto words = split(sentence);
+    istringstream iss(sentence);
+    string word;
 
-    for (auto word = words.begin(); word != words.end(); ++word) {
-        auto it = vocabulary.find(*word);
+    while (iss >> word) {
+        auto it = vocabulary.find(word);
         HuffmanNode node = HuffmanNode::UNK;
 
         if (it != vocabulary.end()) {
@@ -187,7 +176,7 @@ void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
         float f = static_cast<float>(node.count) / training_words; // frequency of this word
         //float p = 1 - sqrt(config.subsampling / f); // formula used in the word2vec paper
         float p = 1 - (1 + sqrt(f / config.subsampling)) * config.subsampling / f; // formula used in word2vec
-        float r =  MonolingualModel::randf();
+        float r =  multivec::randf();
 
         // the higher the frequency the most likely to be discarded (p can be less than 0)
         if (p >= r) {
@@ -359,7 +348,7 @@ vec MonolingualModel::sentVec(const string& sentence, int policy) {
             vec hidden(dimension, 0);
             HuffmanNode cur_node = nodes[word_pos];
 
-            int this_window_size = 1 + MonolingualModel::rand() % config.window_size;
+            int this_window_size = 1 + multivec::rand() % config.window_size;
             int count = 0;
 
             for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
@@ -560,7 +549,7 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
     vec hidden(dimension, 0);
     HuffmanNode cur_node = nodes[word_pos];
 
-    int this_window_size = 1 + MonolingualModel::rand() % config.window_size;
+    int this_window_size = 1 + multivec::rand() % config.window_size;
     int count = 0;
 
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
@@ -613,7 +602,7 @@ void MonolingualModel::trainWordSkipGram(const vector<HuffmanNode>& nodes, int w
     int dimension = config.dimension;
     HuffmanNode input_word = nodes[word_pos]; // use this word to predict surrounding words
 
-    int this_window_size = 1 + MonolingualModel::rand() % config.window_size;
+    int this_window_size = 1 + multivec::rand() % config.window_size;
 
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
         int p = pos;

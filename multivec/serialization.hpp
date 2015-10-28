@@ -1,5 +1,4 @@
 #pragma once
-
 #include "multivec-bi.hpp"
 
 template<typename T>

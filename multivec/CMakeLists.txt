@@ -9,6 +9,7 @@ set(HEADERS_MULTIVEC_MONO
         ${HEADERS}
         ${CMAKE_CURRENT_SOURCE_DIR}/multivec-mono.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/serialization.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils.hpp
         PARENT_SCOPE
 )
 
@@ -25,5 +26,6 @@ set(HEADERS_MULTIVEC_BI
         ${CMAKE_CURRENT_SOURCE_DIR}/multivec-mono.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/serialization.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/multivec-bi.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils.hpp
         PARENT_SCOPE
 )

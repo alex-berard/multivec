@@ -1,17 +1,7 @@
 #pragma once
-
 #include "multivec-mono.hpp"
 
 using namespace std;
-
-struct BilingualConfig : Config {
-    float bi_weight;
-    BilingualConfig() : bi_weight(1.0f) {}
-    void print() const {
-        Config::print();
-        std::cout << "bi-weight:   " << bi_weight << std::endl;
-    }
-};
 
 class BilingualModel
 {
