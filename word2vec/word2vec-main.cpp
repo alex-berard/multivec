@@ -1,66 +1,97 @@
 #include "word2vec.hpp"
-#include "boost/program_options.hpp"
+#include <getopt.h>
+#include <vector>
+#include <iomanip>
+
+struct option_plus {
+    const char *name;
+    int         has_arg;
+    int        *flag;
+    int         val;
+    const char *desc;
+};
+
+static std::vector<option_plus> options_plus = {
+    {"help",              no_argument,       0, 'h', "print this help message"},
+    {"verbose",           no_argument,       0, 'v', "verbose mode"},
+    {"dimension",         required_argument, 0, 'a', "dimension of the word embeddings"},
+    {"min-count",         required_argument, 0, 'b', "minimum count of vocabulary words"},
+    {"window-size",       required_argument, 0, 'c', "size of the window"},
+    {"threads",           required_argument, 0, 'd', "number of threads"},
+    {"iter",              required_argument, 0, 'e', "number of training epochs"},
+    {"negative",          required_argument, 0, 'f', "number of negative samples (0 for no negative sampling)"},
+    {"alpha",             required_argument, 0, 'g', "initial learning rate"},
+    {"subsampling",       required_argument, 0, 'i', "subsampling (usually between 1e-03 and 1e-05)"},
+    {"sg",                no_argument,       0, 'j', "skip-gram model (default: CBOW)"},
+    {"hs",                no_argument,       0, 'k', "hierarchical softmax (default off)"},
+    {"sent-vector",       no_argument,       0, 'l', "train sentence vectors"},
+    {"train",             required_argument, 0, 'm', "train with given training file"},
+    {"save-vectors",      required_argument, 0, 'n', "save word vectors"},
+    {"save-vectors-bin",  required_argument, 0, 'o', "save word vectors in binary format"},
+    {0, 0, 0, 0, 0}
+};
+
+void print_usage() {
+    std::cout << "Options:" << std::endl;
+    for (auto it = options_plus.begin(); it != options_plus.end(); ++it) {
+        if (it->name == 0) continue;
+        std::string name(it->name);
+        if (it->has_arg == required_argument) name += " arg";
+        std::cout << std::setw(26) << std::left << "  --" + name << " " << it->desc << std::endl;
+    }
+    std::cout << std::endl;
+}
 
 int main(int argc, char **argv) {
-    namespace po = boost::program_options;
-    po::options_description desc("Options");
+    std::vector<option> options;
+    for (auto it = options_plus.begin(); it != options_plus.end(); ++it) {
+        options.push_back({it->name, it->has_arg, it->flag, it-> val});
+    }
+
     Config config;
+    std::string train_file;
+    std::string save_vectors;
+    std::string save_vectors_bin;
 
-    desc.add_options()
-        ("help,h", "Print help message")
-        ("alpha",       po::value<float>(&config.starting_alpha),  "Learning rate")
-        ("dimension",   po::value<int>(&config.dimension),         "Dimension of the embeddings")
-        ("min-count",   po::value<int>(&config.min_count),         "Minimum count of each word in the vocabulary")
-        ("window-size", po::value<int>(&config.window_size),       "Window size")
-        ("threads",     po::value<int>(&config.n_threads),         "Number of threads")
-        ("iter",        po::value<int>(&config.max_iterations),    "Number of training iterations")
-        ("subsampling", po::value<float>(&config.subsampling),     "Subsampling parameter (0 for no subsampling)")
-        ("sg",          po::bool_switch(&config.skip_gram),        "Skip-gram-model (cbow model by default)")
-        ("hs",          po::bool_switch(&config.hierarchical_softmax), "Hierarchical softmax (negative sampling by default)")
-        ("verbose,v",   po::bool_switch(&config.verbose),          "Verbose mode")
-        ("negative",    po::value<int>(&config.negative),          "Number of negative samples")
-        ("train",       po::value<std::string>(),                  "Training file")
-        ("save-vectors-bin", po::value<std::string>(),             "Save embeddings in the binary format")
-        ("save-vectors", po::value<std::string>(),                 "Save embeddings in the txt format")
-        ("sent-vector", po::bool_switch(&config.sent_vector),      "Training file includes sentence ids")
-        ;
+    while (1) {
+        int option_index = 0;
+        int opt = getopt_long(argc, argv, "hv", options.data(), &option_index);
+        if (opt == -1) break;
 
-    po::variables_map vm;
-
-    try {
-        po::store(po::parse_command_line(argc, argv, desc), vm);
-
-        if (vm.count("help")) {
-            std::cout << desc << std::endl;
-            return 0;
+        switch (opt) {
+            case 0:                                           break;
+            case 'h': print_usage();                          return 0;
+            case 'v': config.verbose = true;                  break;
+            case 'a': config.dimension = atoi(optarg);        break;
+            case 'b': config.min_count = atoi(optarg);        break;
+            case 'c': config.window_size = atoi(optarg);      break;
+            case 'd': config.n_threads = atoi(optarg);        break;
+            case 'e': config.max_iterations = atoi(optarg);   break;
+            case 'f': config.negative = atoi(optarg);         break;
+            case 'g': config.starting_alpha = atof(optarg);   break;
+            case 'i': config.subsampling = atof(optarg);      break;
+            case 'j': config.skip_gram = true;                break;
+            case 'k': config.hierarchical_softmax = true;     break;
+            case 'l': config.sent_vector = true;              break;
+            case 'm': train_file = std::string(optarg);       break;
+            case 'n': save_vectors = std::string(optarg);     break;
+            case 'o': save_vectors_bin = std::string(optarg); break;
+            default:                                          abort();
         }
-
-        // if model is skip-gram, default learning rate is 0.025
-        if (!vm.count("alpha") && config.skip_gram) {
-            config.starting_alpha = 0.025;
-        }
-
-        po::notify(vm); // checks required arguments
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        return 1;
     }
 
-    if (vm.count("train")) {
-        string training_file = vm["train"].as<std::string>();
-        string output_file;
-
-        if (vm.count("save-vectors")) {
-            output_file = vm["save-vectors"].as<std::string>();
-        } else if (vm.count("save-vectors-bin")) {
-            output_file = vm["save-vectors-bin"].as<std::string>();
+    if (!train_file.empty()) {
+        if (!save_vectors.empty()) {
+            Main(train_file, save_vectors, config);
+            return 0;
+        }
+        else if (!save_vectors_bin.empty()) {
             config.binary = true;
-        } else {
+            Main(train_file, save_vectors_bin, config);
             return 0;
         }
-
-        Main(training_file, output_file, config);
     }
 
+    print_usage();
     return 0;
 }

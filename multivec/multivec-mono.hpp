@@ -198,9 +198,9 @@ public:
 
     void train(const string& training_file); // training from scratch (resets vocabulary and weights)
 
-    void saveEmbeddingsBin(const string &filename, int policy = 0) const; // saves the word embeddings in the word2vec binary format
-    void saveEmbeddings(const string &filename, int policy = 0) const; // saves the word embeddings in the word2vec text format
-    void saveSentEmbeddings(const string &filename) const;
+    void saveVectorsBin(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec binary format
+    void saveVectors(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec text format
+    void saveSentVectors(const string &filename) const;
 
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model

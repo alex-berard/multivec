@@ -3,7 +3,7 @@
 #include <chrono>
 
 using namespace std::chrono;
-using namespace std;
+//using namespace std;
 
 struct Config {
     float starting_alpha;
@@ -37,7 +37,7 @@ struct Config {
         {}
 
     void print() const {
-        std::cout << std::boolalpha; // to print false/true instead of 0/1
+        std::cout << std::boolalpha;
         std::cout << "dimension:   " << dimension << std::endl;
         std::cout << "window size: " << window_size << std::endl;
         std::cout << "min count:   " << min_count << std::endl;
@@ -52,4 +52,4 @@ struct Config {
     }
 };
 
-void Main(string train_file, string output_file, Config config);
+void Main(std::string train_file, std::string output_file, Config config);

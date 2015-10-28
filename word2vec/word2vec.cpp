@@ -533,7 +533,7 @@ void TrainModel() {
   auto duration = duration_cast<microseconds>(t2 - t1).count();
   if (debug_mode > 0)
       printf("\n");
-  cout << "Training time: " << static_cast<float>(duration) / 1000000 << endl;
+  std::cout << "Training time: " << static_cast<float>(duration) / 1000000 << std::endl;
   fo = fopen(output_file, "wb");
 
   // Save the word vectors
@@ -547,7 +547,7 @@ void TrainModel() {
   fclose(fo);
 }
 
-void Main(string train_file_, string output_file_, Config config) {
+void Main(std::string train_file_, std::string output_file_, Config config) {
   vocab = (struct vocab_word *)calloc(vocab_max_size, sizeof(struct vocab_word));
   vocab_hash = (int *)calloc(vocab_hash_size, sizeof(int));
   expTable = (real *)malloc((EXP_TABLE_SIZE + 1) * sizeof(real));
@@ -556,7 +556,7 @@ void Main(string train_file_, string output_file_, Config config) {
     expTable[i] = expTable[i] / (expTable[i] + 1);                   // Precompute f(x) = x / (x + 1)
   }
 
-  cout << "Word2vec" << endl;
+  std::cout << "Word2vec" << std::endl;
   config.print();
 
   debug_mode = 2 * config.verbose;

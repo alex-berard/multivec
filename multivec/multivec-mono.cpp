@@ -196,7 +196,7 @@ void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
     }
 }
 
-void MonolingualModel::saveEmbeddingsBin(const string &filename, int policy) const {
+void MonolingualModel::saveVectorsBin(const string &filename, int policy) const {
     if (config.verbose)
         cout << "Saving embeddings in binary format to " << filename << endl;
 
@@ -219,7 +219,7 @@ void MonolingualModel::saveEmbeddingsBin(const string &filename, int policy) con
     }
 }
 
-void MonolingualModel::saveEmbeddings(const string &filename, int policy) const {
+void MonolingualModel::saveVectors(const string &filename, int policy) const {
     if (config.verbose)
         cout << "Saving embeddings in text format to " << filename << endl;
 
@@ -242,7 +242,7 @@ void MonolingualModel::saveEmbeddings(const string &filename, int policy) const 
     }
 }
 
-void MonolingualModel::saveSentEmbeddings(const string &filename) const {
+void MonolingualModel::saveSentVectors(const string &filename) const {
     if (config.verbose)
         cout << "Saving sentence vectors in text format to " << filename << endl;
 

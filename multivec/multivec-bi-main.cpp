@@ -1,81 +1,114 @@
 #include "multivec-bi.hpp"
-#include "boost/program_options.hpp"
+#include <getopt.h>
 
-namespace po = boost::program_options;
+struct option_plus {
+    const char *name;
+    int         has_arg;
+    int        *flag;
+    int         val;
+    const char *desc;
+};
 
-vector<string> check_arg_count(const po::variables_map& vm, const string& name, int count) {
-    auto args = vm[name].as<vector<string>>();
-    if (args.size() != count) {
-        throw po::error("option --" + name + " wrong number of arguments");
+static vector<option_plus> options_plus = {
+    {"help",          no_argument,       0, 'h', "print this help message"},
+    {"verbose",       no_argument,       0, 'v', "verbose mode"},
+    {"dimension",     required_argument, 0, 'a', "dimension of the word embeddings"},
+    {"min-count",     required_argument, 0, 'b', "minimum count of vocabulary words"},
+    {"window-size",   required_argument, 0, 'c', "size of the window"},
+    {"threads",       required_argument, 0, 'd', "number of threads"},
+    {"iter",          required_argument, 0, 'e', "number of training epochs"},
+    {"negative",      required_argument, 0, 'f', "number of negative samples (0 for no negative sampling)"},
+    {"alpha",         required_argument, 0, 'g', "initial learning rate"},
+    {"beta",          required_argument, 0, 'i', "bilingual training weight"},
+    {"subsampling",   required_argument, 0, 'j', "subsampling (usually between 1e-03 and 1e-05)"},
+    {"sg",            no_argument,       0, 'k', "skip-gram model (default: CBOW)"},
+    {"hs",            no_argument,       0, 'l', "hierarchical softmax (default off)"},
+    {"train-src",     required_argument, 0, 'm', "specify source file for training"},
+    {"train-trg",     required_argument, 0, 'n', "specify target file for training"},
+    {"load",          required_argument, 0, 'o', "load model"},
+    {"save",          required_argument, 0, 'p', "save model"},
+    {"save-src",      required_argument, 0, 'q', "save source model"},
+    {"save-trg",      required_argument, 0, 'r', "save target model"},
+    {0, 0, 0, 0, 0}
+};
+
+void print_usage() {
+    std::cout << "Options:" << std::endl;
+    for (auto it = options_plus.begin(); it != options_plus.end(); ++it) {
+        if (it->name == 0) continue;
+        string name(it->name);
+        if (it->has_arg == required_argument) name += " arg";
+        std::cout << std::setw(26) << std::left << "  --" + name << " " << it->desc << std::endl;
     }
-    return args;
+    std::cout << std::endl;
 }
 
 int main(int argc, char **argv) {
     BilingualConfig config;
-    po::options_description desc("Options");
 
-    desc.add_options()
-        ("help,h", "Print help message")
-        ("alpha",       po::value<float>(&config.starting_alpha),   "Learning rate")
-        ("dimension",   po::value<int>(&config.dimension),          "Dimension of the embeddings")
-        ("min-count",   po::value<int>(&config.min_count),          "Minimum count of each word in the vocabulary")
-        ("window-size", po::value<int>(&config.window_size),        "Window size")
-        ("threads",     po::value<int>(&config.n_threads),          "Number of threads")
-        ("iter",        po::value<int>(&config.max_iterations),     "Number of training iterations")
-        ("subsampling", po::value<float>(&config.subsampling),      "Subsampling parameter (0 for no subsampling)")
-        ("sg",          po::bool_switch(&config.skip_gram),         "Skip-gram-model (cbow model by default)")
-        ("hs",          po::bool_switch(&config.hierarchical_softmax), "Hierarchical softmax (negative sampling by default)")
-        ("verbose,v",   po::bool_switch(&config.verbose),           "Verbose mode")
-        ("negative",    po::value<int>(&config.negative),           "Number of negative samples")
-        ("bi-weight",   po::value<float>(&config.bi_weight),        "Bilingual training weight")
-        ("load",        po::value<std::string>(),                   "Load existing model")
-        ("save",        po::value<std::string>(),                   "Save entire model")
-        ("save-src",    po::value<std::string>(),                   "Save source model")
-        ("save-trg",    po::value<std::string>(),                   "Save target model")
-        ("train",       po::value<vector<string>>()->multitoken(),  "Training files");
+    vector<option> options;
+    for (auto it = options_plus.begin(); it != options_plus.end(); ++it) {
+        options.push_back({it->name, it->has_arg, it->flag, it-> val});
+    }
 
-    po::variables_map vm;
+    string train_src_file;
+    string train_trg_file;
+    string save_file;
+    string load_file;
+    string save_src_file;
+    string save_trg_file;
 
-    vector<string> training_files;
+    while (1) {
+        int option_index = 0;
+        int opt = getopt_long(argc, argv, "hv", options.data(), &option_index);
+        if (opt == -1) break;
 
-    try {
-        po::store(po::parse_command_line(argc, argv, desc), vm);
-
-        if (vm.count("help")) {
-            cout << desc << endl;
-            return 0;
+        switch (opt) {
+            case 0:                                         break;
+            case 'h': print_usage();                        return 0;
+            case 'v': config.verbose = true;                break;
+            case 'a': config.dimension = atoi(optarg);      break;
+            case 'b': config.min_count = atoi(optarg);      break;
+            case 'c': config.window_size = atoi(optarg);    break;
+            case 'd': config.n_threads = atoi(optarg);      break;
+            case 'e': config.max_iterations = atoi(optarg); break;
+            case 'f': config.negative = atoi(optarg);       break;
+            case 'g': config.starting_alpha = atof(optarg); break;
+            case 'i': config.bi_weight = atof(optarg);      break;
+            case 'j': config.subsampling = atof(optarg);    break;
+            case 'k': config.skip_gram = true;              break;
+            case 'l': config.hierarchical_softmax = true;   break;
+            case 'm': train_src_file = string(optarg);      break;
+            case 'n': train_trg_file = string(optarg);      break;
+            case 'o': load_file = string(optarg);           break;
+            case 'p': save_file = string(optarg);           break;
+            case 'q': save_src_file = string(optarg);       break;
+            case 'r': save_trg_file = string(optarg);       break;
+            default:                                        abort();
         }
-
-        po::notify(vm); // checks required arguments
-
-        if (vm.count("train")) {
-            training_files = check_arg_count(vm, "train", 2);
-        }
-
-    } catch (const exception& e) {
-        cerr << "Error: " << e.what() << endl;
-        return 1;
     }
 
     BilingualModel model(config);
 
-    if (!training_files.empty()) {
-        model.train(training_files[0], training_files[1]);
-    } else if (vm.count("load")) {
-        model.load(vm["load"].as<std::string>());
-    } else {
+    if (!load_file.empty()) {
+        model.load(load_file); // FIXME: overwrites model.config
+    }
+    else if (!train_trg_file.empty() && !train_trg_file.empty()) {
+        model.train(train_src_file, train_trg_file);
+    }
+    else {
+        print_usage();
         return 0;
     }
 
-    if (vm.count("save")) {
-        model.save(vm["save"].as<std::string>());
+    if(!save_file.empty()) {
+        model.save(save_file);
     }
-    if (vm.count("save-src")) {
-        model.src_model.save(vm["save-src"].as<std::string>());
+    if(!save_src_file.empty()) {
+        model.src_model.save(save_src_file);
     }
-    if (vm.count("save-trg")) {
-        model.trg_model.save(vm["save-trg"].as<std::string>());
+    if(!save_trg_file.empty()) {
+        model.src_model.save(save_trg_file);
     }
 
     return 0;

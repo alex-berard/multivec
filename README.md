@@ -21,12 +21,11 @@ C++ implementation of *word2vec*, *bivec*, and *paragraph vector*.
 ## Dependencies
 * GCC 4.4+
 * CMake 2.6+
-* Boost.Program_options
 * Boost.Serialization
 
 On Ubuntu/Debian:
 
-    apt-get install libboost-program-options-dev libboost-serialization-dev
+    apt-get install libboost-serialization-dev
 
 ## TODO
 * better software architecture for paragraph vector/online paragraph vector
