@@ -33,7 +33,7 @@ inline void save(ofstream& outfile, const Config& cfg) {
 
 inline void save(ofstream& outfile, const BilingualConfig& cfg) {
     save(outfile, reinterpret_cast<const Config&>(cfg));
-    outfile << cfg.bi_weight << endl;
+    outfile << cfg.beta << endl;
 }
 
 inline void save(ofstream& outfile, const HuffmanNode& node) {
@@ -108,7 +108,7 @@ inline void load(ifstream& infile, Config& cfg) {
 
 inline void load(ifstream& infile, BilingualConfig& cfg) {
     load(infile, reinterpret_cast<Config&>(cfg));
-    infile >> cfg.bi_weight;
+    infile >> cfg.beta;
 }
 
 inline void load(ifstream& infile, HuffmanNode& node) {

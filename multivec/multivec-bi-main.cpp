@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
             case 'e': config.max_iterations = atoi(optarg); break;
             case 'f': config.negative = atoi(optarg);       break;
             case 'g': config.starting_alpha = atof(optarg); break;
-            case 'i': config.bi_weight = atof(optarg);      break;
+            case 'i': config.beta = atof(optarg);           break;
             case 'j': config.subsampling = atof(optarg);    break;
             case 'k': config.skip_gram = true;              break;
             case 'l': config.hierarchical_softmax = true;   break;

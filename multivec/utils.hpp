@@ -132,10 +132,10 @@ struct Config {
 };
 
 struct BilingualConfig : Config {
-    float bi_weight;
-    BilingualConfig() : bi_weight(1.0f) {}
+    float beta;
+    BilingualConfig() : beta(1.0f) {}
     void print() const {
         Config::print();
-        std::cout << "beta:        " << bi_weight << std::endl;
+        std::cout << "beta:        " << beta << std::endl;
     }
 };

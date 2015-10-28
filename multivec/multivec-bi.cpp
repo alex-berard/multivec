@@ -159,7 +159,7 @@ int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent
         trainWord(trg_model, trg_model, trg_nodes, trg_nodes, trg_pos, trg_pos, alpha);
     }
 
-    if (config.bi_weight == 0)
+    if (config.beta == 0)
         return words;
 
     // Bilingual training
@@ -168,8 +168,8 @@ int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent
         int trg_pos = alignment[src_pos];
 
         if (trg_pos != -1) { // target word isn't OOV
-            trainWord(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha * config.bi_weight);
-            trainWord(trg_model, src_model, trg_nodes, src_nodes, trg_pos, src_pos, alpha * config.bi_weight);
+            trainWord(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha * config.beta);
+            trainWord(trg_model, src_model, trg_nodes, src_nodes, trg_pos, src_pos, alpha * config.beta);
         }
     }
 
