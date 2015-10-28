@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
         model.saveVectors(save_vectors, saving_policy);
     }
     if (!save_vectors_bin.empty()) {
-        model.saveVectorsBin(save_vectors, saving_policy);
+        model.saveVectorsBin(save_vectors_bin, saving_policy);
     }
     if (!save_sent_vectors.empty() && config.sent_vector) {
         model.saveSentVectors(save_sent_vectors);

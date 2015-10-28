@@ -79,7 +79,7 @@ static PyObject * monomodel_save_embeddings(MonoModel *self, PyObject *args) {
         return NULL;
 
     try {
-        self->model->saveEmbeddings(string(filename));
+        self->model->saveVectorsBin(string(filename));
         return Py_None;
     } catch (...) {
         PyErr_SetString(PyExc_IOError, "Couldn't save embeddings");

@@ -12,20 +12,15 @@ C++ implementation of *word2vec*, *bivec*, and *paragraph vector*.
 
 ### Bilingual model
 * Bivec-like training with a parallel corpus [3, 7]
-* Uses two monolingual models, all the monolingual features are available
+* Trains two monolingual models, all the monolingual features are available
     for source & target model
-    * Including monolingual paragraph vector [4]
+    * Including online paragraph vector [4]
 * Save & load full model, or source/target model
 * Python wrapper
 
 ## Dependencies
 * GCC 4.4+
 * CMake 2.6+
-* Boost.Serialization
-
-On Ubuntu/Debian:
-
-    apt-get install libboost-serialization-dev
 
 ## TODO
 * better software architecture for paragraph vector/online paragraph vector
@@ -34,8 +29,7 @@ On Ubuntu/Debian:
 * incremental training: possibility to train without erasing the model
 * GIZA alignment for bilingual model
 * write a small linear algebra module
-* use custom serialization to remove dependency to boost
-* use getopt instead of program-options
+* bilingual paragraph vector training
 
 ## References
 1. [Distributed Representations of Words and Phrases and their Compositionality](http://arxiv.org/abs/1310.4546), Mikolov et al. (2013)
@@ -45,5 +39,3 @@ On Ubuntu/Debian:
 5. [BilBOWA: Fast Bilingual Distributed Representations without Word Alignments](http://arxiv.org/abs/1410.2455), Gouws et al. (2014)
 6. [Word2vec project](https://code.google.com/p/word2vec/)
 7. [Bivec project](http://stanford.edu/~lmthang/bivec/)
-8. [Gensim word2vec](https://radimrehurek.com/gensim/models/word2vec.html)
-9. [Gensim doc2vec](https://radimrehurek.com/gensim/models/doc2vec.html)

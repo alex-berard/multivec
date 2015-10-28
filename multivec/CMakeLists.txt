@@ -3,7 +3,6 @@ set(SOURCE_MULTIVEC_MONO
         ${SOURCE}
         ${CMAKE_CURRENT_SOURCE_DIR}/multivec-mono-main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/multivec-mono.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/evaluation.cpp
         PARENT_SCOPE
 )
 set(HEADERS_MULTIVEC_MONO

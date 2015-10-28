@@ -6,14 +6,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 set(CMAKE_BUILD_TYPE Release)
 
-find_package( Boost REQUIRED COMPONENTS serialization )
 find_package( Threads )
-include_directories( ${Boost_INCLUDE_DIRS} )
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/multivec")
 add_subdirectory("${PROJECT_SOURCE_DIR}/word2vec")
 
-set(DEPENDENCIES ${Boost_SERIALIZATION_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+set(DEPENDENCIES ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(multivec-mono ${SOURCE_MULTIVEC_MONO} ${HEADERS_MULTIVEC_MONO})
 target_link_libraries( multivec-mono ${DEPENDENCIES} )

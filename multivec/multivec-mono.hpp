@@ -4,16 +4,14 @@
 #include <cmath>
 #include <vector>
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <thread>
 #include <assert.h>
 #include <iomanip> // setprecision
-#include <boost/serialization/serialization.hpp>
 #include <chrono>
-#include <random>
 #include <iterator>
 
 
@@ -54,16 +52,15 @@ struct HuffmanNode {
 
     bool is_leaf;
     bool is_unk;
-    bool is_sent_id;
 
-    HuffmanNode() : index(-1), is_unk(true), is_sent_id(false) {}
+    HuffmanNode() : index(-1), is_unk(true) {}
 
-    HuffmanNode(int index, const string& word, bool is_sent_id = false) :
-            word(word), index(index), count(1), is_leaf(true), is_unk(false), is_sent_id(is_sent_id)
+    HuffmanNode(int index, const string& word) :
+            word(word), index(index), count(1), is_leaf(true), is_unk(false)
     {}
 
     HuffmanNode(int index, HuffmanNode* left, HuffmanNode* right) :
-            left(left), right(right), index(index), count(left->count + right->count), is_leaf(false), is_unk(false), is_sent_id(false)
+            left(left), right(right), index(index), count(left->count + right->count), is_leaf(false), is_unk(false)
     {}
 
     bool operator==(const HuffmanNode& node) const {
@@ -130,10 +127,8 @@ struct Config {
 class MonolingualModel
 {
     friend class BilingualModel;
-    friend class boost::serialization::access;
-    template<class Archive> void serialize(Archive& ar, const unsigned int version) {
-        ar & config & input_weights & output_weights & output_weights_hs & sent_weights & vocabulary;
-    }
+    friend void save(ofstream& outfile, const MonolingualModel& model);
+    friend void load(ifstream& infile, MonolingualModel& model);
 
 private:
     mat input_weights;
@@ -148,12 +143,12 @@ private:
 
     float alpha;
     Config config;
-    map<string, HuffmanNode> vocabulary;
+    unordered_map<string, HuffmanNode> vocabulary;
     vector<HuffmanNode*> unigram_table;
 
     static unsigned long long rand() {
         static unsigned long long next_random(time(NULL));
-        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11; // possible race conditions, but who cares...
+        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11;
         return next_random >> 16;
     }
     static float randf() {

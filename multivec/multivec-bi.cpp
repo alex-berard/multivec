@@ -260,29 +260,27 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
 }
 
 void BilingualModel::load(const string& filename) {
+    if (config.verbose)
+        cout << "Loading model" << endl;
+
     ifstream infile(filename);
 
     if (!infile.is_open()) {
         throw runtime_error("couldn't open file " + filename);
     }
 
-    if (config.verbose)
-        cout << "Loading model" << endl;
-
-    boost::archive::text_iarchive ia(infile);
-    ia >> *this;
+    ::load(infile, *this);
 }
 
 void BilingualModel::save(const string& filename) const {
+    if (config.verbose)
+        cout << "Saving model" << endl;
+
     ofstream outfile(filename);
 
     if (!outfile.is_open()) {
         throw runtime_error("couldn't open file " + filename);
     }
 
-    if (config.verbose)
-        cout << "Saving model" << endl;
-
-    boost::archive::text_oarchive oa(outfile);
-    oa << *this;
+    ::save(outfile, *this);
 }

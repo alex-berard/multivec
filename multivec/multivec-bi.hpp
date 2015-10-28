@@ -15,10 +15,8 @@ struct BilingualConfig : Config {
 
 class BilingualModel
 {
-    friend class boost::serialization::access;
-    template<class Archive> void serialize(Archive& ar, const unsigned int version) {
-        ar & src_model & trg_model & config;
-    }
+    friend void save(ofstream& outfile, const BilingualModel& model);
+    friend void load(ifstream& infile, BilingualModel& model);
 
 private:
     // Configuration of the model (monolingual models have the same configuration)

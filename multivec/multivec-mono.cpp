@@ -271,8 +271,7 @@ void MonolingualModel::load(const string& filename) {
         throw runtime_error("couldn't open file " + filename);
     }
 
-    boost::archive::text_iarchive ia(infile);
-    ia >> *this;
+    ::load(infile, *this);
     initUnigramTable();
 }
 
@@ -286,8 +285,7 @@ void MonolingualModel::save(const string& filename) const {
         throw runtime_error("couldn't open file " + filename);
     }
 
-    boost::archive::text_oarchive oa(outfile);
-    oa << *this;
+    ::save(outfile, *this);
 }
 
 vec MonolingualModel::wordVec(int index, int policy) const {
