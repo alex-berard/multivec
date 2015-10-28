@@ -9,7 +9,7 @@ struct option_plus { // same as option with an additional description field
     const char *desc;
 };
 
-static vector<option_plus> options_plus = {
+static option_plus option_arr[] = {
     {"help",              no_argument,       0, 'h', "print this help message"},
     {"verbose",           no_argument,       0, 'v', "verbose mode"},
     {"dimension",         required_argument, 0, 'a', "dimension of the word embeddings"},
@@ -33,6 +33,9 @@ static vector<option_plus> options_plus = {
     {"train-online",      required_argument, 0, 't', "use existing model to train online sentence vectors"},
     {0, 0, 0, 0, 0}
 };
+
+// ugly, but no aggregate initialization for vector in c++0x
+static vector<option_plus> options_plus(option_arr, option_arr + sizeof(option_arr) / sizeof(option_arr[0]));
 
 void print_usage() {
     std::cout << "Options:" << std::endl;

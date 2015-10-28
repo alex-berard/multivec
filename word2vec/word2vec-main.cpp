@@ -11,7 +11,7 @@ struct option_plus {
     const char *desc;
 };
 
-static std::vector<option_plus> options_plus = {
+static option_plus option_arr[] = {
     {"help",              no_argument,       0, 'h', "print this help message"},
     {"verbose",           no_argument,       0, 'v', "verbose mode"},
     {"dimension",         required_argument, 0, 'a', "dimension of the word embeddings"},
@@ -30,6 +30,8 @@ static std::vector<option_plus> options_plus = {
     {"save-vectors-bin",  required_argument, 0, 'o', "save word vectors in binary format"},
     {0, 0, 0, 0, 0}
 };
+
+static std::vector<option_plus> options_plus(option_arr, option_arr + sizeof(option_arr) / sizeof(option_arr[0]));
 
 void print_usage() {
     std::cout << "Options:" << std::endl;
