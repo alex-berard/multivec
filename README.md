@@ -6,21 +6,77 @@ C++ implementation of *word2vec*, *bivec*, and *paragraph vector*.
 ### Monolingual model
 * Most of word2vec's features [1, 6]
 * Evaluation on the *analogical reasoning task* (multithreaded version of word2vec's *compute-accuracy*)
-* Online paragraph vector [2]
+* Batch and online paragraph vector [2]
 * Save & load full model, including configuration and vocabulary
 * Python wrapper
 
 ### Bilingual model
 * Bivec-like training with a parallel corpus [3, 7]
-* Trains two monolingual models, all the monolingual features are available
-    for source & target model
-    * Including online paragraph vector [4]
-* Save & load full model, or source/target model
+* Save & load full model
+* Trains two monolingual models, which can be exported and used by MultiVec
 * Python wrapper
 
 ## Dependencies
 * GCC 4.4+
 * CMake 2.6+
+* Python and Numpy headers for the Python wrapper
+
+## Installation
+
+    git clone https://github.com/eske/multivec.git
+    mkdir multivec/build
+    cd multivec/build
+    cmake ..
+    make
+    cd ..
+
+The `bin` directory should now contain 4 binaries:
+* `multivec-mono` which is used to generate monolingual models;
+* `multivec-bi` to generate bilingual models;
+* `word2vec` which is a modified version of word2vec that matches our user interface;
+* `compute-accuracy` to evaluate word embeddings on the analogical reasoning task (multithreaded version of word2vec's compute-accuracy program).
+
+### Python wrapper
+
+    cd python-wrapper
+    make
+
+Use from Python:
+
+    python2
+    >>> from multivec import MonoModel, BiModel
+    >>> model = BiModel()
+    >>> model.load('models/europarl.en-de.bin')
+    >>> model.word_vec('germany')
+    ...
+
+## Usage examples
+First create two directories `data` and `models` at the root of the project, where you will put the text corpora and trained models.
+The script `scripts/prepare.sh` can be used to pre-process a corpus (punctuation normalization, tokenization and lowercasing).
+
+    mkdir data
+    mkdir models
+    wget http://www.statmt.org/wmt14/training-parallel-nc-v9.tgz -P data
+    tar xzf data/de-en.tgz -C data
+    scripts/prepare.py data/europarl-v7.de-en.en en > data/europarl.en
+    scripts/prepare.py data/europarl-v7.de-en.de de > data/europarl.de
+
+To train a monolingual model using text corpus `data/europarl.en`:
+
+    bin/multivec-mono --train data/europarl.en --save models/europarl.en.bin --threads 16
+
+To train a bilingual model using parallel corpus `data/europarl.en`, `data/europarl.de`:
+
+    bin/multivec-bi --train-src data/europarl.en --train-trg data/europarl.de --save models/europarl.en-de.bin --threads 16
+
+To load a bilingual model and export it to source and target monolingual models:
+
+    bin/multivec-bi --load models/europarl.en-de.bin --save-src models/europarl.en.bin --save-trg models/europarl.en.bin
+
+To evaluate a trained English model on the analogical reasoning task:
+
+    bin/compute-accuracy models/europarl.en.bin 0 < word2vec/questions-words.txt
+
 
 ## TODO
 * better software architecture for paragraph vector/online paragraph vector
