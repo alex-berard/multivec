@@ -73,9 +73,10 @@ To load a bilingual model and export it to source and target monolingual models:
 
     bin/multivec-bi --load models/europarl.en-de.bin --save-src models/europarl.en.bin --save-trg models/europarl.en.bin
 
-To evaluate a trained English model on the analogical reasoning task:
+To evaluate a trained English model on the analogical reasoning task, first export the model to the word2vec format, then use `compute-accuracy`:
 
-    bin/compute-accuracy models/europarl.en.bin 0 < word2vec/questions-words.txt
+    bin/multivec-mono --load models/europarl.en.bin --save-vectors-bin models/vectors.bin
+    bin/compute-accuracy models/vectors.bin 0 < word2vec/questions-words.txt
 
 
 ## TODO
