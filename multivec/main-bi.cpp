@@ -1,4 +1,4 @@
-#include "multivec-bi.hpp"
+#include "bilingual.hpp"
 #include <getopt.h>
 
 struct option_plus {

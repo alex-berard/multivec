@@ -1,4 +1,4 @@
-#include "multivec-mono.hpp"
+#include "monolingual.hpp"
 #include "serialization.hpp"
 
 const HuffmanNode HuffmanNode::UNK;

@@ -1,4 +1,4 @@
-#include "multivec-bi.hpp"
+#include "bilingual.hpp"
 #include "serialization.hpp"
 
 void BilingualModel::train(const string& src_file, const string& trg_file) {

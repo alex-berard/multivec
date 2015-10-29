@@ -1,4 +1,4 @@
-#include "multivec-mono.hpp"
+#include "monolingual.hpp"
 #include <getopt.h>
 
 struct option_plus { // same as option with an additional description field
