@@ -85,7 +85,6 @@ To evaluate a trained English model on the analogical reasoning task, first expo
 * paragraph vector: option to concatenate, sum or average with word vectors on projection layer.
 * incremental training: possibility to train without erasing the model
 * GIZA alignment for bilingual model
-* write a small linear algebra module
 * bilingual paragraph vector training
 
 ## References

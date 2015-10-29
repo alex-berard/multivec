@@ -12,6 +12,7 @@
 #include <iomanip> // setprecision, setw, left
 #include <chrono>
 #include <iterator>
+#include "vec.hpp"
 
 using namespace std;
 using namespace std::chrono;
@@ -19,7 +20,7 @@ using namespace std::chrono;
 const float MAX_EXP = 6;
 const int UNIGRAM_TABLE_SIZE = 1e8; // size of the frequency table
 
-typedef vector<float> vec;
+typedef Vec vec;
 typedef vector<vec> mat;
 
 inline float sigmoid(float x) {

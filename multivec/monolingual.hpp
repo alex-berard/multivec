@@ -12,7 +12,6 @@ private:
     mat output_weights; // output weights for negative sampling
     mat output_weights_hs; // output weights for hierarchical softmax
     mat sent_weights;
-    mat online_sent_weights;
 
     long long training_words; // total number of words in training file (used to compute word frequencies)
     long long training_lines;

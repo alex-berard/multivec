@@ -2,18 +2,24 @@
 #include "bilingual.hpp"
 
 template<typename T>
-inline void save(ofstream& outfile, const vector<T>& v) {
+inline void save(ofstream& outfile, const std::vector<T>& v) {
     outfile << v.size() << endl;
     for (auto it = v.begin(); it != v.end(); ++it) {
         outfile << *it << endl;
     }
 }
 
-template<typename T>
-inline void save(ofstream& outfile, const vector<vector<T>>& v) {
+inline void save(ofstream& outfile, const vec& v) {
     outfile << v.size() << endl;
-    for (auto it = v.begin(); it != v.end(); ++it) {
-        save(outfile, *it);
+    for (int i = 0; i < v.size(); ++i) {
+        outfile << v[i] << endl;
+    }
+}
+
+inline void save(ofstream& outfile, const mat& m) {
+    outfile << m.size() << endl;
+    for (int i = 0; i < m.size(); ++i) {
+        save(outfile, m[i]);
     }
 }
 
@@ -80,15 +86,23 @@ inline void load(ifstream& infile, vector<T>& v) {
     }
 }
 
-template<typename T>
-inline void load(ifstream& infile, vector<vector<T>>& v) {
+inline void load(ifstream& infile, vec& v) {
     int size = 0;
-    v.clear();
     infile >> size;
-    vector<T> x;
+    v = vec(size);
     for (int i = 0; i < size; ++i) {
-        load(infile, x);
-        v.push_back(x);
+        infile >> v[i];
+    }
+}
+
+inline void load(ifstream& infile, mat& m) {
+    int size = 0;
+    m.clear();
+    infile >> size;
+    vec v(0);
+    for (int i = 0; i < size; ++i) {
+        load(infile, v);
+        m.push_back(v);
     }
 }
 

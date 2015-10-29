@@ -223,11 +223,9 @@ void MonolingualModel::saveVectors(const string &filename, int policy) const {
     for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
         outfile << it->second.word << " ";
         vec embedding = wordVec(it->second.index, policy);
-
-        for (int c = 0; c < config.dimension - 1; ++c) {
+        for (int c = 0; c < config.dimension; ++c) {
             outfile << embedding[c] << " ";
         }
-        outfile << embedding.back() << endl;
     }
 }
 
@@ -243,10 +241,9 @@ void MonolingualModel::saveSentVectors(const string &filename) const {
 
     for (auto it = sent_weights.begin(); it != sent_weights.end(); ++it) {
         vec embedding = *it;
-        for (int c = 0; c < config.dimension - 1; ++c) {
+        for (int c = 0; c < config.dimension; ++c) {
             outfile << embedding[c] << " ";
         }
-        outfile << embedding.back() << endl;
     }
 }
 
@@ -280,16 +277,15 @@ void MonolingualModel::save(const string& filename) const {
 vec MonolingualModel::wordVec(int index, int policy) const {
     if (policy == 1 && config.negative > 0) // concat input and output
     {
-        vec res(input_weights[index]);
-        vec output = output_weights[index];
-        res.insert(res.end(), output.begin(), output.end());
+        int d = config.dimension;
+        vec res(d * 2);
+        for (int c = 0; c < d; ++c) res[c] = input_weights[index][c];
+        for (int c = 0; c < d; ++c) res[d + c] = output_weights[index][c];
         return res;
     }
     else if (policy == 2 && config.negative > 0) // sum input and output
     {
-        vec res(config.dimension);
-        for (int c = 0; c < config.dimension; ++c) res[c] = input_weights[index][c] + output_weights[index][c];
-        return res;
+        return input_weights[index] + output_weights[index];
     }
     else if (policy == 3 && config.negative > 0) // only output weights
     {
@@ -321,10 +317,9 @@ void MonolingualModel::sentVec(istream& input, int policy) {
             // in case of error (empty sentence, or all words are OOV), print a vector of zeros
         };
 
-        for (int c = 0; c < embedding.size() - 1; ++c) {
+        for (int c = 0; c < config.dimension; ++c) {
             cout << embedding[c] << " ";
         }
-        cout << embedding.back() << endl;
     }
 }
 
@@ -353,34 +348,22 @@ vec MonolingualModel::sentVec(const string& sentence, int policy) {
 
             for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
                 if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
-                for (int c = 0; c < dimension; ++c) {
-                    hidden[c] += input_weights[nodes[pos].index][c];
-                }
+                hidden += input_weights[nodes[pos].index];
                 ++count;
             }
 
             if (count == 0) continue;
-            for (int c = 0; c < dimension; ++c) {
-                hidden[c] += sent_vec[c];
-            }
-
-            for (int c = 0; c < dimension; ++c) {
-                hidden[c] /= count + 1; //TODO this or (hidden / count) + sent_vec?
-            }
+            hidden = (hidden + sent_vec) / (count + 1); //TODO this or (hidden / count) + sent_vec?
 
             vec error(dimension, 0);
             if (config.hierarchical_softmax) {
-                vec err = hierarchicalUpdate(cur_node, hidden, alpha, false);
-                for (int c = 0; c < dimension; ++c) error[c] += err[c];
+                error += hierarchicalUpdate(cur_node, hidden, alpha, false);
             }
             if (config.negative > 0) {
-                vec err = negSamplingUpdate(cur_node, hidden, alpha, false);
-                for (int c = 0; c < dimension; ++c) error[c] += err[c];
+                error += negSamplingUpdate(cur_node, hidden, alpha, false);
             }
 
-            for (int c = 0; c < dimension; ++c) {
-                sent_vec[c] += error[c];
-            }
+            sent_vec += error;
         }
     }
 
@@ -554,47 +537,35 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
 
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
-        for (int c = 0; c < dimension; ++c) {
-            hidden[c] += input_weights[nodes[pos].index][c];
-        }
+        hidden += input_weights[nodes[pos].index];
         ++count;
     }
 
     if (config.sent_vector) {
-        for (int c = 0; c < dimension; ++c) {
-            hidden[c] += sent_weights[sent_id][c];
-        }
+        hidden += sent_weights[sent_id];
         ++count;
     }
 
     if (count == 0) return;
-    for (int c = 0; c < dimension; ++c) {
-        hidden[c] /= count;
-    }
+    hidden /= count;
 
     vec error(dimension, 0);
     if (config.hierarchical_softmax) {
-        vec err = hierarchicalUpdate(cur_node, hidden, alpha);
-        for (int c = 0; c < dimension; ++c) error[c] += err[c];
+        error += hierarchicalUpdate(cur_node, hidden, alpha);
     }
     if (config.negative > 0) {
-        vec err = negSamplingUpdate(cur_node, hidden, alpha);
-        for (int c = 0; c < dimension; ++c) error[c] += err[c];
+        error += negSamplingUpdate(cur_node, hidden, alpha);
     }
 
     // update input weights
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
         if (config.freeze) break;
         if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
-        for (int c = 0; c < dimension; ++c) {
-            input_weights[nodes[pos].index][c] += error[c];
-        }
+        input_weights[nodes[pos].index] += error;
     }
 
     if (config.sent_vector) {
-        for (int c = 0; c < dimension; ++c) {
-            sent_weights[sent_id][c] += error[c];
-        }
+        sent_weights[sent_id] += error;
     }
 }
 
@@ -612,18 +583,14 @@ void MonolingualModel::trainWordSkipGram(const vector<HuffmanNode>& nodes, int w
 
         vec error(dimension, 0);
         if (config.hierarchical_softmax) {
-            vec err = hierarchicalUpdate(output_word, input_weights[input_word.index], alpha);
-            for (int c = 0; c < dimension; ++c) error[c] += err[c];
+            error += hierarchicalUpdate(output_word, input_weights[input_word.index], alpha);
         }
         if (config.negative > 0) {
-            vec err = negSamplingUpdate(output_word, input_weights[input_word.index], alpha);
-            for (int c = 0; c < dimension; ++c) error[c] += err[c];
+            error += negSamplingUpdate(output_word, input_weights[input_word.index], alpha);
         }
 
         if (!config.freeze) {
-            for (int c = 0; c < dimension; ++c) {
-                input_weights[input_word.index][c] += error[c];
-            }
+            input_weights[input_word.index] += error;
         }
     }
 }
@@ -645,10 +612,7 @@ vec MonolingualModel::negSamplingUpdate(const HuffmanNode& node, const vec& hidd
             label = 0;
         }
 
-        float x = 0;
-        for (int c = 0; c < dimension; ++c) {
-            x += hidden[c] * output_weights[target->index][c];
-        }
+        float x = hidden.dot(output_weights[target->index]);
 
         float pred;
         if (x >= MAX_EXP) {
@@ -660,14 +624,10 @@ vec MonolingualModel::negSamplingUpdate(const HuffmanNode& node, const vec& hidd
         }
         float error = alpha * (label - pred);
 
-        for (int c = 0; c < dimension; ++c) {
-            temp[c] += error * output_weights[target->index][c];
-        }
+        temp += error * output_weights[target->index];
 
         if (update && !config.freeze) {
-            for (int c = 0; c < dimension; ++c) {
-                output_weights[target->index][c] += error * hidden[c];
-            }
+            output_weights[target->index] += error * hidden;
         }
     }
 
@@ -681,10 +641,7 @@ vec MonolingualModel::hierarchicalUpdate(const HuffmanNode& node, const vec& hid
 
     for (int j = 0; j < node.code.size(); ++j) {
         int parent_index = node.parents[j];
-        float x = 0;
-        for (int c = 0; c < dimension; ++c) {
-            x += hidden[c] * output_weights_hs[parent_index][c];
-        }
+        float x = hidden.dot(output_weights_hs[parent_index]);
 
         if (x <= -MAX_EXP || x >= MAX_EXP) {
             continue;
@@ -693,14 +650,10 @@ vec MonolingualModel::hierarchicalUpdate(const HuffmanNode& node, const vec& hid
         float pred = sigmoid(x);
         float error = -alpha * (pred - node.code[j]);
 
-        for (int c = 0; c < dimension; ++c) {
-            temp[c] += error * output_weights_hs[parent_index][c];
-        }
+        temp += error * output_weights_hs[parent_index];
 
         if (update && !config.freeze) {
-            for (int c = 0; c < dimension; ++c) {
-                output_weights_hs[parent_index][c] += error * hidden[c];
-            }
+            output_weights_hs[parent_index] += error * hidden;
         }
     }
 
