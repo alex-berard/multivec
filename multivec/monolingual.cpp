@@ -170,12 +170,11 @@ vector<HuffmanNode> MonolingualModel::getNodes(const string& sentence) const {
     return nodes;
 }
 
+/**
+ * @brief Discard random nodes according to their frequency. The more frequent a word is, the more
+ * likely it is to be discarded. Discarded nodes are replaced by UNK token.
+ */
 void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
-    /**
-     * Discard random nodes according to their frequency. The more frequent a word is,
-     * the more likely it is to be discarded.
-     * Discarded nodes are replaced by UNK token.
-     */
     for (auto it = nodes.begin(); it != nodes.end(); ++it) {
         auto node = *it;
         float f = static_cast<float>(node.count) / training_words; // frequency of this word
@@ -277,14 +276,6 @@ void MonolingualModel::save(const string& filename) const {
 }
 
 vec MonolingualModel::wordVec(int index, int policy) const {
-    /**
-     * Return weight vector corresponding to the given word index.
-     * Policy parameter decides which weights to return:
-     *  0 (default): only input weights
-     *  1: concatenation of input and output weights
-     *  2: sum of input and output weights
-     *  3: only output weights
-     */
     if (policy == 1 && config.negative > 0) // concat input and output
     {
         int d = config.dimension;
@@ -307,6 +298,17 @@ vec MonolingualModel::wordVec(int index, int policy) const {
     }
 }
 
+/**
+ * @brief Return weight vector corresponding to the given word.
+ * 
+ * @param word
+ * @param policy defines which weights to return.
+ * 0 (default): input weights only, 
+ * 1: concatenation of input and output weights,
+ * 2: sum of input and output weights,
+ * 3: output weights only.
+ * @return vec
+ */
 vec MonolingualModel::wordVec(const string& word, int policy) const {
     auto it = vocabulary.find(word);
 
@@ -426,12 +428,15 @@ void MonolingualModel::train(const string& training_file) {
     cout << "Training time: " << static_cast<float>(duration) / 1000000 << endl;
 }
 
+/**
+ * @brief Divide a given file into chunks with the same number of lines each
+ * TODO: avoid reading training file several times
+ * 
+ * @param filename path of the file
+ * @param n_chunks number of chunks
+ * @return starting position (in bytes) of each chunk
+ */
 vector<long long> MonolingualModel::chunkify(const string& filename, int n_chunks) {
-    /**
-     * Divide file into chunks with the same number of lines each. Return the starting
-     * position (in bytes) of each chunk.
-     * TODO: avoid reading training file several times
-     */
     ifstream infile(filename);
 
     if (!infile.is_open()) {
@@ -463,7 +468,7 @@ void MonolingualModel::trainChunk(const string& training_file,
     ifstream infile(training_file);
     float starting_alpha = config.starting_alpha;
     int max_iterations = config.max_iterations;
-
+    
     if (!infile.is_open()) {
         throw runtime_error("couldn't open file " + training_file);
     }

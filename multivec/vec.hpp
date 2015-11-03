@@ -110,7 +110,15 @@ public:
             _data[i] /= alpha;
         }
     }
-
+    
+    float norm() const {
+        float res = 0;
+        for (size_type i = 0; i != size(); ++i) {
+            res += pow(_data[i], 2);
+        }
+        return sqrt(res);
+    }
+    
     const value_type* data() const { return _data.data(); }
     value_type* data() { return _data.data(); }
 };

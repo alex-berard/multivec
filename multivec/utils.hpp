@@ -33,11 +33,24 @@ inline string lower(string s) {
     return s;
 }
 
+inline vector<string> split(const string& sequence) {
+    vector<string> words;
+    istringstream iss(sequence);
+    string word;
+    
+    while (iss >> word) {
+        words.push_back(word);
+    }
+    
+    return words;
+}
+
 namespace multivec {
     /**
-     * Custom random generator.
-     * std::rand is thread-safe but very slow with multiple threads.
+     * @brief Custom random generator. std::rand is thread-safe but very slow with multiple threads.
      * https://en.wikipedia.org/wiki/Linear_congruential_generator
+     * 
+     * @return next random number
      */
     inline unsigned long long rand() {
         static unsigned long long next_random(time(NULL)); // in C++11 the thread_local keyword would solve the thread safety problem.
@@ -50,10 +63,10 @@ namespace multivec {
     }
 }
 
+/**
+ * @brief Node of a Huffman binary tree, used for the hierarchical softmax algorithm.
+ */
 struct HuffmanNode {
-    /**
-     * Node of a Huffman binary tree, used for the hierarchical softmax algorithm.
-     */
     static const HuffmanNode UNK; // node for out-of-vocabulary words
 
     string word;
