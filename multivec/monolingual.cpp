@@ -171,15 +171,17 @@ vector<HuffmanNode> MonolingualModel::getNodes(const string& sentence) const {
 }
 
 void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
+    /**
+     * Discard random nodes according to their frequency. The more frequent a word is,
+     * the more likely it is to be discarded.
+     * Discarded nodes are replaced by UNK token.
+     */
     for (auto it = nodes.begin(); it != nodes.end(); ++it) {
         auto node = *it;
         float f = static_cast<float>(node.count) / training_words; // frequency of this word
-        //float p = 1 - sqrt(config.subsampling / f); // formula used in the word2vec paper
-        float p = 1 - (1 + sqrt(f / config.subsampling)) * config.subsampling / f; // formula used in word2vec
-        float r =  multivec::randf();
+        float p = 1 - (1 + sqrt(f / config.subsampling)) * config.subsampling / f; // word2vec formula
 
-        // the higher the frequency the most likely to be discarded (p can be less than 0)
-        if (p >= r) {
+        if (p >= multivec::randf()) {
             *it = HuffmanNode::UNK;
         }
     }
@@ -275,6 +277,14 @@ void MonolingualModel::save(const string& filename) const {
 }
 
 vec MonolingualModel::wordVec(int index, int policy) const {
+    /**
+     * Return weight vector corresponding to the given word index.
+     * Policy parameter decides which weights to return:
+     *  0 (default): only input weights
+     *  1: concatenation of input and output weights
+     *  2: sum of input and output weights
+     *  3: only output weights
+     */
     if (policy == 1 && config.negative > 0) // concat input and output
     {
         int d = config.dimension;
@@ -385,7 +395,7 @@ void MonolingualModel::train(const string& training_file) {
     words_processed = 0;
     alpha = config.starting_alpha;
 
-    // read files to find out the beginning of each chunk
+    // read file to find out the beginning of each chunk
     auto chunks = chunkify(training_file, config.n_threads); // also counts the number of lines
     if (!config.freeze)
         initNet();
@@ -417,6 +427,11 @@ void MonolingualModel::train(const string& training_file) {
 }
 
 vector<long long> MonolingualModel::chunkify(const string& filename, int n_chunks) {
+    /**
+     * Divide file into chunks with the same number of lines each. Return the starting
+     * position (in bytes) of each chunk.
+     * TODO: avoid reading training file several times
+     */
     ifstream infile(filename);
 
     if (!infile.is_open()) {
@@ -471,7 +486,8 @@ void MonolingualModel::trainChunk(const string& training_file,
                 words_processed += word_count - last_count; // asynchronous update
                 last_count = word_count;
 
-                if (!config.freeze) { // FIXME: online training: no decreasing learning rate
+                if (!config.freeze) { // FIXME
+                    // decreasing learning rate
                     alpha = starting_alpha * (1 - static_cast<float>(words_processed) / (max_iterations * training_words));
                     alpha = max(alpha, starting_alpha * 0.0001f);
 
@@ -532,7 +548,7 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
     vec hidden(dimension, 0);
     HuffmanNode cur_node = nodes[word_pos];
 
-    int this_window_size = 1 + multivec::rand() % config.window_size;
+    int this_window_size = 1 + multivec::rand() % config.window_size; // reduced window
     int count = 0;
 
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {

@@ -63,9 +63,7 @@ public:
     void saveVectorsBin(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec binary format
     void saveVectors(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec text format
     void saveSentVectors(const string &filename) const;
-
+    
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model
-
-    void computeAccuracy(istream& infile, int max_vocabulary_size = 0) const;
 };

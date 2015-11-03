@@ -1,5 +1,29 @@
+#pragma once
 #include <vector>
-#include <assert.h>
+#include <iostream>
+#include <sstream>
+#include <algorithm>
+#include <iterator>
+
+/**
+ * Small linear algebra library that supports basic operations between vectors: difference, addition or dot product of 
+ * two vectors, and multiplication and division by a scalar.
+ * 
+ * This module uses expression templates (https://en.wikipedia.org/wiki/Expression_templates) to perform efficient vector operations.
+ * 
+ * Vector operations like: (u + alpha * v) use a single for loop, while
+ * naive operator overloading would use two loops.
+ * 
+ * Examples:
+ * Vec v1({2,0,2});
+ * v1 /= 2;
+ * Vec v2({1,0,0});
+ * Vec v = 0.5 * (v1 + v2);
+ * float u = v1.dot(v2);
+ * std::cout << v << std::endl;    #[1, 0, 0.5]
+ * 
+ * TODO: integrate with BLAS
+ */
 
 template <typename E>
 class VecExpression {
@@ -26,7 +50,17 @@ public:
     Vec() {}
     Vec(size_type n) : _data(n) {}
     Vec(size_type n, float val) : _data(n, val) {}
+    Vec(VecExpression::container_type v) : _data(v) {}
 
+    friend std::ostream& operator<<(std::ostream &o, Vec const& self) {
+        std::ostringstream ss;
+        if (!self._data.empty()) {
+            std::copy(self._data.begin(), self._data.end() - 1, std::ostream_iterator<int>(ss, ","));
+            ss << self._data.back();
+        }
+        return o << "[" << ss.str() << "]";
+    }
+    
     template <typename E>
     Vec(VecExpression<E> const& vec) {
         E const& v = vec;
@@ -88,9 +122,7 @@ class VecDifference : public VecExpression<VecDifference<E1, E2>> {
 public:
     typedef Vec::size_type size_type;
     typedef Vec::value_type value_type;
-    VecDifference(VecExpression<E1> const& u, VecExpression<E2> const& v) : u(u), v(v) {
-        assert(u.size() == v.size());
-    }
+    VecDifference(VecExpression<E1> const& u, VecExpression<E2> const& v) : u(u), v(v) {}
     size_type size() const { return v.size(); }
     value_type operator[](Vec::size_type i) const { return u[i] - v[i]; }
 };
@@ -102,9 +134,7 @@ class VecAddition : public VecExpression<VecAddition<E1, E2>> {
 public:
     typedef Vec::size_type size_type;
     typedef Vec::value_type value_type;
-    VecAddition(VecExpression<E1> const& u, VecExpression<E2> const& v) : u(u), v(v) {
-        assert(u.size() == v.size());
-    }
+    VecAddition(VecExpression<E1> const& u, VecExpression<E2> const& v) : u(u), v(v) {}
     size_type size() const { return v.size(); }
     value_type operator[](Vec::size_type i) const { return u[i] + v[i]; }
 };

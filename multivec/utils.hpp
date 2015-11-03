@@ -34,10 +34,15 @@ inline string lower(string s) {
 }
 
 namespace multivec {
+    /**
+     * Custom random generator.
+     * std::rand is thread-safe but very slow with multiple threads.
+     * https://en.wikipedia.org/wiki/Linear_congruential_generator
+     */
     inline unsigned long long rand() {
-        static unsigned long long next_random(time(NULL));
-        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11;
-        return next_random >> 16;
+        static unsigned long long next_random(time(NULL)); // in C++11 the thread_local keyword would solve the thread safety problem.
+        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11; // unsafe, but we don't care
+        return next_random >> 16; // with this generator, the most significant bits are bits 47...16
     }
 
     inline float randf() {
@@ -46,14 +51,17 @@ namespace multivec {
 }
 
 struct HuffmanNode {
+    /**
+     * Node of a Huffman binary tree, used for the hierarchical softmax algorithm.
+     */
     static const HuffmanNode UNK; // node for out-of-vocabulary words
 
     string word;
 
-    vector<int> code;
-    vector<int> parents;
+    vector<int> code; // Huffman code of this node: path from root to leaf (0 for left, 1 for right)
+    vector<int> parents; // indices of the parent nodes
 
-    HuffmanNode* left;
+    HuffmanNode* left; // used for constructing the tree, useless afterwards
     HuffmanNode* right;
 
     int index;
@@ -87,18 +95,18 @@ struct HuffmanNode {
 
 struct Config {
     float starting_alpha;
-    int dimension;
-    int min_count;
-    int max_iterations;
+    int dimension; // size of the embeddings
+    int min_count; // mininum count of each word in the training file to be included in the vocabulary
+    int max_iterations; // number of training epochs
     int window_size;
     int n_threads;
     float subsampling;
-    bool verbose;
+    bool verbose; // print additional information
     bool hierarchical_softmax;
-    bool skip_gram;
-    int negative;
-    bool sent_vector;
-    bool freeze;
+    bool skip_gram; // set to true to use skip-gram model instead of CBOW
+    int negative; // number of negative samples used for the negative sampling training algorithm
+    bool sent_vector; // includes sentence vectors in the training
+    bool freeze; // freezes all parameters (weights and vocabulary) except sentence vectors (used for online paragraph vector)
 
     Config() :
         starting_alpha(0.05),
