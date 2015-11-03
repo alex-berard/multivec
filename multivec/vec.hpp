@@ -23,6 +23,7 @@ public:
     value_type operator[](size_type i) const { return _data[i]; }
     size_type size() const { return _data.size(); }
 
+    Vec() {}
     Vec(size_type n) : _data(n) {}
     Vec(size_type n, float val) : _data(n, val) {}
 

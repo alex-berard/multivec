@@ -2,63 +2,130 @@
 #include "bilingual.hpp"
 
 template<typename T>
+inline void save(ofstream& outfile, T x) {
+    // for basic types (int, bool, float, etc.)
+    outfile.write(reinterpret_cast<const char*>(&x), sizeof(x));
+}
+
+template<typename T>
+inline void load(ifstream& infile, T& x) {
+    infile.read(reinterpret_cast<char*>(&x), sizeof(x));
+}
+
+inline void save(ofstream& outfile, const string& s) {
+    save(outfile, s.size());
+    outfile.write(s.data(), s.size());
+}
+
+inline void load(ifstream& infile, string& s) {
+    size_t size = 0;
+    load(infile, size);
+    char* temp = new char[size + 1];
+    temp[size] = '\0';
+    infile.read(temp, size);
+    s = temp;
+    delete [] temp;
+}
+
+template<typename T>
 inline void save(ofstream& outfile, const std::vector<T>& v) {
-    outfile << v.size() << endl;
-    for (auto it = v.begin(); it != v.end(); ++it) {
-        outfile << *it << endl;
+    save(outfile, v.size());
+    for (size_t i = 0; i < v.size(); ++i) {
+        save(outfile, v[i]);
+    }
+}
+
+template<typename T>
+inline void load(ifstream& infile, std::vector<T>& v) {
+    size_t size = 0;
+    v.clear();
+    load(infile, size);
+    for (size_t i = 0; i < size; ++i) {
+        T x;
+        load(infile, x);
+        v.push_back(x);
     }
 }
 
 inline void save(ofstream& outfile, const vec& v) {
-    outfile << v.size() << endl;
-    for (int i = 0; i < v.size(); ++i) {
-        outfile << v[i] << endl;
+    save(outfile, v.size());
+    for (size_t i = 0; i < v.size(); ++i) {
+        save(outfile, v[i]);
     }
 }
 
-inline void save(ofstream& outfile, const mat& m) {
-    outfile << m.size() << endl;
-    for (int i = 0; i < m.size(); ++i) {
-        save(outfile, m[i]);
+inline void load(ifstream& infile, vec& v) {
+    size_t size = 0;
+    load(infile, size);
+    v = vec(size);
+    for (size_t i = 0; i < size; ++i) {
+        load(infile, v[i]);
     }
 }
 
 inline void save(ofstream& outfile, const Config& cfg) {
-    outfile << cfg.starting_alpha << endl
-            << cfg.dimension << endl
-            << cfg.min_count << endl
-            << cfg.max_iterations << endl
-            << cfg.window_size << endl
-            << cfg.n_threads << endl
-            << cfg.subsampling << endl
-            << cfg.hierarchical_softmax << endl
-            << cfg.skip_gram << endl
-            << cfg.negative << endl
-            << cfg.sent_vector << endl;
+    save(outfile, cfg.starting_alpha);
+    save(outfile, cfg.dimension);
+    save(outfile, cfg.min_count);
+    save(outfile, cfg.max_iterations);
+    save(outfile, cfg.window_size);
+    save(outfile, cfg.n_threads);
+    save(outfile, cfg.subsampling);
+    save(outfile, cfg.hierarchical_softmax);
+    save(outfile, cfg.n_threads);
+    save(outfile, cfg.skip_gram);
+    save(outfile, cfg.negative);
+    save(outfile, cfg.sent_vector);
+}
+
+inline void load(ifstream& infile, Config& cfg) {
+   load(infile, cfg.starting_alpha);
+   load(infile, cfg.dimension);
+   load(infile, cfg.min_count);
+   load(infile, cfg.max_iterations);
+   load(infile, cfg.window_size);
+   load(infile, cfg.n_threads);
+   load(infile, cfg.subsampling);
+   load(infile, cfg.hierarchical_softmax);
+   load(infile, cfg.n_threads);
+   load(infile, cfg.skip_gram);
+   load(infile, cfg.negative);
+   load(infile, cfg.sent_vector);
 }
 
 inline void save(ofstream& outfile, const BilingualConfig& cfg) {
     save(outfile, reinterpret_cast<const Config&>(cfg));
-    outfile << cfg.beta << endl;
+    save(outfile, cfg.beta);
+}
+
+inline void load(ifstream& infile, BilingualConfig& cfg) {
+    load(infile, reinterpret_cast<Config&>(cfg));
+    load(infile, cfg.beta);
 }
 
 inline void save(ofstream& outfile, const HuffmanNode& node) {
-    outfile << node.word << endl
-            << node.code.size() << endl
-            << node.parents.size() << endl
-            << node.index << endl
-            << node.count << endl;
-
+    save(outfile, node.index);
+    save(outfile, node.count);
+    save(outfile, node.word);
     save(outfile, node.code);
     save(outfile, node.parents);
 }
 
+inline void load(ifstream& infile, HuffmanNode& node) {
+    load(infile, node.index);
+    load(infile, node.count);
+    load(infile, node.word);
+    load(infile, node.code);
+    load(infile, node.parents);
+}
+
 inline void save(ofstream& outfile, const MonolingualModel& model) {
     save(outfile, model.config);
+    save(outfile, model.vocabulary.size());
 
-    outfile << model.vocabulary.size() << endl;
-
-    for (auto it = model.vocabulary.begin(); it != model.vocabulary.end(); ++it) {
+    // transform into map to save in lexicographical order (for consistency)
+    map<string, HuffmanNode> voc_ordered(model.vocabulary.begin(), model.vocabulary.end());
+    for (auto it = voc_ordered.begin(); it != voc_ordered.end(); ++it) {
         save(outfile, it->second);
     }
 
@@ -68,89 +135,15 @@ inline void save(ofstream& outfile, const MonolingualModel& model) {
     save(outfile, model.sent_weights);
 }
 
-inline void save(ofstream& outfile, const BilingualModel& model) {
-    save(outfile, model.config);
-    save(outfile, model.src_model);
-    save(outfile, model.trg_model);
-}
-
-template<typename T>
-inline void load(ifstream& infile, vector<T>& v) {
-    int size = 0;
-    v.clear();
-    infile >> size;
-    T x;
-    for (int i = 0; i < size; ++i) {
-        infile >> x;
-        v.push_back(x);
-    }
-}
-
-inline void load(ifstream& infile, vec& v) {
-    int size = 0;
-    infile >> size;
-    v = vec(size);
-    for (int i = 0; i < size; ++i) {
-        infile >> v[i];
-    }
-}
-
-inline void load(ifstream& infile, mat& m) {
-    int size = 0;
-    m.clear();
-    infile >> size;
-    vec v(0);
-    for (int i = 0; i < size; ++i) {
-        load(infile, v);
-        m.push_back(v);
-    }
-}
-
-inline void load(ifstream& infile, Config& cfg) {
-    infile >> cfg.starting_alpha
-           >> cfg.dimension
-           >> cfg.min_count
-           >> cfg.max_iterations
-           >> cfg.window_size
-           >> cfg.n_threads
-           >> cfg.subsampling
-           >> cfg.hierarchical_softmax
-           >> cfg.skip_gram
-           >> cfg.negative
-           >> cfg.sent_vector;
-}
-
-inline void load(ifstream& infile, BilingualConfig& cfg) {
-    load(infile, reinterpret_cast<Config&>(cfg));
-    infile >> cfg.beta;
-}
-
-inline void load(ifstream& infile, HuffmanNode& node) {
-    int code_size = 0;
-    int parent_size = 0;
-
-    infile >> node.word
-           >> code_size
-           >> parent_size
-           >> node.index
-           >> node.count;
-
-    node.code.clear();
-    node.parents.clear();
-
-    load(infile, node.code);
-    load(infile, node.parents);
-}
-
 inline void load(ifstream& infile, MonolingualModel& model) {
     load(infile, model.config);
 
-    int vocabulary_size = 0;
-    infile >> vocabulary_size;
+    size_t vocabulary_size = 0;
+    load(infile, vocabulary_size);
     model.vocabulary.clear();
-    HuffmanNode node(0, "");
 
-    for (int i = 0; i < vocabulary_size; ++i) {
+    for (size_t i = 0; i < vocabulary_size; ++i) {
+        HuffmanNode node(0, ""); // empty constructor creates UNK node
         load(infile, node);
         model.vocabulary.insert({node.word, node});
     }
@@ -159,6 +152,12 @@ inline void load(ifstream& infile, MonolingualModel& model) {
     load(infile, model.output_weights);
     load(infile, model.output_weights_hs);
     load(infile, model.sent_weights);
+}
+
+inline void save(ofstream& outfile, const BilingualModel& model) {
+    save(outfile, model.config);
+    save(outfile, model.src_model);
+    save(outfile, model.trg_model);
 }
 
 inline void load(ifstream& infile, BilingualModel& model) {
