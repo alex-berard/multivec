@@ -1,6 +1,6 @@
 #include <Python.h>
 #include "structmember.h"
-#include "multivec-bi.hpp"
+#include "bilingual.hpp"
 #include "numpy/arrayobject.h"
 
 // MonoModel class
