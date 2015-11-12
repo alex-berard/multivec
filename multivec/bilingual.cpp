@@ -261,6 +261,8 @@ void BilingualModel::load(const string& filename) {
     }
 
     ::load(infile, *this);
+    src_model.initUnigramTable();
+    trg_model.initUnigramTable();
 }
 
 void BilingualModel::save(const string& filename) const {
