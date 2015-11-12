@@ -50,7 +50,7 @@ public:
     Vec() {}
     Vec(size_type n) : _data(n) {}
     Vec(size_type n, float val) : _data(n, val) {}
-    Vec(VecExpression::container_type v) : _data(v) {}
+    Vec(Vec::container_type v) : _data(v) {}
 
     friend std::ostream& operator<<(std::ostream &o, Vec const& self) {
         std::ostringstream ss;
