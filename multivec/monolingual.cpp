@@ -245,6 +245,7 @@ void MonolingualModel::saveSentVectors(const string &filename) const {
         for (int c = 0; c < config.dimension; ++c) {
             outfile << embedding[c] << " ";
         }
+        outfile << endl;
     }
 }
 
