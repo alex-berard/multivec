@@ -6,12 +6,14 @@ class MonolingualModel
     friend class BilingualModel;
     friend void save(ofstream& outfile, const MonolingualModel& model);
     friend void load(ifstream& infile, MonolingualModel& model);
+    
 
 private:
     mat input_weights;
     mat output_weights; // output weights for negative sampling
     mat output_weights_hs; // output weights for hierarchical softmax
     mat sent_weights;
+    const int maxNbest = 50;
 
     long long training_words; // total number of words in training file (used to compute word frequencies)
     long long training_lines;

@@ -681,3 +681,4 @@ vec MonolingualModel::hierarchicalUpdate(const HuffmanNode& node, const vec& hid
 
     return temp;
 }
+
