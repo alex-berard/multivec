@@ -53,7 +53,7 @@ vector< pair< string, float > > MonolingualModel::closest(const string& word, in
         cerr <<"out of vocabulary!" << endl;
         return toReturn;
     } 
-    toReturn.push_back(pair("Nothing",-1000.0)); // add a dummy word for comparison
+    toReturn.push_back(pair< string, float >("Nothing",-1000.0)); // add a dummy word for comparison
     int index1 = it->second.index;
     vec v1 = wordVec(index1, policy);
     vec v2;
@@ -61,12 +61,15 @@ vector< pair< string, float > > MonolingualModel::closest(const string& word, in
 	if (index1 != it->second.index) {
 	    v2 = wordVec(it->second.index, policy);
 	    float sim = cosineSimilarity(v1,v2);
-	    for (size_t i = 0; ((i < toReturn.size()) && (i < maxNbest + 1)); i++) {
-		if (sim > toReturn.at(i).second)
+	    vector< pair< string, float > >::iterator itvec;
+	    int i=0;
+	    for (itvec = toReturn.begin(); ((itvec != toReturn.end()) && (i < maxNbest + 1)); itvec++) {
+		if (sim > itvec->second)
 		{
-		    toReturn.insert(i,pair(it->second.word,sim));
+		    toReturn.insert(itvec,pair< string, float >(it->second.word,sim));
 		    break;
 		}
+		i++;
 	    }
 	}
     }
@@ -90,7 +93,7 @@ vector< pair< string, float > > MonolingualModel::closest(const string& word1, c
         cerr <<"out of vocabulary!" << endl;
         return toReturn;
     } 
-    toReturn.push_back(pair("Nothing",-1000.0)); // add a dummy word for comparison
+    toReturn.push_back(pair< string, float >("Nothing",-1000.0)); // add a dummy word for comparison
     vec v1 = wordVec(it->second.index, policy);
     vec v2;
     for (size_t i = 0; i < vecword.size(); i++) {
@@ -99,11 +102,13 @@ vector< pair< string, float > > MonolingualModel::closest(const string& word1, c
 	if (it != vocabulary.end()) {
 	    v2 = wordVec(it->second.index, policy);
 	    sim = cosineSimilarity(v1,v2);
-	} 
-	for (size_t j = 0; ((j < toReturn.size()) && (j < maxNbest + 1)); j++) {
-	    if (sim > toReturn.at(j).second)
+	}
+	vector< pair< string, float > >::iterator itvec; 
+	for (itvec = toReturn.begin(); itvec != toReturn.end(); itvec++) {
+
+	    if (sim > itvec->second)
 	    {
-		toReturn.insert(j,pair(vecword.at(i),sim));
+		toReturn.insert(itvec,pair< string, float >(vecword.at(i),sim));
 		break;
 	    }
 	}
