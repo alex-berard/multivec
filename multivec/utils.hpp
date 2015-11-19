@@ -28,6 +28,10 @@ inline float sigmoid(float x) {
     return 1 / (1 + exp(-x));
 }
 
+inline float cosineSimilarity(vec &v1,vec &v2) {
+    return v1.dot(v2) / ((v1.norm() * v2.norm()));
+}
+
 inline string lower(string s) {
     std::transform(s.begin(), s.end(), s.begin(), ::tolower);
     return s;

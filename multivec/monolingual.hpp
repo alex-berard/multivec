@@ -74,4 +74,6 @@ public:
     float similarity(const string& word1, const string& word2, int policy = 0) const;
     float distance(const string& word1, const string& word2, int policy = 0) const;
     float similarityNgrams(const string& seq1, const string& seq2, int policy = 0) const;
+    vector< pair <string,float> > closest(const string& word1, const vector < string > & vecword, int policy = 0) const;
+    vector< pair <string,float> > closest(const string& word1, int policy = 0) const;
 };

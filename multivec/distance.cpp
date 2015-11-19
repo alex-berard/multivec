@@ -18,6 +18,7 @@ float MonolingualModel::distance(const string& word1, const string& word2, int p
     return 1 - similarity(word1, word2, policy);
 }
 
+
 float MonolingualModel::similarityNgrams(const string& seq1, const string& seq2, int policy) const {
     auto words1 = split(seq1);
     auto words2 = split(seq2);
