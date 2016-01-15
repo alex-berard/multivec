@@ -227,6 +227,7 @@ void MonolingualModel::saveVectors(const string &filename, int policy) const {
         for (int c = 0; c < config.dimension; ++c) {
             outfile << embedding[c] << " ";
         }
+        outfile << endl;
     }
 }
 
