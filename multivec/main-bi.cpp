@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
         model.src_model.save(save_src_file);
     }
     if(!save_trg_file.empty()) {
-        model.src_model.save(save_trg_file);
+        model.trg_model.save(save_trg_file);
     }
 
     return 0;
