@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
-project(multivec)
+project(multivec++)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 #set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE Release)
 
@@ -28,4 +28,7 @@ add_executable(compute-accuracy ${COMPUTE_ACC})
 target_link_libraries(compute-accuracy ${DEPENDENCIES})
 
 add_library(multivec SHARED ${MULTIVEC_LIB})
-install(TARGETS multivec DESTINATION ${PROJECT_SOURCE_DIR}/bin)
+install(TARGETS multivec DESTINATION lib)
+install(TARGETS compute-accuracy word2vec multivec-bi multivec-mono DESTINATION bin)
+install(FILES multivec/bilingual.hpp  multivec/monolingual.hpp  multivec/serialization.hpp  multivec/utils.hpp  multivec/vec.hpp  word2vec/word2vec.hpp DESTINATION include)
+
