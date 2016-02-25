@@ -35,4 +35,5 @@ bin/
 callgrind*
 .idea/
 tags
-document-representations/
+rcv-from-binod/
+*.class
