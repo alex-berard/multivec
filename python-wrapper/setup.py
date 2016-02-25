@@ -1,6 +1,6 @@
 from distutils.core import setup, Extension
 import numpy
-module = Extension("multivec", ["wrapper.cpp", "../multivec/monolingual.cpp", "../multivec/bilingual.cpp"],
+module = Extension("multivec", ["wrapper.cpp", "../multivec/monolingual.cpp", "../multivec/bilingual.cpp", "../multivec/distance.cpp"],
     undef_macros=['NDEBUG'])
 module.extra_compile_args = ['--std=c++0x', '-w', '-I../multivec', '-O3']
 module.libraries = ['m']

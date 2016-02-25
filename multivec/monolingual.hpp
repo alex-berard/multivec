@@ -49,7 +49,7 @@ private:
 
     vector<long long> chunkify(const string& filename, int n_chunks);
     vec wordVec(int index, int policy) const;
-    
+
 public:
     MonolingualModel() : training_words(0), training_lines(0), words_processed(0) {} // model with default configuration
     MonolingualModel(Config config) : training_words(0), training_lines(0), words_processed(0), config(config) {}
@@ -63,15 +63,23 @@ public:
     void saveVectorsBin(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec binary format
     void saveVectors(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec text format
     void saveSentVectors(const string &filename) const;
-    
+
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model
-    
+
     vec bow(const string& sequence) const;
-    
+
     void normalizeWeights(); // normalize all weights between 0 and 1
-    
+
     float similarity(const string& word1, const string& word2, int policy = 0) const;
     float distance(const string& word1, const string& word2, int policy = 0) const;
     float similarityNgrams(const string& seq1, const string& seq2, int policy = 0) const;
+
+    int getDimension() const { return config.dimension; };
+
+    vector<pair<string, float>> closest(const string& word, int n = 50, int policy = 0) const;
+    vector<pair<string, float>> closest(const string& word, const vector<string>& words, int policy = 0) const;
+    vector<pair<string, float>> closest(const vec& v, int n, int policy) const;
+
+    vector<pair<string, int>> getWords() const; // get words with their counts
 };

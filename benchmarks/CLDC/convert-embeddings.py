@@ -3,7 +3,7 @@ from __future__ import division
 import sys
 
 if __name__ == '__main__':
-    next(sys.stdin)
+    next(sys.stdin)   # skip first line (lines dimension)
     for line in sys.stdin:
         line = line.strip()
         word, vector = line.split(' ', 1)

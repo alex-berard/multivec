@@ -102,6 +102,13 @@ static PyObject * vec_to_numpy(vec arr) {
     return PyArray_Return(nparr);
 }
 
+static vec numpy_to_vec(PyObject * arr) {
+    int size = ((PyArrayObject *) arr)->dimensions[0]; // FIXME
+    const char *data = ((PyArrayObject *) arr)->data;
+    vector<float> v(data, data + size);
+    return vec(v);
+}
+
 static PyObject * monomodel_sent_vec(MonoModel *self, PyObject *args) {
     const char *sentence;
     if (!PyArg_ParseTuple(args, "s", &sentence))
@@ -128,6 +135,71 @@ static PyObject * monomodel_word_vec(MonoModel *self, PyObject *args) {
     }
 }
 
+static PyObject * monomodel_similarity(MonoModel *self, PyObject *args) {
+    const char *word1;
+    const char *word2;
+    if (!PyArg_ParseTuple(args, "ss", &word1, &word2))
+        return NULL;
+
+    return PyFloat_FromDouble(self->model->similarity(string(word1), string(word2)));
+}
+
+static PyObject * monomodel_closest(MonoModel *self, PyObject *args) {
+    const char *word;
+    int n;
+    if (!PyArg_ParseTuple(args, "si", &word, &n))
+        return NULL;
+
+    vector<pair<string, float>> table = self->model->closest(string(word), n);
+    PyObject * res = PyList_New(0);
+    for (auto it = table.begin(); it != table.end(); ++it) {
+        PyObject * item = Py_BuildValue("sf", it->first.c_str(), it->second);
+        PyList_Append(res, item);
+    }
+    return res;
+}
+
+static PyObject * monomodel_vocabulary(MonoModel *self) {
+    PyObject * res = PyList_New(0);
+    vector<pair<string, int>> words = self->model->getWords();
+    for (auto it = words.begin(); it != words.end(); ++it) {
+        PyObject * item = Py_BuildValue("s", it->first.c_str());
+        PyList_Append(res, item);
+    }
+    return res;
+}
+
+static PyObject * monomodel_counts(MonoModel *self) {
+    PyObject * res = PyList_New(0);
+    vector<pair<string, int>> words = self->model->getWords();
+    for (auto it = words.begin(); it != words.end(); ++it) {
+        PyObject * item = Py_BuildValue("si", it->first.c_str(), it->second);
+        PyList_Append(res, item);
+    }
+    return res;
+}
+
+static PyObject * monomodel_closest_from_vec(MonoModel *self, PyObject *args) {
+    PyObject * vec;
+    if (!PyArg_ParseTuple(args, "o&", vec, PyArray_Converter)) // FIXME
+        return NULL;
+    /*
+    PyObject * res = PyList_New(0);
+    vector<pair<string, int>> words = self->model->getWords();
+    for (auto it = words.begin(); it != words.end(); ++it) {
+        PyObject * item = Py_BuildValue("si", it->first.c_str(), it->second);
+        PyList_Append(res, item);
+    }
+    return res;
+    */
+    return 0;
+}
+
+static PyObject * monomodel_dimension(MonoModel *self) {
+    PyObject * dim = Py_BuildValue("i", self->model->getDimension());
+    return dim;
+}
+
 static PyMethodDef monomodel_methods[] = {
     {"train", (PyCFunction)monomodel_train, METH_VARARGS, "Train the model"},
     {"load", (PyCFunction)monomodel_load, METH_VARARGS, "Load model from the disk"},
@@ -135,6 +207,12 @@ static PyMethodDef monomodel_methods[] = {
     {"sent_vec", (PyCFunction)monomodel_sent_vec, METH_VARARGS, "Inference step for paragraphs"},
     {"word_vec", (PyCFunction)monomodel_word_vec, METH_VARARGS, "Word embedding"},
     {"save_embeddings", (PyCFunction)monomodel_save_embeddings, METH_VARARGS, "Save word embeddings in the word2vec format"},
+    {"closest", (PyCFunction)monomodel_closest, METH_VARARGS, "Closest words to given word"},
+    {"closest_from_vec", (PyCFunction)monomodel_closest_from_vec, METH_VARARGS, "Closest words to given vector"},
+    {"similarity", (PyCFunction)monomodel_similarity, METH_VARARGS, "Similarity between two words"},
+    {"vocabulary", (PyCFunction)monomodel_vocabulary, METH_NOARGS, "Get words in vocabulary"},
+    {"counts", (PyCFunction)monomodel_counts, METH_NOARGS, "Get words in vocabulary with their counts"},
+    {"dimension", (PyCFunction)monomodel_dimension, METH_NOARGS, "Dimension of the embeddings"},
     {NULL}  /* Sentinel */
 };
 
