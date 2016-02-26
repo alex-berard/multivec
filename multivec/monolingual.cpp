@@ -321,6 +321,20 @@ vec MonolingualModel::wordVec(const string& word, int policy) const {
     }
 }
 
+vec MonolingualModel::wordVecOOV(const string& word, int policy) const {
+    auto it = vocabulary.find(word);
+
+    if (it == vocabulary.end()) {
+        int d = config.dimension;
+        vec res(d * 2);
+        for (int c = 0; c < d; ++c) res[c] = 0.0;
+        for (int c = 0; c < d; ++c) res[d + c] = 0.0;
+        return res;
+    } else {
+        return wordVec(it->second.index, policy);
+    }
+}
+
 void MonolingualModel::sentVec(istream& input, int policy) {
     string line;
     while(getline(input, line)) {

@@ -55,6 +55,7 @@ public:
     MonolingualModel(Config config) : training_words(0), training_lines(0), words_processed(0), config(config) {}
 
     vec wordVec(const string& word, int policy = 0) const; // word embedding
+    vec wordVecOOV(const string& word, int policy = 0) const; // word embedding
     vec sentVec(const string& sentence, int policy = 0); // paragraph vector (Le & Mikolov)
     void sentVec(istream& infile, int policy); // compute paragraph vector for all lines in a stream
 
@@ -74,4 +75,5 @@ public:
     float similarity(const string& word1, const string& word2, int policy = 0) const;
     float distance(const string& word1, const string& word2, int policy = 0) const;
     float similarityNgrams(const string& seq1, const string& seq2, int policy = 0) const;
+    float similaritySentence(const string& seq1, const string& seq2, int policy = 0) const;
 };
