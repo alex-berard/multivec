@@ -367,7 +367,7 @@ vec MonolingualModel::sentVec(const string& sentence, int policy) {
             }
 
             if (count == 0) continue;
-            hidden = (hidden + sent_vec) / (count + 1); //TODO this or (hidden / count) + sent_vec?
+            hidden = (hidden + sent_vec) / (count + 1); // TODO this or (hidden / count) + sent_vec?
 
             vec error(dimension, 0);
             if (config.hierarchical_softmax) {

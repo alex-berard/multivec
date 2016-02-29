@@ -104,6 +104,8 @@ public class CollectionPreprocessor {
 		   BufferedReader in = new BufferedReader(new FileReader(embedFile));
 		   Map<String,List<Double>> wordEmbeddings = new HashMap<String, List<Double>>();
 		   
+		   in.readLine(); // skip first line (lines dimension)
+		   
 		   String line;
 		   while ((line = in.readLine()) != null) {
 			   line = line.trim();
@@ -111,12 +113,14 @@ public class CollectionPreprocessor {
 				   continue;
 			   }
 		   
+               // line format:  word feat1 feat2 ...
 			   String fields[] = line.split("\\s+");
 			   
 			   String word = fields[0];
-			   ArrayList<Double> features = new ArrayList<Double>(fields.length - 2);
-			   for (int idx = 2; idx < fields.length; idx++) {
-				   features.add(idx - 2, Double.parseDouble(fields[idx]));
+			   ArrayList<Double> features = new ArrayList<Double>(fields.length - 1);
+			   
+			   for (int idx = 1; idx < fields.length; idx++) {
+				   features.add(idx - 1, Double.parseDouble(fields[idx]));
 			   }
 			   wordEmbeddings.put(word, features);
 			   

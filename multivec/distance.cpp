@@ -152,3 +152,34 @@ void MonolingualModel::normalizeWeights() {
     ::normalizeWeights(output_weights_hs);
     ::normalizeWeights(sent_weights);
 }
+
+float MonolingualModel::similaritySentence(const string& seq1, const string& seq1, int policy) const {
+    auto words1 = split(seq1);
+    auto words2 = split(seq1);
+    
+    vec vec1(config.dimension);
+    vec vec2(config.dimension);
+    
+    for (auto it = words1.begin(); it != words1.end(); ++it) {
+        try {
+            vec1 += wordVec(*it, policy);
+        }
+        catch (runtime_error) {}
+    }
+    
+    for (auto it = words2.begin(); it != words2.end(); ++it) {
+        try {
+            vec2 += wordVec(*it, policy);
+        }
+        catch (runtime_error) {}
+    }
+    
+    float length = vec1.norm() * vec2.norm();
+    
+    if (length == 0) {
+        return 0.0;
+    } else {
+        return vec1.dot(vec2) / length;
+    }
+}
+

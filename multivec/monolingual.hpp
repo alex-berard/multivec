@@ -71,15 +71,16 @@ public:
 
     void normalizeWeights(); // normalize all weights between 0 and 1
 
-    float similarity(const string& word1, const string& word2, int policy = 0) const;
-    float distance(const string& word1, const string& word2, int policy = 0) const;
-    float similarityNgrams(const string& seq1, const string& seq2, int policy = 0) const;
+    float similarity(const string& word1, const string& word2, int policy = 0) const; // cosine similarity
+    float distance(const string& word1, const string& word2, int policy = 0) const; // 1 - cosine similarity
+    float similarityNgrams(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two sequences of same size
+    float similaritySentence(const string& seq1, const string& seq1, int policy = 0) const; // similarity between two variable-size sequences
 
     int getDimension() const { return config.dimension; };
 
-    vector<pair<string, float>> closest(const string& word, int n = 50, int policy = 0) const;
+    vector<pair<string, float>> closest(const string& word, int n = 50, int policy = 0) const; // n closest words to given word
     vector<pair<string, float>> closest(const string& word, const vector<string>& words, int policy = 0) const;
-    vector<pair<string, float>> closest(const vec& v, int n, int policy) const;
+    vector<pair<string, float>> closest(const vec& v, int n, int policy = 0) const;
 
     vector<pair<string, int>> getWords() const; // get words with their counts
 };
