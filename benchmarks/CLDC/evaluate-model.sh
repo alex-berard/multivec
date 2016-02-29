@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 this_dir=`pwd`
 temp_dir=`mktemp -d`
 
@@ -19,17 +20,17 @@ rm -f $rcv_dir/data/doc-reprs/*
 
 echo [Bilingual Word Embeddings]
 cd $rcv_dir/scripts/de2en/
-./prepare-data-klement-4cat-all-sizes-my-embeddings.ch > /dev/null
+./prepare-data-1000.ch > /dev/null
 echo ""
 echo "DE->EN:"
 echo "-----------"
-./run-perceptron-all-sizes-my-embeddings.ch
+./run-perceptron-1000.ch
 cd ../en2de/
-./prepare-data-klement-4cat-all-sizes-my-embeddings.ch > /dev/null
+./prepare-data-1000.ch > /dev/null
 echo ""
 echo "EN->DE:"
 echo "-----------"
-./run-perceptron-all-sizes-my-embeddings.ch
+./run-perceptron-1000.ch
 
 cd $this_dir
 
@@ -43,18 +44,18 @@ cp $temp_dir/trg-model.bin $rcv_dir/data/embeddings/my-model.de.bin
 
 cd $rcv_dir/scripts/de2en/
 #./prepare-data-klement-4cat-all-sizes-sent-embeddings.ch > /dev/null
-./prepare-data-klement-4cat-all-sizes-sent-embeddings.ch
+./prepare-data-1000-sent-embeddings.ch
 echo ""
 echo "DE->EN:"
 echo "-----------"
-./run-perceptron-all-sizes-my-embeddings.ch
+./run-perceptron-1000.ch
 cd ../en2de/
 #./prepare-data-klement-4cat-all-sizes-sent-embeddings.ch > /dev/null
-./prepare-data-klement-4cat-all-sizes-sent-embeddings.ch
+./prepare-data-1000-sent-embeddings.ch
 echo ""
 echo "EN->DE:"
 echo "-----------"
-./run-perceptron-all-sizes-my-embeddings.ch
+./run-perceptron-1000.ch
 
 cd $this_dir
 

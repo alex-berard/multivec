@@ -1,6 +1,6 @@
-#!/bin/bash
-corpus=data/europarl.tok.en
-corpus_trg=data/europarl.tok.de
+#!/usr/bin/env bash
+corpus=data/europarl/europarl.tok.en
+corpus_trg=data/europarl/europarl.tok.de
 output=benchmarks/analogical_reasoning/results
 threads=16
 
