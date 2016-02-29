@@ -54,6 +54,7 @@ public:
     MonolingualModel() : training_words(0), training_lines(0), words_processed(0) {} // model with default configuration
     MonolingualModel(Config config) : training_words(0), training_lines(0), words_processed(0), config(config) {}
 
+    // TODO: put policy in config
     vec wordVec(const string& word, int policy = 0) const; // word embedding
     vec sentVec(const string& sentence, int policy = 0); // paragraph vector (Le & Mikolov)
     void sentVec(istream& infile, int policy); // compute paragraph vector for all lines in a stream
@@ -67,14 +68,13 @@ public:
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model
 
-    vec bow(const string& sequence) const;
-
     void normalizeWeights(); // normalize all weights between 0 and 1
 
     float similarity(const string& word1, const string& word2, int policy = 0) const; // cosine similarity
     float distance(const string& word1, const string& word2, int policy = 0) const; // 1 - cosine similarity
     float similarityNgrams(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two sequences of same size
-    float similaritySentence(const string& seq1, const string& seq1, int policy = 0) const; // similarity between two variable-size sequences
+    float similaritySentence(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two variable-size sequences
+    float softEditDistance(const string& seq1, const string& seq2, int policy = 0) const; // soft Levenshtein distance
 
     int getDimension() const { return config.dimension; };
 

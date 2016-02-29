@@ -43,15 +43,13 @@ cp $temp_dir/src-model.bin $rcv_dir/data/embeddings/my-model.en.bin
 cp $temp_dir/trg-model.bin $rcv_dir/data/embeddings/my-model.de.bin
 
 cd $rcv_dir/scripts/de2en/
-#./prepare-data-klement-4cat-all-sizes-sent-embeddings.ch > /dev/null
-./prepare-data-1000-sent-embeddings.ch
+./prepare-data-1000-sent-embeddings.ch > /dev/null
 echo ""
 echo "DE->EN:"
 echo "-----------"
 ./run-perceptron-1000.ch
 cd ../en2de/
-#./prepare-data-klement-4cat-all-sizes-sent-embeddings.ch > /dev/null
-./prepare-data-1000-sent-embeddings.ch
+./prepare-data-1000-sent-embeddings.ch > /dev/null
 echo ""
 echo "EN->DE:"
 echo "-----------"

@@ -153,9 +153,9 @@ void MonolingualModel::normalizeWeights() {
     ::normalizeWeights(sent_weights);
 }
 
-float MonolingualModel::similaritySentence(const string& seq1, const string& seq1, int policy) const {
+float MonolingualModel::similaritySentence(const string& seq1, const string& seq2, int policy) const {
     auto words1 = split(seq1);
-    auto words2 = split(seq1);
+    auto words2 = split(seq2);
     
     vec vec1(config.dimension);
     vec vec2(config.dimension);
@@ -181,5 +181,32 @@ float MonolingualModel::similaritySentence(const string& seq1, const string& seq
     } else {
         return vec1.dot(vec2) / length;
     }
+}
+
+float MonolingualModel::softEditDistance(const string& seq1, const string& seq2, int policy) const {
+    auto s1 = split(seq1);
+    auto s2 = split(seq2);
+	const size_t len1 = s1.size(), len2 = s2.size();
+	vector<vector<float>> d(len1 + 1, vector<float>(len2 + 1));
+
+	d[0][0] = 0;
+	for (size_t i = 1; i <= len1; ++i) d[i][0] = i;
+	for (size_t i = 1; i <= len2; ++i) d[0][i] = i;
+
+	for (size_t i = 1; i <= len1; ++i) {
+		for (size_t j = 1; j <= len2; ++j) {
+		    // use distance between word embeddings as a substitution cost
+		    // FIXME distances tend to be well below 1, even for very different words.
+		    // This is rather unbalanced with deletion and insertion costs, which remain at 1.
+		    // Also, distance can (but will rarely) be greater than 1.
+            float sub_cost = distance(s1[i - 1], s2[j - 1], policy);
+            
+            d[i][j] = min({ d[i - 1][j] + 1,  // deletion
+                            d[i][j - 1] + 1,  // insertion
+                            d[i - 1][j - 1] + sub_cost });  // substitution
+        }
+    }
+    
+	return d[len1][len2];
 }
 
