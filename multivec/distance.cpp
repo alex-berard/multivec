@@ -1,29 +1,99 @@
 #include "monolingual.hpp"
 
 /**
- * @brief Compute cosine similarity between word1 and word2. Throw runtime_error if 
- * those words are unknown. For the score to be in [0,1], the weights need to be normalized beforehand.
+ * @brief Compute cosine similarity between word1 and word2.
+ * For the score to be in [0,1], the weights need to be normalized beforehand.
+ * Return 0 if word1 or word2 is unknown.
  */
 float MonolingualModel::similarity(const string& word1, const string& word2, int policy) const {
-    if (word1 == word2) {
+    auto it1 = vocabulary.find(word1);
+    auto it2 = vocabulary.find(word2);
+
+    if (it1 == vocabulary.end() || it2 == vocabulary.end()) {
+        return 0.0;
+    } else if (it1->second.index == it2->second.index) {
         return 1.0;
     } else {
-        auto it = vocabulary.find(word1);
-        if (it == vocabulary.end()) {
-          return 0.0;
-        }
-        it = vocabulary.find(word2);
-        if (it == vocabulary.end()) {
-          return 0.0;
-        }
-        vec v1 = wordVec(word1, policy);
-        vec v2 = wordVec(word2, policy);
-        return v1.dot(v2) / (v1.norm() * v2.norm());
+        vec v1 = wordVec(it1->second.index, policy);
+        vec v2 = wordVec(it2->second.index, policy);
+        return cosineSimilarity(v1, v2);
     }
 }
 
 float MonolingualModel::distance(const string& word1, const string& word2, int policy) const {
     return 1 - similarity(word1, word2, policy);
+}
+
+
+static bool comp(const pair<string, float>& p1, const pair<string, float>& p2) {
+    return p1.second > p2.second;
+}
+
+/**
+ * @brief Return an ordered list of the `n` closest words to `word` according to cosine similarity.
+ */
+vector<pair<string, float>> MonolingualModel::closest(const string& word, int n, int policy) const {
+    vector<pair<string, float>> res;
+    auto it = vocabulary.find(word);
+
+    if (it == vocabulary.end()) {
+        cerr << "OOV word" << endl;
+        return res;
+    }
+
+    int index = it->second.index;
+    vec v1 = wordVec(index, policy);
+
+    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+        if (it->second.index != index) {
+            vec v2 = wordVec(it->second.index, policy);
+            res.push_back({it->second.word, cosineSimilarity(v1, v2)});
+        }
+    }
+
+    std::partial_sort(res.begin(), res.begin() + n, res.end(), comp);
+    if (res.size() > n) res.resize(n);
+    return res;
+}
+
+vector<pair<string, float>> MonolingualModel::closest(const vec& v, int n, int policy) const {
+    vector<pair<string, float>> res;
+
+    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+        vec v2 = wordVec(it->second.index, policy);
+        res.push_back({it->second.word, cosineSimilarity(v, v2)});
+    }
+
+    std::partial_sort(res.begin(), res.begin() + n, res.end(), comp);
+    if (res.size() > n) res.resize(n);
+    return res;
+}
+
+/**
+ * @brief Return sorted list of `words` according to their similarity to `word`.
+ */
+vector<pair<string, float>> MonolingualModel::closest(const string& word, const vector<string>& words, int policy) const {
+    vector<pair<string, float>> res;
+    auto it = vocabulary.find(word);
+
+    if (it == vocabulary.end()) {
+        cerr << "OOV word" << endl;
+        return res;
+    }
+
+    int index = it->second.index;
+    vec v1 = wordVec(index, policy);
+
+    for (auto it = words.begin(); it != words.end(); ++it) {
+        auto node_it = vocabulary.find(*it);
+        if (node_it != vocabulary.end()) {
+            vec v2 = wordVec(node_it->second.index, policy);
+            res.push_back({node_it->second.word, cosineSimilarity(v1, v2)});
+        }
+    }
+
+    std::sort(res.begin(), res.end(), comp);
+    return res;
 }
 
 float MonolingualModel::similarityNgrams(const string& seq1, const string& seq2, int policy) const {
@@ -33,7 +103,7 @@ float MonolingualModel::similarityNgrams(const string& seq1, const string& seq2,
     if (words2.size() != words2.size()) {
         throw runtime_error("input sequences don't have the same size");
     }
-    
+
     float res = 0;
     int n = 0;
     for (size_t i = 0; i < words1.size(); ++i) {
@@ -43,61 +113,21 @@ float MonolingualModel::similarityNgrams(const string& seq1, const string& seq2,
         }
         catch (runtime_error) {}
     }
-    
+
     if (n == 0) {
-        throw runtime_error("N-gram size of zero !");
+        throw runtime_error("all word pairs are unknown (OOV)");
     } else {
         return res / n;
     }
-}
-
-float MonolingualModel::similaritySentence(const string& seq1, const string& seq2, int policy) const {
-    auto words1 = split(seq1);
-    auto words2 = split(seq2);
-
-    float res = 0;
-    int n = 0;
-    auto l_word1 = wordVec(words1[0], policy);
-    auto l_word2 = wordVec(words2[0], policy);
-    auto sentence1 = l_word1;
-    auto sentence2 = l_word2;
-    for (size_t i = 1; i < words1.size(); ++i) {
-        try {
-            for (size_t j = 0; j < sentence1.size(); ++j) {
-                l_word1 = wordVec(words1[i], policy);
-                sentence1[j]+=l_word1[j];
-            }
-        }
-        catch (runtime_error) {}
-    }
-    for (size_t i = 1; i < words2.size(); ++i) {
-        try {
-            for (size_t j = 0; j < sentence2.size(); ++j) {
-                l_word2 = wordVec(words2[i], policy);
-                sentence2[j]+=words2[i][j];
-            }
-        }
-        catch (runtime_error) {}
-    }
-    for (size_t i = 0; i < sentence1.size(); ++i) {
-        if (sentence1[i] != 0.0 && sentence2[i] !=0.0) {
-          n = 1;
-          break;
-        }
-    }
-    if (n == 0) { 
-      return 0.0;
-    }
-    return sentence1.dot(sentence2) / (sentence1.norm() * sentence2.norm());
 }
 
 void normalizeWeights(mat& weights) {
     if (weights.empty()) {
         return;
     }
-    
+
     int dim = weights[0].size();
-    
+
     vec min_values = weights[0];
     vec max_values = weights[0];
     for (size_t i = 1; i < weights.size(); ++i) {
@@ -106,7 +136,7 @@ void normalizeWeights(mat& weights) {
             max_values[j] = max(max_values[j], weights[i][j]);
         }
     }
-    
+
     for (size_t i = 0; i < weights.size(); ++i) {
         for (size_t j = 0; j < dim; ++j) {
             if (max_values[j] != min_values[j]) {
@@ -122,3 +152,61 @@ void MonolingualModel::normalizeWeights() {
     ::normalizeWeights(output_weights_hs);
     ::normalizeWeights(sent_weights);
 }
+
+float MonolingualModel::similaritySentence(const string& seq1, const string& seq2, int policy) const {
+    auto words1 = split(seq1);
+    auto words2 = split(seq2);
+    
+    vec vec1(config.dimension);
+    vec vec2(config.dimension);
+    
+    for (auto it = words1.begin(); it != words1.end(); ++it) {
+        try {
+            vec1 += wordVec(*it, policy);
+        }
+        catch (runtime_error) {}
+    }
+    
+    for (auto it = words2.begin(); it != words2.end(); ++it) {
+        try {
+            vec2 += wordVec(*it, policy);
+        }
+        catch (runtime_error) {}
+    }
+    
+    float length = vec1.norm() * vec2.norm();
+    
+    if (length == 0) {
+        return 0.0;
+    } else {
+        return vec1.dot(vec2) / length;
+    }
+}
+
+float MonolingualModel::softEditDistance(const string& seq1, const string& seq2, int policy) const {
+    auto s1 = split(seq1);
+    auto s2 = split(seq2);
+	const size_t len1 = s1.size(), len2 = s2.size();
+	vector<vector<float>> d(len1 + 1, vector<float>(len2 + 1));
+
+	d[0][0] = 0;
+	for (size_t i = 1; i <= len1; ++i) d[i][0] = i;
+	for (size_t i = 1; i <= len2; ++i) d[0][i] = i;
+
+	for (size_t i = 1; i <= len1; ++i) {
+		for (size_t j = 1; j <= len2; ++j) {
+		    // use distance between word embeddings as a substitution cost
+		    // FIXME distances tend to be well below 1, even for very different words.
+		    // This is rather unbalanced with deletion and insertion costs, which remain at 1.
+		    // Also, distance can (but will rarely) be greater than 1.
+            float sub_cost = distance(s1[i - 1], s2[j - 1], policy);
+            
+            d[i][j] = min({ d[i - 1][j] + 1,  // deletion
+                            d[i][j - 1] + 1,  // insertion
+                            d[i - 1][j - 1] + sub_cost });  // substitution
+        }
+    }
+    
+	return d[len1][len2];
+}
+

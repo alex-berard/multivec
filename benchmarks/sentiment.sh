@@ -1,5 +1,5 @@
 #!/bin/bash
-ext_corpus=data/europarl.tok.en
+ext_corpus=data/europarl/europarl.tok.en
 output=benchmarks/imdb_sentiment/results
 threads=16
 

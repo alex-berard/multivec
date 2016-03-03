@@ -302,10 +302,10 @@ vec MonolingualModel::wordVec(int index, int policy) const {
 
 /**
  * @brief Return weight vector corresponding to the given word.
- * 
+ *
  * @param word
  * @param policy defines which weights to return.
- * 0 (default): input weights only, 
+ * 0 (default): input weights only,
  * 1: concatenation of input and output weights,
  * 2: sum of input and output weights,
  * 3: output weights only.
@@ -316,20 +316,6 @@ vec MonolingualModel::wordVec(const string& word, int policy) const {
 
     if (it == vocabulary.end()) {
         throw runtime_error("out of vocabulary");
-    } else {
-        return wordVec(it->second.index, policy);
-    }
-}
-
-vec MonolingualModel::wordVecOOV(const string& word, int policy) const {
-    auto it = vocabulary.find(word);
-
-    if (it == vocabulary.end()) {
-        int d = config.dimension;
-        vec res(d * 2);
-        for (int c = 0; c < d; ++c) res[c] = 0.0;
-        for (int c = 0; c < d; ++c) res[d + c] = 0.0;
-        return res;
     } else {
         return wordVec(it->second.index, policy);
     }
@@ -381,7 +367,7 @@ vec MonolingualModel::sentVec(const string& sentence, int policy) {
             }
 
             if (count == 0) continue;
-            hidden = (hidden + sent_vec) / (count + 1); //TODO this or (hidden / count) + sent_vec?
+            hidden = (hidden + sent_vec) / (count + 1); // TODO this or (hidden / count) + sent_vec?
 
             vec error(dimension, 0);
             if (config.hierarchical_softmax) {
@@ -447,7 +433,7 @@ void MonolingualModel::train(const string& training_file) {
 /**
  * @brief Divide a given file into chunks with the same number of lines each
  * TODO: avoid reading training file several times
- * 
+ *
  * @param filename path of the file
  * @param n_chunks number of chunks
  * @return starting position (in bytes) of each chunk
@@ -484,7 +470,7 @@ void MonolingualModel::trainChunk(const string& training_file,
     ifstream infile(training_file);
     float starting_alpha = config.starting_alpha;
     int max_iterations = config.max_iterations;
-    
+
     if (!infile.is_open()) {
         throw runtime_error("couldn't open file " + training_file);
     }
@@ -695,4 +681,14 @@ vec MonolingualModel::hierarchicalUpdate(const HuffmanNode& node, const vec& hid
     }
 
     return temp;
+}
+
+vector<pair<string, int>> MonolingualModel::getWords() const {
+    vector<pair<string, int>> res;
+
+    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+        res.push_back({it->second.word, it->second.count});
+    }
+
+    return res;
 }
