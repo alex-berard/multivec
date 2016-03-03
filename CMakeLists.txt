@@ -28,7 +28,14 @@ add_executable(compute-accuracy ${COMPUTE_ACC})
 target_link_libraries(compute-accuracy ${DEPENDENCIES})
 
 add_library(multivec SHARED ${MULTIVEC_LIB})
-install(TARGETS multivec DESTINATION lib)
+ADD_LIBRARY(multivec-static STATIC ${MULTIVEC_LIB})
+
+SET_TARGET_PROPERTIES(multivec-static PROPERTIES OUTPUT_NAME multivec)
+install(TARGETS multivec multivec-static DESTINATION lib)
 install(TARGETS compute-accuracy word2vec multivec-bi multivec-mono DESTINATION bin)
 install(FILES multivec/bilingual.hpp  multivec/monolingual.hpp  multivec/serialization.hpp  multivec/utils.hpp  multivec/vec.hpp  word2vec/word2vec.hpp DESTINATION include)
+
+#add_library(multivec STATIC ${MULTIVEC_LIB})
+#install(TARGETS multivec DESTINATION lib)
+
 

@@ -27,7 +27,7 @@ pushd build
 v_uname=`uname`
 if [ $v_uname != "Darwin" ]
 then
-	/usr/bin/cmake  -DCMAKE_INSTALL_PREFIX=$1  -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+	/usr/bin/cmake  -DCMAKE_EXE_LINKER_FLAGS="-static -pthread " -DCMAKE_INSTALL_PREFIX=$1  -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
 else
 #	cmake -DCMAKE_INSTALL_PREFIX=$1  ..
 	echo "do nothing"
