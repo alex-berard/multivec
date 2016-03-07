@@ -1,4 +1,6 @@
 #include "monolingual.hpp"
+#include "bilingual.hpp"
+
 
 /**
  * @brief Compute cosine similarity between word1 and word2.
@@ -210,3 +212,155 @@ float MonolingualModel::softEditDistance(const string& seq1, const string& seq2,
 	return d[len1][len2];
 }
 
+/**
+ *
+ * Bilingual Methods
+ *
+ */
+
+
+/**
+ * @brief Compute cosine similarity between wordSrc in the source model and wordTgt in the target model.
+ * For the score to be in [0,1], the weights need to be normalized beforehand.
+ * Return 0 if wordSrc or wordTgt is unknown.
+ */
+float BilingualModel::similarity(const string& wordSrc, const string& wordTgt, int policy) const {
+    auto itSrc = src_model.vocabulary.find(wordSrc);
+    auto itTgt = trg_model.vocabulary.find(wordTgt);
+
+    if (itSrc == src_model.vocabulary.end() || itTgt == trg_model.vocabulary.end()) {
+        return 0.0;
+    } else {
+        vec vSrc = src_model.wordVec(itSrc->second.index, policy);
+        vec vTgt = trg_model.wordVec(itTgt->second.index, policy);
+        return cosineSimilarity(vSrc, vTgt);
+    }
+}
+
+float BilingualModel::distance(const string& wordSrc, const string& wordTgt, int policy) const {
+    return 1 - similarity(wordSrc, wordTgt, policy);
+}
+
+
+/**
+ * @brief Return an ordered list of the `n` closest target words to the source word `word` according to cosine similarity.
+ */
+vector<pair<string, float>> BilingualModel::closest(const string& word, int n, int policy) const {
+    vector<pair<string, float>> res;
+    auto it = src_model.vocabulary.find(word);
+
+    if (it == src_model.vocabulary.end()) {
+        cerr << "OOV word" << endl;
+        return res;
+    }
+
+    int index = it->second.index;
+    vec vSrc = src_model.wordVec(index, policy);
+
+    for (auto it = trg_model.vocabulary.begin(); it != trg_model.vocabulary.end(); ++it) {
+        if (it->second.index != index) {
+            vec vTgt = trg_model.wordVec(it->second.index, policy);
+            res.push_back({it->second.word, cosineSimilarity(vSrc, vTgt)});
+        }
+    }
+
+    std::partial_sort(res.begin(), res.begin() + n, res.end(), comp);
+    if (res.size() > n) res.resize(n);
+    return res;
+}
+
+vector<pair<string, float>> BilingualModel::closest(const vec& v, int n, int policy) const {
+    vector<pair<string, float>> res;
+
+    for (auto it = trg_model.vocabulary.begin(); it != trg_model.vocabulary.end(); ++it) {
+        vec vTgt = trg_model.wordVec(it->second.index, policy);
+        res.push_back({it->second.word, cosineSimilarity(v, vTgt)});
+    }
+
+    std::partial_sort(res.begin(), res.begin() + n, res.end(), comp);
+    if (res.size() > n) res.resize(n);
+    return res;
+}
+
+/**
+ * @brief Return sorted list of `words` according to their similarity to `word`.
+ */
+vector<pair<string, float>> BilingualModel::closest(const string& word, const vector<string>& words, int policy) const {
+    vector<pair<string, float>> res;
+    auto it = src_model.vocabulary.find(word);
+
+    if (it == src_model.vocabulary.end()) {
+        cerr << "OOV word" << endl;
+        return res;
+    }
+
+    int index = it->second.index;
+    vec v1 = src_model.wordVec(index, policy);
+
+    for (auto it = words.begin(); it != words.end(); ++it) {
+        auto node_it = trg_model.vocabulary.find(*it);
+        if (node_it != trg_model.vocabulary.end()) {
+            vec v2 = trg_model.wordVec(node_it->second.index, policy);
+            res.push_back({node_it->second.word, cosineSimilarity(v1, v2)});
+        }
+    }
+
+    std::sort(res.begin(), res.end(), comp);
+    return res;
+}
+
+
+float BilingualModel::similarityNgrams(const string& seqSrc, const string& seqTgt, int policy) const {
+    auto wordsSrc = split(seqSrc);
+    auto wordsTgt = split(seqTgt);
+
+    if (wordsTgt.size() != wordsTgt.size()) {
+        throw runtime_error("input sequences don't have the same size");
+    }
+
+    float res = 0;
+    int n = 0;
+    for (size_t i = 0; i < wordsSrc.size(); ++i) {
+        try {
+            res += similarity(wordsSrc[i], wordsTgt[i], policy);
+            n += 1;
+        }
+        catch (runtime_error) {}
+    }
+
+    if (n == 0) {
+        throw runtime_error("all word pairs are unknown (OOV)");
+    } else {
+        return res / n;
+    }
+}
+
+float BilingualModel::similaritySentence(const string& seqSrc, const string& seqTgt, int policy) const {
+    auto wordsSrc = split(seqSrc);
+    auto wordsTgt = split(seqTgt);
+    
+    vec vecSrc(config.dimension);
+    vec vecTgt(config.dimension);
+    
+    for (auto it = wordsSrc.begin(); it != wordsSrc.end(); ++it) {
+        try {
+            vecSrc += src_model.wordVec(*it, policy);
+        }
+        catch (runtime_error) {}
+    }
+    
+    for (auto it = wordsTgt.begin(); it != wordsTgt.end(); ++it) {
+        try {
+            vecTgt += trg_model.wordVec(*it, policy);
+        }
+        catch (runtime_error) {}
+    }
+    
+    float length = vecSrc.norm() * vecTgt.norm();
+    
+    if (length == 0) {
+        return 0.0;
+    } else {
+        return vecSrc.dot(vecTgt) / length;
+    }
+}
