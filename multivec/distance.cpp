@@ -183,9 +183,9 @@ float MonolingualModel::similaritySentence(const string& seq1, const string& seq
     }
 }
 
-float MonolingualModel::softEditDistance(const string& seq1, const string& seq2, int policy) const {
-    auto s1 = split(seq1);
-    auto s2 = split(seq2);
+float MonolingualModel::softWER(const string& hyp, const string& ref, int policy) const {
+    auto s1 = split(hyp);
+    auto s2 = split(ref);
 	const size_t len1 = s1.size(), len2 = s2.size();
 	vector<vector<float>> d(len1 + 1, vector<float>(len2 + 1));
 
@@ -207,6 +207,6 @@ float MonolingualModel::softEditDistance(const string& seq1, const string& seq2,
         }
     }
     
-	return d[len1][len2];
+	return d[len1][len2] / len2;
 }
 

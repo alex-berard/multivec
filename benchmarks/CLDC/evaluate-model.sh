@@ -11,8 +11,7 @@ fi
 model=$1
 rcv_dir=$2
 
-rm -f $rcv_dir/data/embeddings/my-embeddings-de-en.en $rcv_dir/data/embeddings/my-embeddings-de-en.de
-rm -f $rcv_dir/data/doc-reprs/*
+rm -f $rcv_dir/data/embeddings/*
 
 ./bin/multivec-bi --load $model --save-src $temp_dir/src-model.bin --save-trg $temp_dir/trg-model.bin > /dev/null
 ./bin/multivec-mono --load $temp_dir/src-model.bin --saving-policy 2 --save-vectors $rcv_dir/data/embeddings/my-embeddings-de-en.en > /dev/null
@@ -20,12 +19,14 @@ rm -f $rcv_dir/data/doc-reprs/*
 
 echo [Bilingual Word Embeddings]
 cd $rcv_dir/scripts/de2en/
+rm $rcv_dir/data/doc-reprs/*
 ./prepare-data-1000.ch > /dev/null
 echo ""
 echo "DE->EN:"
 echo "-----------"
 ./run-perceptron-1000.ch
 cd ../en2de/
+rm $rcv_dir/data/doc-reprs/*
 ./prepare-data-1000.ch > /dev/null
 echo ""
 echo "EN->DE:"
@@ -36,19 +37,18 @@ cd $this_dir
 
 echo [Online Paragraph Vector]
 
-rm -f $rcv_dir/data/doc-reprs/*
-rm -f $rcv_dir/data/embeddings/my-model.en.bin $rcv_dir/data/embeddings/my-model.de.bin
-
 cp $temp_dir/src-model.bin $rcv_dir/data/embeddings/my-model.en.bin
 cp $temp_dir/trg-model.bin $rcv_dir/data/embeddings/my-model.de.bin
 
 cd $rcv_dir/scripts/de2en/
+rm $rcv_dir/data/doc-reprs/*
 ./prepare-data-1000-sent-embeddings.ch > /dev/null
 echo ""
 echo "DE->EN:"
 echo "-----------"
 ./run-perceptron-1000.ch
 cd ../en2de/
+rm $rcv_dir/data/doc-reprs/*
 ./prepare-data-1000-sent-embeddings.ch > /dev/null
 echo ""
 echo "EN->DE:"
