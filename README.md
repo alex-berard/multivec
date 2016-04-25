@@ -41,14 +41,18 @@ The `bin` directory should now contain 4 binaries:
     cd python-wrapper
     make
 
-Use from Python:
+Use from Python (`multivec.so` must be in the PYTHONPATH, e.g. working directory):
 
     python2
-    >>> from multivec import MonoModel, BiModel
-    >>> model = BiModel()
-    >>> model.load('models/europarl.en-de.bin')
-    >>> model.word_vec('germany')
-    ...
+    >>> from multivec import BiModel
+    >>> model.load('models/news.en-fr.bin')
+    >>> model.src_model
+    <monomodel.MonoModel object at 0x7fbd5585d138>
+    >>> model.src_model.word_vec('france')
+    array([ 0.33916989,  1.50113714, -1.37295866, -1.49976909, -1.75945604,
+            0.17705017,  1.73590481,  2.26124287, -1.98765969, -2.01758456,
+           -1.00831568, -0.47787675, -0.19950299, -2.3867569 , -0.01307649,
+           ... ], dtype=float32)
 
 ## Usage examples
 First create two directories `data` and `models` at the root of the project, where you will put the text corpora and trained models.
@@ -93,14 +97,14 @@ This toolkit is part of the project KEHATH (https://kehath.imag.fr/) funded by t
 
 ## Citation
 
-When multivec is used in your research, please cite:
+When you use this toolkit, please cite:
 
-    @InProceedings{BerardLREC2016,
-    Title                    = {{MultiVec: a multilingual and multilevel representation learning toolkit for NLP}},
+    @InProceedings{MultiVecLREC2016,
+    Title                    = {{MultiVec: a Multilingual and Multilevel Representation Learning Toolkit for NLP}},
     Author                   = {Alexandre Bérard and Christophe Servan and Olivier Pietquin and Laurent Besacier},
     Booktitle                = {The 10th edition of the Language Resources and Evaluation Conference (LREC 2016)},
     Year                     = {2016},
-    Month                    = {Mai}
+    Month                    = {May}
     }
 
 ## References
