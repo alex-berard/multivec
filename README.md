@@ -78,7 +78,6 @@ To evaluate a trained English model on the analogical reasoning task, first expo
     bin/multivec-mono --load models/europarl.en.bin --save-vectors-bin models/vectors.bin
     bin/compute-accuracy models/vectors.bin 0 < word2vec/questions-words.txt
 
-
 ## TODO
 * better software architecture for paragraph vector/online paragraph vector
 * paragraph vector: DBOW model (similar to skip-gram)
@@ -86,6 +85,23 @@ To evaluate a trained English model on the analogical reasoning task, first expo
 * incremental training: possibility to train without erasing the model
 * GIZA alignment for bilingual model
 * bilingual paragraph vector training
+
+## Acknowledgement
+
+This toolkit is part of the project KEHATH (https://kehath.imag.fr/) funded by the French National Research Agency.
+
+
+## Citation
+
+When multivec is used in your research, please cite:
+
+    @InProceedings{BerardLREC2016,
+    Title                    = {{MultiVec: a multilingual and multilevel representation learning toolkit for NLP}},
+    Author                   = {Alexandre Bérard and Christophe Servan and Olivier Pietquin and Laurent Besacier},
+    Booktitle                = {The 10th edition of the Language Resources and Evaluation Conference (LREC 2016)},
+    Year                     = {2016},
+    Month                    = {Mai}
+    }
 
 ## References
 1. [Distributed Representations of Words and Phrases and their Compositionality](http://arxiv.org/abs/1310.4546), Mikolov et al. (2013)
