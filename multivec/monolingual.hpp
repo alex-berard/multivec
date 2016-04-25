@@ -74,7 +74,7 @@ public:
     float distance(const string& word1, const string& word2, int policy = 0) const; // 1 - cosine similarity
     float similarityNgrams(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two sequences of same size
     float similaritySentence(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two variable-size sequences
-    float softWER(const string& hyp, const string& ref, int policy = 0) const;
+    float softWER(const string& hyp, const string& ref, int policy = 0) const; // soft Word Error Rate
 
     int getDimension() const { return config.dimension; };
 

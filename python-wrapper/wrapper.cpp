@@ -200,13 +200,13 @@ static PyObject * monomodel_dimension(MonoModel *self) {
     return dim;
 }
 
-static PyObject * monomodel_soft_edit_distance(MonoModel *self, PyObject *args) {
+static PyObject * monomodel_soft_WER(MonoModel *self, PyObject *args) {
     const char *seq1;
     const char *seq2;
     if (!PyArg_ParseTuple(args, "ss", &seq1, &seq2))
         return NULL;
 
-    return PyFloat_FromDouble(self->model->softEditDistance(string(seq1), string(seq2)));
+    return PyFloat_FromDouble(self->model->softWER(string(seq1), string(seq2)));
 }
 
 static PyMethodDef monomodel_methods[] = {
@@ -222,7 +222,7 @@ static PyMethodDef monomodel_methods[] = {
     {"vocabulary", (PyCFunction)monomodel_vocabulary, METH_NOARGS, "Get words in vocabulary"},
     {"counts", (PyCFunction)monomodel_counts, METH_NOARGS, "Get words in vocabulary with their counts"},
     {"dimension", (PyCFunction)monomodel_dimension, METH_NOARGS, "Dimension of the embeddings"},
-    {"soft_edit_distance", (PyCFunction)monomodel_soft_edit_distance, METH_VARARGS, "Soft Levenshtein distance between two sequences"},
+    {"soft_WER", (PyCFunction)monomodel_soft_WER, METH_VARARGS, "Soft Word Error Rate between two sequences"},
     {NULL}  /* Sentinel */
 };
 
