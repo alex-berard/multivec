@@ -90,6 +90,19 @@ To evaluate a trained English model on the analogical reasoning task, first expo
 
 This toolkit is part of the project KEHATH (https://kehath.imag.fr/) funded by the French National Research Agency.
 
+
+## Citation
+
+When multivec is used in your research, please cite:
+
+    @InProceedings{BerardLREC2016,
+    Title                    = {{MultiVec: a multilingual and multilevel representation learning toolkit for NLP}},
+    Author                   = {Alexandre Bérard and Christophe Servan and Olivier Pietquin and Laurent Besacier},
+    Booktitle                = {The 10th edition of the Language Resources and Evaluation Conference (LREC 2016)},
+    Year                     = {2016},
+    Month                    = {Mai}
+    }
+
 ## References
 1. [Distributed Representations of Words and Phrases and their Compositionality](http://arxiv.org/abs/1310.4546), Mikolov et al. (2013)
 2. [Distributed Representations of Sentences and Documents](http://arxiv.org/abs/1405.4053), Le and Mikolov (2014)
