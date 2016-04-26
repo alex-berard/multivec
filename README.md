@@ -95,7 +95,7 @@ To evaluate a trained English model on the analogical reasoning task, first expo
 This toolkit is part of the project KEHATH (https://kehath.imag.fr/) funded by the French National Research Agency.
 
 
-## Citation
+## Scientific paper
 
 When you use this toolkit, please cite:
 
