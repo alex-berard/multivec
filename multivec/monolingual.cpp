@@ -262,6 +262,7 @@ void MonolingualModel::load(const string& filename) {
 
     ::load(infile, *this);
     initUnigramTable();
+    if (config.verbose) cout << "Vocabulary size: " << vocabulary.size() << endl;
 }
 
 void MonolingualModel::save(const string& filename) const {
