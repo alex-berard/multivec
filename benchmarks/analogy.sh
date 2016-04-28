@@ -4,6 +4,8 @@ corpus_trg=data/europarl/europarl.tok.de
 output=benchmarks/analogical_reasoning/results
 threads=16
 
+./benchmarks/download-europarl.sh
+
 mkdir -p $output/word2vec $output/multivec $output/multivec-bi
 
 ./benchmarks/analogical_reasoning/multivec.sh --train $corpus --iter 20 --dimension 100 --subsampling 1e-04 --window-size 5 --negative 5 --min-count 5 --threads $threads > $output/multivec/res1.txt
