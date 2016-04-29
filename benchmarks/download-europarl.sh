@@ -9,6 +9,7 @@ mkdir -p $data_dir
 cd $data_dir
 
 if [ ! -f europarl.en ]; then
+    echo "downloading europarl"
     wget http://www.statmt.org/europarl/v7/de-en.tgz
     tar xzf de-en.tgz
     rm de-en.tgz
@@ -18,12 +19,14 @@ if [ ! -f europarl.en ]; then
 fi
 
 if [ ! -f europarl.tok.en ]; then
+    echo "pre-processing europarl"
     $scripts/prepare-data.py europarl europarl.tok en de --normalize-punk --tokenize --lowercase --shuffle --threads $threads --scripts $scripts
 fi
 
 if [ ! -f europarl.cldc.en ]; then
-    $scripts/prepare-data.py europarl.tok europarl.cldc.tmp en de --normalize-numbers --scripts $scripts
-    $scripts/reduce-voc.py europarl.cldc.tmp europarl.cldc en de --min-count 5
-    rm europarl.cldc.tmp.*
+    echo "pre-processing europarl for CLDC"
+    $scripts/prepare-data.py europarl.tok europarl.cldc en de --normalize-numbers --scripts $scripts --min-count 5
 fi
+
+cd $this_dir
 

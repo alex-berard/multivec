@@ -4,19 +4,20 @@ from __future__ import division
 from itertools import izip, islice
 from random import shuffle
 from contextlib import contextmanager
+from collections import Counter
+from operator import itemgetter
 import argparse
 import subprocess
 import tempfile
 import os
 import logging
 import sys
-import shlex
 
 
 help_msg = """\
 Apply any number of those pre-processing steps to given corpus:
-Tokenization, lowercasing, shuffling, filtering of lines according to length, splitting into train/dev/test,
-punctuation normalization and digit normalization.
+Tokenization, lowercasing, shuffling, filtering of lines according to length,
+splitting into train/dev/test, punctuation and digit normalization.
 """
 
 temporary_files = []
@@ -68,8 +69,8 @@ def process_file(corpus, id_, args):
             processes.append([path_to('normalize-punctuation.perl'), '-l',
                               lang])
         if args.tokenize:
-            processes.append([path_to('tokenizer.perl'), '-l', lang, '-threads',
-                              str(args.threads)])
+            processes.append([path_to('tokenizer.perl'), '-l', lang,
+                              '-threads', str(args.threads)])
         if args.lowercase:
             processes.append([path_to('lowercase.perl')])
         if args.normalize_numbers:
@@ -87,18 +88,12 @@ def process_file(corpus, id_, args):
         return output_.name
 
 
-def process_corpus(corpus, args, output_corpus=None):
+def process_corpus(corpus, args):
     input_filenames = [process_file(corpus, i, args)
                  for i in range(len(args.extensions))]
 
-    output_filenames = None
-    if output_corpus is not None:
-        output_filenames = ['{}.{}'.format(output_corpus, ext)
-                            for ext in args.extensions]
-
     with open_files(input_filenames) as input_files,\
-            (open_temp_files(len(input_filenames)) if not output_filenames
-            else open_files(output_filenames, 'w')) as output_files:
+         open_temp_files(len(input_filenames)) as output_files:
 
         # (lazy) sequence of sentence tuples
         all_lines = (lines for lines in izip(*input_files) if
@@ -117,46 +112,81 @@ def process_corpus(corpus, args, output_corpus=None):
         return [f.name for f in output_files]
 
 
-def split_corpus(filenames, dest_corpora, extensions):
-      
+def split_corpus(filenames, sizes, args):
     with open_files(filenames) as input_files:
-        for corpus, size in reversed(dest_corpora):  # puts train corpus last
-            if size != 0:
-                output_filenames = ['{}.{}'.format(corpus, ext)
-                                    for ext in extensions]
-                with open_files(output_filenames, mode='w') as output_files:
-                    for input_file, output_file in zip(input_files, output_files):
-                        output_file.writelines(islice(input_file, size))
-                        # If size is None, this will read the whole file.
-                        # That's why we put train last.
+        output_filenames = []
+    
+        for size in sizes:  # puts train corpus last
+            if size == 0:
+                output_filenames.append(None)
+                continue
+                
+            with open_temp_files(num=len(args.extensions)) as output_files:
+                for input_file, output_file in zip(input_files, output_files):
+                    # If size is None, this will read the whole file.
+                    # That's why we put train last.
+                    output_file.writelines(islice(input_file, size))
+                output_filenames.append([f.name for f in output_files])
 
-            
+        return output_filenames
+
+
+def get_vocab(filename, args):
+    counts = Counter()
+    with open(filename) as file_:
+        for line in file_:
+            for word in line.split():
+                counts[word] += 1
+    
+    words = [(w, c) for w, c in counts.iteritems() if c >= args.min_count]
+    
+    max_vocab_size = args.max_vocab_size
+    if 0 < max_vocab_size < len(words):
+        words = sorted(words, key=itemgetter(1), reverse=True)[:max_vocab_size]
+    
+    return set(w for w, _ in words)
+
+
+def move_and_filter(filenames, output_corpus, args, vocabs=None):
+    output_filenames = ['{}.{}'.format(output_corpus, ext)
+                        for ext in args.extensions]
+
+    if not vocabs:
+        for filename, output_filename in zip(filenames, output_filenames):
+            os.rename(filename, output_filename)
+        return
+    
+    for filename, output_filename, vocab in zip(filenames, output_filenames,
+                                                vocabs):
+        with open(filename) as input_file,\
+             open(output_filename, 'w') as output_file:
+        
+            for line in input_file:
+                line = ' '.join(w if w in vocab else args.unk_symbol
+                                for w in line.split())
+                
+                output_file.write(line + '\n')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=help_msg,
-            formatter_class=argparse.RawDescriptionHelpFormatter)
+        formatter_class=argparse.RawDescriptionHelpFormatter)
 
     parser.add_argument('corpus', help='training corpus')
-    parser.add_argument('output_corpus',
-                        help='directory where the files will be copied')
+    parser.add_argument('output_corpus', help='destination corpus')
     parser.add_argument('extensions', nargs='+', help='list of extensions')
-
     parser.add_argument('--dev-corpus', help='development corpus')
     parser.add_argument('--test-corpus', help='test corpus')
-
     parser.add_argument('--scripts', help='path to script directory '
                         '(None if in $PATH)', default='scripts')
-
     parser.add_argument('--dev-size', type=int,
                         help='size of development corpus', default=0)
     parser.add_argument('--test-size', type=int,
                         help='size of test corpus', default=0)
     parser.add_argument('--train-size', type=int,
-                        help='size of training corpus (defaults to maximum)')
-
+                        help='size of training corpus (default: maximum)')
     parser.add_argument('--lang', nargs='+', help='optional list of language '
-                                                  'codes (when different '\
-                                                  'than file extensions)')
-
+                        'codes (when different than file extensions)')
     parser.add_argument('--normalize-punk', help='normalize punctuation',
                         action='store_true')
     parser.add_argument('--normalize-numbers', help='normalize numbers '
@@ -166,17 +196,18 @@ if __name__ == '__main__':
     parser.add_argument('--shuffle', help='shuffle the corpus',
                         action='store_true')
     parser.add_argument('--tokenize', dest='tokenize',
-                        help='toggle tokenization', action='store_true')
-
+                        help='tokenize the corpus', action='store_true')
     parser.add_argument('-v', '--verbose', help='verbose mode',
                         action='store_true')
-
     parser.add_argument('--min', type=int, default=1,
                         help='min number of tokens per line')
     parser.add_argument('--max', type=int, default=50,
                         help='max number of tokens per line (0 for no limit)')
-
-    parser.add_argument('--threads', type=int, default=16)
+    parser.add_argument('--threads', type=int, default=16,
+                        help='number of threads for tokenizer')
+    parser.add_argument('--min-count', type=int, default=0)
+    parser.add_argument('--max-vocab-size', type=int, default=0)
+    parser.add_argument('--unk-symbol', default='<UNK>')
 
     args = parser.parse_args()
 
@@ -195,36 +226,51 @@ if __name__ == '__main__':
         logging.info('creating directory')
         os.makedirs(output_dir)
 
-    output_train = args.output_corpus
-    output_test = args.output_corpus + '.test'
-    output_dev = args.output_corpus + '.dev'
-
     try:
-        if args.dev_corpus:
-            logging.info('processing dev corpus')
-            process_corpus(args.dev_corpus, args, output_dev)
-        if args.test_corpus:
-            logging.info('processing test corpus')
-            process_corpus(args.test_corpus, args, output_test)
-
-        logging.info('processing train corpus')
-        if args.dev_corpus and args.test_corpus:
-            process_corpus(args.corpus, args, output_train)
-        else:
-            filenames = process_corpus(args.corpus, args)                
-            dest_corpora = [(output_train, args.train_size)]
-            if not args.test_corpus:
-                dest_corpora.append((output_test, args.test_size))
-            if not args.dev_corpus:
-                dest_corpora.append((output_dev, args.dev_size))
-
+        input_corpora = (args.dev_corpus, args.test_corpus, args.corpus)
+        output_corpora = (args.output_corpus + '.dev' ,
+                          args.output_corpus + '.test',
+                          args.output_corpus)
+        
+        # list of temporary files for each corpus (dev, test, train)
+        # a value of None means no such corpus
+        filenames = [None, None, None]
+        for i, corpus in enumerate(input_corpora):
+            if corpus is not None:
+                filenames[i] = process_corpus(corpus, args)
+        
+        # split files
+        sizes = [
+            args.dev_size if not args.dev_corpus else 0,
+            args.test_size if not args.test_corpus else 0,
+            args.train_size
+        ]
+        
+        if any(sizes):
             logging.info('splitting files')
-            split_corpus(filenames, dest_corpora, args.extensions)
-
+            # returns a list in the same format as `filenames`
+            split_filenames = split_corpus(filenames[-1], sizes, args)
+            
+            # union of `filenames` and `split_filenames`
+            for i, filenames_ in enumerate(split_filenames):
+                if filenames_ is not None:
+                    filenames[i] = filenames_
+        
+        vocabs = None
+        if args.max_vocab_size or args.min_count:
+            # vocabularies are created from training corpus
+            vocabs = [get_vocab(filename, args) for filename in filenames[-1]]
+            
+        # move temporary files to their destination
+        for filenames_, output_corpus in zip(filenames, output_corpora):
+            if filenames_ is not None:
+                move_and_filter(filenames_, output_corpus, args, vocabs)
+        
     finally:
         logging.info('removing temporary files')
-        for name in temporary_files:  # remove temporary files
+        for name in temporary_files:
             try:
                 os.remove(name)
             except OSError:
                 pass
+
