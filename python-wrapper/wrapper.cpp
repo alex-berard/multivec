@@ -144,6 +144,33 @@ static PyObject * monomodel_similarity(MonoModel *self, PyObject *args) {
     return PyFloat_FromDouble(self->model->similarity(string(word1), string(word2)));
 }
 
+static PyObject * monomodel_distance(MonoModel *self, PyObject *args) {
+    const char *word1;
+    const char *word2;
+    if (!PyArg_ParseTuple(args, "ss", &word1, &word2))
+        return NULL;
+
+    return PyFloat_FromDouble(self->model->distance(string(word1), string(word2)));
+}
+
+static PyObject * monomodel_similarity_sentence(MonoModel *self, PyObject *args) {
+    const char *seq1;
+    const char *seq2;
+    if (!PyArg_ParseTuple(args, "ss", &seq1, &seq2))
+        return NULL;
+
+    return PyFloat_FromDouble(self->model->similaritySentence(string(seq1), string(seq2)));
+}
+
+static PyObject * monomodel_similarity_ngrams(MonoModel *self, PyObject *args) {
+    const char *seq1;
+    const char *seq2;
+    if (!PyArg_ParseTuple(args, "ss", &seq1, &seq2))
+        return NULL;
+
+    return PyFloat_FromDouble(self->model->similarityNgrams(string(seq1), string(seq2)));
+}
+
 static PyObject * monomodel_closest(MonoModel *self, PyObject *args) {
     const char *word;
     int n;
@@ -217,8 +244,11 @@ static PyMethodDef monomodel_methods[] = {
     {"word_vec", (PyCFunction)monomodel_word_vec, METH_VARARGS, "Word embedding"},
     {"save_embeddings", (PyCFunction)monomodel_save_embeddings, METH_VARARGS, "Save word embeddings in the word2vec format"},
     {"closest", (PyCFunction)monomodel_closest, METH_VARARGS, "Closest words to given word"},
-    {"closest_from_vec", (PyCFunction)monomodel_closest_from_vec, METH_VARARGS, "Closest words to given vector"},
+    //{"closest_from_vec", (PyCFunction)monomodel_closest_from_vec, METH_VARARGS, "Closest words to given vector"},
     {"similarity", (PyCFunction)monomodel_similarity, METH_VARARGS, "Similarity between two words"},
+    {"distance", (PyCFunction)monomodel_distance, METH_VARARGS, "Distance between two words"},
+    {"similarity_sentence", (PyCFunction)monomodel_similarity_sentence, METH_VARARGS, "Similarity between two sequences"},
+    {"similarity_ngrams", (PyCFunction)monomodel_similarity_ngrams, METH_VARARGS, "Similarity between two sequences of n-grams"},
     {"vocabulary", (PyCFunction)monomodel_vocabulary, METH_NOARGS, "Get words in vocabulary"},
     {"counts", (PyCFunction)monomodel_counts, METH_NOARGS, "Get words in vocabulary with their counts"},
     {"dimension", (PyCFunction)monomodel_dimension, METH_NOARGS, "Dimension of the embeddings"},
@@ -343,6 +373,68 @@ static PyObject * bimodel_load(BiModel *self, PyObject *args) {
     }
 }
 
+static PyObject * bimodel_similarity(BiModel *self, PyObject *args) {
+    const char *word1;
+    const char *word2;
+    if (!PyArg_ParseTuple(args, "ss", &word1, &word2))
+        return NULL;
+
+    return PyFloat_FromDouble(self->model->similarity(string(word1), string(word2)));
+}
+
+static PyObject * bimodel_distance(BiModel *self, PyObject *args) {
+    const char *word1;
+    const char *word2;
+    if (!PyArg_ParseTuple(args, "ss", &word1, &word2))
+        return NULL;
+
+    return PyFloat_FromDouble(self->model->distance(string(word1), string(word2)));
+}
+
+static PyObject * bimodel_similarity_sentence(BiModel *self, PyObject *args) {
+    const char *seq1;
+    const char *seq2;
+    if (!PyArg_ParseTuple(args, "ss", &seq1, &seq2))
+        return NULL;
+
+    return PyFloat_FromDouble(self->model->similaritySentence(string(seq1), string(seq2)));
+}
+
+static PyObject * bimodel_similarity_ngrams(BiModel *self, PyObject *args) {
+    const char *seq1;
+    const char *seq2;
+    if (!PyArg_ParseTuple(args, "ss", &seq1, &seq2))
+        return NULL;
+
+    return PyFloat_FromDouble(self->model->similarityNgrams(string(seq1), string(seq2)));
+}
+
+static PyObject * bimodel_closest(BiModel *self, PyObject *args) {
+    const char *word;
+    int n;
+    if (!PyArg_ParseTuple(args, "si", &word, &n))
+        return NULL;
+
+    vector<pair<string, float>> table = self->model->closest(string(word), n);
+    PyObject * res = PyList_New(0);
+    for (auto it = table.begin(); it != table.end(); ++it) {
+        PyObject * item = Py_BuildValue("sf", it->first.c_str(), it->second);
+        PyList_Append(res, item);
+    }
+    return res;
+}
+
+/*
+static PyObject * bimodel_soft_WER(BiModel *self, PyObject *args) {
+    const char *seq1;
+    const char *seq2;
+    if (!PyArg_ParseTuple(args, "ss", &seq1, &seq2))
+        return NULL;
+
+    return PyFloat_FromDouble(self->model->softWER(string(seq1), string(seq2)));
+}
+*/
+
 static PyMemberDef bimodel_members[] = {
     {"src_model", T_OBJECT_EX, offsetof(BiModel, src_model), 0, "Source model"},
     {"trg_model", T_OBJECT_EX, offsetof(BiModel, trg_model), 0, "Target model"},
@@ -352,6 +444,12 @@ static PyMethodDef bimodel_methods[] = {
     {"train", (PyCFunction)bimodel_train, METH_VARARGS, "Train a bilingual model"},
     {"save", (PyCFunction)bimodel_save, METH_VARARGS, "Save model to disk"},
     {"load", (PyCFunction)bimodel_load, METH_VARARGS, "Load model from disk"},
+    {"closest", (PyCFunction)bimodel_closest, METH_VARARGS, "Closest words to given word"},
+    {"similarity", (PyCFunction)bimodel_similarity, METH_VARARGS, "Similarity between two words"},
+    {"distance", (PyCFunction)bimodel_distance, METH_VARARGS, "Distance between two words"},
+    {"similarity_sentence", (PyCFunction)bimodel_similarity_sentence, METH_VARARGS, "Similarity between two sequences"},
+    {"similarity_ngrams", (PyCFunction)bimodel_similarity_ngrams, METH_VARARGS, "Similarity between two sequences of n-grams"},
+    //{"soft_WER", (PyCFunction)bimodel_soft_WER, METH_VARARGS, "Soft Word Error Rate between two sequences"},
     {NULL}  /* Sentinel */
 };
 

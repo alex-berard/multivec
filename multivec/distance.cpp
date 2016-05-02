@@ -220,22 +220,23 @@ float MonolingualModel::softWER(const string& hyp, const string& ref, int policy
 
 
 /**
- * @brief Compute cosine similarity between wordSrc in the source model and wordTgt in the target model.
+ * @brief Compute cosine similarity between word1 in the source model and word2 in the target model.
  * For the score to be in [0,1], the weights need to be normalized beforehand.
- * Return 0 if wordSrc or wordTgt is unknown.
+ * Return 0 if word1 or word2 is unknown.
  */
-float BilingualModel::similarity(const string& wordSrc, const string& wordTgt, int policy) const {
-    auto itSrc = src_model.vocabulary.find(wordSrc);
-    auto itTgt = trg_model.vocabulary.find(wordTgt);
+float BilingualModel::similarity(const string& word1, const string& word2, int policy) const {
+    auto it1 = src_model.vocabulary.find(word1);
+    auto it2 = trg_model.vocabulary.find(word2);
 
-    if (itSrc == src_model.vocabulary.end() || itTgt == trg_model.vocabulary.end()) {
+    if (it1 == src_model.vocabulary.end() || it2 == trg_model.vocabulary.end()) {
         return 0.0;
     } else {
-        vec vSrc = src_model.wordVec(itSrc->second.index, policy);
-        vec vTgt = trg_model.wordVec(itTgt->second.index, policy);
-        return cosineSimilarity(vSrc, vTgt);
+        vec v1 = src_model.wordVec(it1->second.index, policy);
+        vec v2 = trg_model.wordVec(it2->second.index, policy);
+        return cosineSimilarity(v1, v2);
     }
 }
+
 
 float BilingualModel::distance(const string& wordSrc, const string& wordTgt, int policy) const {
     return 1 - similarity(wordSrc, wordTgt, policy);
