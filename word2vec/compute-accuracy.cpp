@@ -156,46 +156,41 @@ void computeAccuracy(istream& infile, map<string, vec>& embeddings, bool verbose
          << setprecision(3) << 100.0 * total / questions << "%\n";
 }
 
-void computeAccuracy(const string& model_filename, istream& infile, int max_vocabulary_size) {
+void computeAccuracy(const string& model_filename, istream& infile, long long max_vocabulary_size) {
     map<string, vec> embeddings;
-    FILE* model_file = fopen(model_filename.c_str(), "rb");
+    ifstream model_file(model_filename);
 
-    if (model_file == NULL) {
-        printf("Input file not found\n");
-        return;
+    if (!model_file.is_open()) {
+        throw runtime_error("couldn't open file " + model_filename);
     }
 
-    long long words;
-    long long size;
-    char word[256];
-
-    fscanf(model_file, "%lld", &words);
-    fscanf(model_file, "%lld", &size);
+    string line;
+    long long words, size;
+    model_file >> words >> size;    
+    getline(model_file, line);
 
     cout << "Vocabulary size: " << words << endl;
     cout << "Embeddings size: " << size << endl;
 
     if (max_vocabulary_size > 0) {
-        words = min((long long)max_vocabulary_size, words);
+        words = min(max_vocabulary_size, words);
     }
 
-    for (int i = 0; i < words; ++i) {
+    for (size_t i = 0; i < words; ++i) {
         vec v(size);
         int j = 0;
 
-        while (true) {
-            char c = fgetc(model_file);
-            word[j] = c;
-            if (feof(model_file) || (c == ' ')) break;
-            if (c != '\n') j++;
-        }
-        word[j] = '\0';
+        getline(model_file, line);
+        cout << line << endl << endl;
+        vector<string> tokens = split(line);
+        string word = tokens.front();
 
-        for (int c = 0; c < size; ++c) {
-            fread(&v[c], sizeof(float), 1, model_file);
+        cout << word << endl;
+        for (size_t j = 0; j < size; ++j) {
+            v[j] = std::stof(tokens[j + 1]);
         }
-
-        embeddings.insert({string(word), v});
+        
+        embeddings.insert({word, v});
     }
 
     computeAccuracy(infile, embeddings, true);
