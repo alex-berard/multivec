@@ -181,11 +181,9 @@ void computeAccuracy(const string& model_filename, istream& infile, long long ma
         int j = 0;
 
         getline(model_file, line);
-        cout << line << endl << endl;
         vector<string> tokens = split(line);
         string word = tokens.front();
 
-        cout << word << endl;
         for (size_t j = 0; j < size; ++j) {
             v[j] = std::stof(tokens[j + 1]);
         }
