@@ -23,7 +23,20 @@ static PyObject * monomodel_new(PyTypeObject *type, PyObject *args, PyObject *kw
 }
 
 static int monomodel_init(MonoModel *self, PyObject *args, PyObject *kwds) {
-    self->model = new MonolingualModel();
+    const char *model_file = NULL;
+    if (!PyArg_ParseTuple(args, "|s", &model_file))
+        return NULL;
+
+    try {
+        if (model_file != NULL) {
+            self->model = new MonolingualModel(model_file);
+        } else {
+            self->model = new MonolingualModel();
+        }
+    } catch (...) {
+        PyErr_SetString(PyExc_Exception, "Couldn't load model");
+        return NULL;
+    }
     return 0;
 }
 
@@ -206,27 +219,6 @@ static PyObject * monomodel_counts(MonoModel *self) {
     return res;
 }
 
-static PyObject * monomodel_closest_from_vec(MonoModel *self, PyObject *args) {
-    PyObject * vec;
-    if (!PyArg_ParseTuple(args, "o&", vec, PyArray_Converter)) // FIXME
-        return NULL;
-    /*
-    PyObject * res = PyList_New(0);
-    vector<pair<string, int>> words = self->model->getWords();
-    for (auto it = words.begin(); it != words.end(); ++it) {
-        PyObject * item = Py_BuildValue("si", it->first.c_str(), it->second);
-        PyList_Append(res, item);
-    }
-    return res;
-    */
-    return 0;
-}
-
-static PyObject * monomodel_dimension(MonoModel *self) {
-    PyObject * dim = Py_BuildValue("i", self->model->getDimension());
-    return dim;
-}
-
 static PyObject * monomodel_soft_WER(MonoModel *self, PyObject *args) {
     const char *seq1;
     const char *seq2;
@@ -236,30 +228,91 @@ static PyObject * monomodel_soft_WER(MonoModel *self, PyObject *args) {
     return PyFloat_FromDouble(self->model->softWER(string(seq1), string(seq2)));
 }
 
+static PyObject * monomodel_getdimension(MonoModel *self, void *closure) {
+    PyObject * dim = Py_BuildValue("i", self->model->getDimension());
+    return dim;
+}
+
+static PyObject * monomodel_set_config(MonoModel *self, PyObject *args, PyObject *keywds) {
+    Config* config = &self->model->config;
+
+    static char *kwlist[] = {"learning_rate", "dimension", "min_count", "iterations", "window_size", "threads",
+                             "subsampling", "verbose", "hierarchical_softmax", "skip_gram", "negative", "sent_vector",
+                             NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, keywds, "|fiiiiifbbbib", kwlist,
+                                     &config->starting_alpha, &config->dimension, &config->min_count,
+                                     &config->max_iterations, &config->window_size, &config->n_threads,
+                                     &config->subsampling, &config->verbose, &config->hierarchical_softmax,
+                                     &config->skip_gram, &config->negative, &config->sent_vector))
+        return NULL;
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject * monomodel_print_config(MonoModel *self) {
+    self->model->config.print();
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+static PyObject * monomodel_get_config(MonoModel *self) {
+    Config* config = &self->model->config;
+    PyObject *res = PyDict_New();
+    PyDict_SetItemString(res, "learning_rate", Py_BuildValue("f", config->starting_alpha));
+    PyDict_SetItemString(res, "dimension", Py_BuildValue("i", config->dimension));
+    PyDict_SetItemString(res, "min_count", Py_BuildValue("i", config->min_count));
+    PyDict_SetItemString(res, "iterations", Py_BuildValue("i", config->max_iterations));
+    PyDict_SetItemString(res, "window_size", Py_BuildValue("i", config->window_size));
+    PyDict_SetItemString(res, "threads", Py_BuildValue("i", config->n_threads));
+    PyDict_SetItemString(res, "subsampling", Py_BuildValue("f", config->subsampling));
+    PyDict_SetItemString(res, "verbose", config->verbose ? Py_True : Py_False);
+    PyDict_SetItemString(res, "hierarchical_softmax", config->hierarchical_softmax ? Py_True : Py_False);
+    PyDict_SetItemString(res, "skip_gram", config->skip_gram ? Py_True : Py_False);
+    PyDict_SetItemString(res, "negative", Py_BuildValue("i", config->negative));
+    PyDict_SetItemString(res, "sent_vector", config->sent_vector ? Py_True : Py_False);
+    return res;
+}
+
+
 static PyMethodDef monomodel_methods[] = {
-    {"train", (PyCFunction)monomodel_train, METH_VARARGS, "Train the model"},
-    {"load", (PyCFunction)monomodel_load, METH_VARARGS, "Load model from the disk"},
-    {"save", (PyCFunction)monomodel_save, METH_VARARGS, "Save model to disk"},
+    {"train", (PyCFunction)monomodel_train, METH_VARARGS,
+     "train(name, initialize=True)\n\n"
+     "Train the model on given training file"},
+    {"load", (PyCFunction)monomodel_load, METH_VARARGS,
+     "load(name)\n\n"
+     "Load model from disk"},
+    {"save", (PyCFunction)monomodel_save, METH_VARARGS,
+     "save(name)\n\n"
+     "Save model to disk"},
     {"sent_vec", (PyCFunction)monomodel_sent_vec, METH_VARARGS, "Inference step for paragraphs"},
     {"word_vec", (PyCFunction)monomodel_word_vec, METH_VARARGS, "Word embedding"},
     {"save_embeddings", (PyCFunction)monomodel_save_embeddings, METH_VARARGS, "Save word embeddings in the word2vec format"},
     {"closest", (PyCFunction)monomodel_closest, METH_VARARGS, "Closest words to given word"},
-    //{"closest_from_vec", (PyCFunction)monomodel_closest_from_vec, METH_VARARGS, "Closest words to given vector"},
     {"similarity", (PyCFunction)monomodel_similarity, METH_VARARGS, "Similarity between two words"},
     {"distance", (PyCFunction)monomodel_distance, METH_VARARGS, "Distance between two words"},
     {"similarity_sentence", (PyCFunction)monomodel_similarity_sentence, METH_VARARGS, "Similarity between two sequences"},
     {"similarity_ngrams", (PyCFunction)monomodel_similarity_ngrams, METH_VARARGS, "Similarity between two sequences of n-grams"},
     {"vocabulary", (PyCFunction)monomodel_vocabulary, METH_NOARGS, "Get words in vocabulary"},
     {"counts", (PyCFunction)monomodel_counts, METH_NOARGS, "Get words in vocabulary with their counts"},
-    {"dimension", (PyCFunction)monomodel_dimension, METH_NOARGS, "Dimension of the embeddings"},
     {"soft_WER", (PyCFunction)monomodel_soft_WER, METH_VARARGS, "Soft Word Error Rate between two sequences"},
-    {NULL}  /* Sentinel */
+    {"set_config", (PyCFunction)monomodel_set_config, METH_VARARGS|METH_KEYWORDS, "Change model configuration"},
+    {"get_config", (PyCFunction)monomodel_get_config, METH_NOARGS, "Get configuration dict"},
+    {"print_config", (PyCFunction)monomodel_print_config, METH_NOARGS, "Print configuration"},
+    {NULL}
+};
+
+static PyGetSetDef monomodel_getseters[] = {
+    {"dimension", (getter)monomodel_getdimension, NULL, "embedding dimension", NULL},
+    {NULL}
 };
 
 static PyTypeObject MonoModelType = {
     PyObject_HEAD_INIT(NULL)
     0,                            /*ob_size*/
-    "monomodel.MonoModel",         /*tp_name*/
+    "MonolingualModel",         /*tp_name*/
     sizeof(MonoModel),            /*tp_basicsize*/
     0,                            /*tp_itemsize*/
     (destructor)monomodel_dealloc, /*tp_dealloc*/
@@ -287,7 +340,7 @@ static PyTypeObject MonoModelType = {
     0,		                      /* tp_iternext */
     monomodel_methods,             /* tp_methods */
     monomodel_members,             /* tp_members */
-    0,                            /* tp_getset */
+    monomodel_getseters,          /* tp_getset */
     0,                            /* tp_base */
     0,                            /* tp_dict */
     0,                            /* tp_descr_get */
@@ -320,7 +373,20 @@ static PyObject * bimodel_new(PyTypeObject *type, PyObject *args, PyObject *kwds
 }
 
 static int bimodel_init(BiModel *self, PyObject *args, PyObject *kwds) {
-    self->model = new BilingualModel();
+    const char *model_file = NULL;
+    if (!PyArg_ParseTuple(args, "|s", &model_file))
+        return NULL;
+
+    try {
+        if (model_file != NULL) {
+            self->model = new BilingualModel(model_file);
+        } else {
+            self->model = new BilingualModel();
+        }
+    } catch (...) {
+        PyErr_SetString(PyExc_Exception, "Couldn't load model");
+        return NULL;
+    }
 
     self->src_model = monomodel_new(&MonoModelType, NULL, NULL);
     ((MonoModel *)self->src_model)->model = &self->model->src_model;
@@ -409,32 +475,6 @@ static PyObject * bimodel_similarity_ngrams(BiModel *self, PyObject *args) {
     return PyFloat_FromDouble(self->model->similarityNgrams(string(seq1), string(seq2)));
 }
 
-static PyObject * bimodel_closest(BiModel *self, PyObject *args) {
-    const char *word;
-    int n;
-    if (!PyArg_ParseTuple(args, "si", &word, &n))
-        return NULL;
-
-    vector<pair<string, float>> table = self->model->closest(string(word), n);
-    PyObject * res = PyList_New(0);
-    for (auto it = table.begin(); it != table.end(); ++it) {
-        PyObject * item = Py_BuildValue("sf", it->first.c_str(), it->second);
-        PyList_Append(res, item);
-    }
-    return res;
-}
-
-/*
-static PyObject * bimodel_soft_WER(BiModel *self, PyObject *args) {
-    const char *seq1;
-    const char *seq2;
-    if (!PyArg_ParseTuple(args, "ss", &seq1, &seq2))
-        return NULL;
-
-    return PyFloat_FromDouble(self->model->softWER(string(seq1), string(seq2)));
-}
-*/
-
 static PyMemberDef bimodel_members[] = {
     {"src_model", T_OBJECT_EX, offsetof(BiModel, src_model), 0, "Source model"},
     {"trg_model", T_OBJECT_EX, offsetof(BiModel, trg_model), 0, "Target model"},
@@ -444,19 +484,17 @@ static PyMethodDef bimodel_methods[] = {
     {"train", (PyCFunction)bimodel_train, METH_VARARGS, "Train a bilingual model"},
     {"save", (PyCFunction)bimodel_save, METH_VARARGS, "Save model to disk"},
     {"load", (PyCFunction)bimodel_load, METH_VARARGS, "Load model from disk"},
-    {"closest", (PyCFunction)bimodel_closest, METH_VARARGS, "Closest words to given word"},
     {"similarity", (PyCFunction)bimodel_similarity, METH_VARARGS, "Similarity between two words"},
     {"distance", (PyCFunction)bimodel_distance, METH_VARARGS, "Distance between two words"},
     {"similarity_sentence", (PyCFunction)bimodel_similarity_sentence, METH_VARARGS, "Similarity between two sequences"},
     {"similarity_ngrams", (PyCFunction)bimodel_similarity_ngrams, METH_VARARGS, "Similarity between two sequences of n-grams"},
-    //{"soft_WER", (PyCFunction)bimodel_soft_WER, METH_VARARGS, "Soft Word Error Rate between two sequences"},
-    {NULL}  /* Sentinel */
+    {NULL}
 };
 
 static PyTypeObject BiModelType = {
     PyObject_HEAD_INIT(NULL)
     0,                            /*ob_size*/
-    "bimodel.BiModel",                /*tp_name*/
+    "BilingualModel",                /*tp_name*/
     sizeof(BiModel),                /*tp_basicsize*/
     0,                            /*tp_itemsize*/
     (destructor)bimodel_dealloc, /*tp_dealloc*/
@@ -503,8 +541,6 @@ initmultivec(void)
 {
     PyObject* m;
 
-    MonoModelType.tp_new = PyType_GenericNew;
-    BiModelType.tp_new = PyType_GenericNew;
     if (PyType_Ready(&MonoModelType) < 0 || PyType_Ready(&BiModelType) < 0)
         return;
 
@@ -513,6 +549,6 @@ initmultivec(void)
 
     Py_INCREF(&MonoModelType);
     Py_INCREF(&BiModelType);
-    PyModule_AddObject(m, "MonoModel", (PyObject *)&MonoModelType);
-    PyModule_AddObject(m, "BiModel", (PyObject *)&BiModelType);
+    PyModule_AddObject(m, "MonolingualModel", (PyObject *)&MonoModelType);
+    PyModule_AddObject(m, "BilingualModel", (PyObject *)&BiModelType);
 }

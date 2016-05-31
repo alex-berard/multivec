@@ -123,7 +123,6 @@ struct Config {
     bool skip_gram; // set to true to use skip-gram model instead of CBOW
     int negative; // number of negative samples used for the negative sampling training algorithm
     bool sent_vector; // includes sentence vectors in the training
-    bool freeze; // freezes all parameters (weights and vocabulary) except sentence vectors (used for online paragraph vector)
 
     Config() :
         starting_alpha(0.05),
@@ -137,8 +136,7 @@ struct Config {
         hierarchical_softmax(false),
         skip_gram(false),
         negative(5),
-        sent_vector(false),
-        freeze(false) // not serialized
+        sent_vector(false)
         {}
 
     virtual void print() const {
@@ -154,7 +152,6 @@ struct Config {
         std::cout << "HS:          " << hierarchical_softmax << std::endl;
         std::cout << "negative:    " << negative << std::endl;
         std::cout << "sent vector: " << sent_vector << std::endl;
-        std::cout << "freeze:      " << freeze << std::endl;
     }
 };
 

@@ -13,12 +13,15 @@ private:
     mat output_weights_hs; // output weights for hierarchical softmax
     mat sent_weights;
 
-    long long training_words; // total number of words in training file (used to compute word frequencies)
-    long long training_lines;
-    long long words_processed;
+    long long vocab_word_count; // property of vocabulary (sum of all word counts)
 
+    // training file stats (properties of this training instance)
+    long long training_words; // total number of words in training file (used for progress estimation)
+    long long training_lines;
+    // training state
+    long long words_processed;
     float alpha;
-    Config config;
+
     unordered_map<string, HuffmanNode> vocabulary;
     vector<HuffmanNode*> unigram_table;
 
@@ -51,20 +54,21 @@ private:
     vec wordVec(int index, int policy) const;
 
 public:
-    MonolingualModel() : training_words(0), training_lines(0), words_processed(0) {} // model with default configuration
-    MonolingualModel(Config config) : training_words(0), training_lines(0), words_processed(0), config(config) {}
+    Config config;
 
-    // TODO: put policy in config
+    MonolingualModel() {}
+    MonolingualModel(const string& model_file) { load(model_file); }
+    MonolingualModel(Config config) : config(config) {}
+
     vec wordVec(const string& word, int policy = 0) const; // word embedding
     vec sentVec(const string& sentence, int policy = 0); // paragraph vector (Le & Mikolov)
     void sentVec(istream& infile, int policy); // compute paragraph vector for all lines in a stream
 
-    void train(const string& training_file); // training from scratch (resets vocabulary and weights)
+    void train(const string& training_file, bool initialize = true); // training from scratch (resets vocabulary and weights)
 
     void saveVectorsBin(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec binary format
     void saveVectors(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec text format
     void saveSentVectors(const string &filename) const;
-
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model
 

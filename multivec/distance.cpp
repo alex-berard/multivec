@@ -197,8 +197,8 @@ float MonolingualModel::softWER(const string& hyp, const string& ref, int policy
 
 	for (size_t i = 1; i <= len1; ++i) {
 		for (size_t j = 1; j <= len2; ++j) {
-		    // use distance between word embeddings as a substitution cost
-		    // FIXME distances tend to be well below 1, even for very different words.
+		    // uses distance between word embeddings as a substitution cost
+		    // FIXME: distances tend to be well below 1, even for very different words.
 		    // This is rather unbalanced with deletion and insertion costs, which remain at 1.
 		    // Also, distance can (but will rarely) be greater than 1.
             float sub_cost = distance(s1[i - 1], s2[j - 1], policy);
@@ -212,6 +212,7 @@ float MonolingualModel::softWER(const string& hyp, const string& ref, int policy
 	return d[len1][len2] / len2;
 }
 
+
 /**
  *
  * Bilingual Methods
@@ -224,9 +225,9 @@ float MonolingualModel::softWER(const string& hyp, const string& ref, int policy
  * For the score to be in [0,1], the weights need to be normalized beforehand.
  * Return 0 if word1 or word2 is unknown.
  */
-float BilingualModel::similarity(const string& word1, const string& word2, int policy) const {
-    auto it1 = src_model.vocabulary.find(word1);
-    auto it2 = trg_model.vocabulary.find(word2);
+float BilingualModel::similarity(const string& src_word, const string& trg_word, int policy) const {
+    auto it1 = src_model.vocabulary.find(src_word);
+    auto it2 = trg_model.vocabulary.find(trg_word);
 
     if (it1 == src_model.vocabulary.end() || it2 == trg_model.vocabulary.end()) {
         return 0.0;
@@ -238,92 +239,52 @@ float BilingualModel::similarity(const string& word1, const string& word2, int p
 }
 
 
-float BilingualModel::distance(const string& wordSrc, const string& wordTgt, int policy) const {
-    return 1 - similarity(wordSrc, wordTgt, policy);
+float BilingualModel::distance(const string& src_word, const string& trg_word, int policy) const {
+    return 1 - similarity(src_word, trg_word, policy);
 }
 
 
-/**
- * @brief Return an ordered list of the `n` closest target words to the source word `word` according to cosine similarity.
- */
-vector<pair<string, float>> BilingualModel::closest(const string& word, int n, int policy) const {
+vector<pair<string, float>> BilingualModel::trg_closest(const string& src_word, int n, int policy) const {
     vector<pair<string, float>> res;
-    auto it = src_model.vocabulary.find(word);
+    auto it = src_model.vocabulary.find(src_word);
 
     if (it == src_model.vocabulary.end()) {
         cerr << "OOV word" << endl;
         return res;
     }
 
-    int index = it->second.index;
-    vec vSrc = src_model.wordVec(index, policy);
-
-    for (auto it = trg_model.vocabulary.begin(); it != trg_model.vocabulary.end(); ++it) {
-        if (it->second.index != index) {
-            vec vTgt = trg_model.wordVec(it->second.index, policy);
-            res.push_back({it->second.word, cosineSimilarity(vSrc, vTgt)});
-        }
-    }
-
-    std::partial_sort(res.begin(), res.begin() + n, res.end(), comp);
-    if (res.size() > n) res.resize(n);
-    return res;
+    vec v = src_model.wordVec(it->second.index, policy);
+    return trg_model.closest(v, n, policy);
 }
 
-vector<pair<string, float>> BilingualModel::closest(const vec& v, int n, int policy) const {
+
+vector<pair<string, float>> BilingualModel::src_closest(const string& trg_word, int n, int policy) const {
     vector<pair<string, float>> res;
+    auto it = trg_model.vocabulary.find(trg_word);
 
-    for (auto it = trg_model.vocabulary.begin(); it != trg_model.vocabulary.end(); ++it) {
-        vec vTgt = trg_model.wordVec(it->second.index, policy);
-        res.push_back({it->second.word, cosineSimilarity(v, vTgt)});
-    }
-
-    std::partial_sort(res.begin(), res.begin() + n, res.end(), comp);
-    if (res.size() > n) res.resize(n);
-    return res;
-}
-
-/**
- * @brief Return sorted list of `words` according to their similarity to `word`.
- */
-vector<pair<string, float>> BilingualModel::closest(const string& word, const vector<string>& words, int policy) const {
-    vector<pair<string, float>> res;
-    auto it = src_model.vocabulary.find(word);
-
-    if (it == src_model.vocabulary.end()) {
+    if (it == trg_model.vocabulary.end()) {
         cerr << "OOV word" << endl;
         return res;
     }
 
-    int index = it->second.index;
-    vec v1 = src_model.wordVec(index, policy);
-
-    for (auto it = words.begin(); it != words.end(); ++it) {
-        auto node_it = trg_model.vocabulary.find(*it);
-        if (node_it != trg_model.vocabulary.end()) {
-            vec v2 = trg_model.wordVec(node_it->second.index, policy);
-            res.push_back({node_it->second.word, cosineSimilarity(v1, v2)});
-        }
-    }
-
-    std::sort(res.begin(), res.end(), comp);
-    return res;
+    vec v = trg_model.wordVec(it->second.index, policy);
+    return src_model.closest(v, n, policy);
 }
 
 
-float BilingualModel::similarityNgrams(const string& seqSrc, const string& seqTgt, int policy) const {
-    auto wordsSrc = split(seqSrc);
-    auto wordsTgt = split(seqTgt);
+float BilingualModel::similarityNgrams(const string& src_seq, const string& trg_seq, int policy) const {
+    auto src_words = split(src_seq);
+    auto trg_words = split(trg_seq);
 
-    if (wordsTgt.size() != wordsTgt.size()) {
+    if (trg_words.size() != trg_words.size()) {
         throw runtime_error("input sequences don't have the same size");
     }
 
     float res = 0;
     int n = 0;
-    for (size_t i = 0; i < wordsSrc.size(); ++i) {
+    for (size_t i = 0; i < src_words.size(); ++i) {
         try {
-            res += similarity(wordsSrc[i], wordsTgt[i], policy);
+            res += similarity(src_words[i], trg_words[i], policy);
             n += 1;
         }
         catch (runtime_error) {}
@@ -336,32 +297,32 @@ float BilingualModel::similarityNgrams(const string& seqSrc, const string& seqTg
     }
 }
 
-float BilingualModel::similaritySentence(const string& seqSrc, const string& seqTgt, int policy) const {
-    auto wordsSrc = split(seqSrc);
-    auto wordsTgt = split(seqTgt);
+float BilingualModel::similaritySentence(const string& src_seq, const string& trg_seq, int policy) const {
+    auto src_words = split(src_seq);
+    auto trg_words = split(trg_seq);
     
-    vec vecSrc(config.dimension);
-    vec vecTgt(config.dimension);
+    vec src_vec(config.dimension);
+    vec trg_vec(config.dimension);
     
-    for (auto it = wordsSrc.begin(); it != wordsSrc.end(); ++it) {
+    for (auto it = src_words.begin(); it != src_words.end(); ++it) {
         try {
-            vecSrc += src_model.wordVec(*it, policy);
+            src_vec += src_model.wordVec(*it, policy);
         }
         catch (runtime_error) {}
     }
     
-    for (auto it = wordsTgt.begin(); it != wordsTgt.end(); ++it) {
+    for (auto it = trg_words.begin(); it != trg_words.end(); ++it) {
         try {
-            vecTgt += trg_model.wordVec(*it, policy);
+            trg_vec += trg_model.wordVec(*it, policy);
         }
         catch (runtime_error) {}
     }
     
-    float length = vecSrc.norm() * vecTgt.norm();
+    float length = src_vec.norm() * trg_vec.norm();
     
     if (length == 0) {
         return 0.0;
     } else {
-        return vecSrc.dot(vecTgt) / length;
+        return src_vec.dot(trg_vec) / length;
     }
 }

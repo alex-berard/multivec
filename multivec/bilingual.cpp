@@ -1,19 +1,22 @@
 #include "bilingual.hpp"
 #include "serialization.hpp"
 
-void BilingualModel::train(const string& src_file, const string& trg_file) {
-    cout << "MultiVec-bi" << endl;
-    config.print();
-    cout << "Training files: " << src_file << ", " << trg_file << endl;
+void BilingualModel::train(const string& src_file, const string& trg_file, bool initialize) {
+    std::cout << "Training files: " << src_file << ", " << trg_file << std::endl;
 
-    if (config.verbose)
-        cout << "Reading vocabulary" << endl;
+    if (initialize) {
+        if (config.verbose)
+            std::cout << "Creating new model" << std::endl;
 
-    src_model.readVocab(src_file);
-    trg_model.readVocab(trg_file);
-    src_model.initNet();
-    trg_model.initNet();
-    total_word_count = 0;
+        src_model.readVocab(src_file);
+        trg_model.readVocab(trg_file);
+        src_model.initNet();
+        trg_model.initNet();
+    } else {
+        // TODO: check that initialization is fine
+    }
+
+    words_processed = 0;
     alpha = config.starting_alpha;
 
     // read files to find out the beginning of each chunk
@@ -39,9 +42,9 @@ void BilingualModel::train(const string& src_file, const string& trg_file) {
     auto duration = duration_cast<microseconds>(end - start).count();
 
     if (config.verbose)
-        cout << endl;
+        std::cout << std::endl;
 
-    cout << "Training time: " << static_cast<float>(duration) / 1000000 << endl;
+    std::cout << "Training time: " << static_cast<float>(duration) / 1000000 << std::endl;
 }
 
 void BilingualModel::trainChunk(const string& src_file,
@@ -77,14 +80,14 @@ void BilingualModel::trainChunk(const string& src_file,
 
             // update learning rate
             if (word_count - last_count > 10000) {
-                total_word_count += word_count - last_count; // asynchronous update
+                words_processed += word_count - last_count; // asynchronous update
                 last_count = word_count;
 
-                alpha = starting_alpha * (1 - static_cast<float>(total_word_count) / (max_iterations * training_words));
+                alpha = starting_alpha * (1 - static_cast<float>(words_processed) / (max_iterations * training_words));
                 alpha = std::max(alpha, starting_alpha * 0.0001f);
 
                 if (config.verbose) {
-                    printf("\rAlpha: %f  Progress: %.2f%%", alpha, 100.0 * total_word_count /
+                    printf("\rAlpha: %f  Progress: %.2f%%", alpha, 100.0 * words_processed /
                                     (max_iterations * training_words));
                     fflush(stdout);
                 }
@@ -95,7 +98,7 @@ void BilingualModel::trainChunk(const string& src_file,
                 break;
         }
 
-        total_word_count += word_count - last_count;
+        words_processed += word_count - last_count;
     }
 }
 
@@ -144,10 +147,10 @@ int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent
 
     // remove <UNK> tokens
     src_nodes.erase(
-        remove(src_nodes.begin(), src_nodes.end(), HuffmanNode::UNK),
+        std::remove(src_nodes.begin(), src_nodes.end(), HuffmanNode::UNK),
         src_nodes.end());
     trg_nodes.erase(
-        remove(trg_nodes.begin(), trg_nodes.end(), HuffmanNode::UNK),
+        std::remove(trg_nodes.begin(), trg_nodes.end(), HuffmanNode::UNK),
         trg_nodes.end());
 
     // Monolingual training
@@ -173,7 +176,7 @@ int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent
         }
     }
 
-    return words; // returns the number of words processed, for progress estimation
+    return words; // returns the number of words processed (for progress estimation)
 }
 
 void BilingualModel::trainWord(MonolingualModel& src_model, MonolingualModel& trg_model,
@@ -252,7 +255,7 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
 
 void BilingualModel::load(const string& filename) {
     if (config.verbose)
-        cout << "Loading model" << endl;
+        std::cout << "Loading model" << std::endl;
 
     ifstream infile(filename);
 
@@ -267,7 +270,7 @@ void BilingualModel::load(const string& filename) {
 
 void BilingualModel::save(const string& filename) const {
     if (config.verbose)
-        cout << "Saving model" << endl;
+        std::cout << "Saving model" << std::endl;
 
     ofstream outfile(filename);
 
