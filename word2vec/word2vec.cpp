@@ -561,12 +561,12 @@ void Main(std::string train_file_, std::string output_file_, Config config) {
 
   debug_mode = 2 * config.verbose;
   min_count = config.min_count;
-  num_threads = config.n_threads;
+  num_threads = config.threads;
   window = config.window_size;
   cbow = !config.skip_gram;
-  iter = config.max_iterations;
-  alpha = config.starting_alpha;
-  starting_alpha = config.starting_alpha;
+  iter = config.iterations;
+  alpha = config.learning_rate;
+  starting_alpha = config.learning_rate;
   sample = config.subsampling;
   negative = config.negative;
   hs = config.hierarchical_softmax;

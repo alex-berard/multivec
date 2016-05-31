@@ -17,19 +17,19 @@ void BilingualModel::train(const string& src_file, const string& trg_file, bool 
     }
 
     words_processed = 0;
-    alpha = config.starting_alpha;
+    alpha = config.learning_rate;
 
     // read files to find out the beginning of each chunk
-    auto src_chunks = src_model.chunkify(src_file, config.n_threads);
-    auto trg_chunks = trg_model.chunkify(trg_file, config.n_threads);
+    auto src_chunks = src_model.chunkify(src_file, config.threads);
+    auto trg_chunks = trg_model.chunkify(trg_file, config.threads);
 
     high_resolution_clock::time_point start = high_resolution_clock::now();
-    if (config.n_threads == 1) {
+    if (config.threads == 1) {
         trainChunk(src_file, trg_file, src_chunks, trg_chunks, 0);
     } else {
         vector<thread> threads;
 
-        for (int i = 0; i < config.n_threads; ++i) {
+        for (int i = 0; i < config.threads; ++i) {
             threads.push_back(thread(&BilingualModel::trainChunk, this,
                 src_file, trg_file, src_chunks, trg_chunks, i));
         }
@@ -54,8 +54,8 @@ void BilingualModel::trainChunk(const string& src_file,
                                 int chunk_id) {
     ifstream src_infile(src_file);
     ifstream trg_infile(trg_file);
-    float starting_alpha = config.starting_alpha;
-    int max_iterations = config.max_iterations;
+    float starting_alpha = config.learning_rate;
+    int max_iterations = config.iterations;
     long long training_words = src_model.training_words + trg_model.training_words;
 
     if (!src_infile.is_open()) {

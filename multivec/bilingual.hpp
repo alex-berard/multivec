@@ -56,6 +56,6 @@ public:
     float similarityNgrams(const string& src_seq, const string& trg_seq, int policy = 0) const; // similarity between two sequences of same size
     float similaritySentence(const string& src_seq, const string& trg_seq, int policy = 0) const; // similarity between two variable-size sequences
 
-    vector<pair<string, float>> trg_closest(const string& src_word, int n = 50, int policy = 0) const; // n closest words to given word
-    vector<pair<string, float>> src_closest(const string& trg_word, int n = 50, int policy = 0) const;
+    vector<pair<string, float>> trg_closest(const string& src_word, int n = 10, int policy = 0) const; // n closest words to given word
+    vector<pair<string, float>> src_closest(const string& trg_word, int n = 10, int policy = 0) const;
 };

@@ -6,12 +6,12 @@ using namespace std::chrono;
 //using namespace std;
 
 struct Config {
-    float starting_alpha;
+    float learning_rate;
     int dimension;
     int min_count;
-    int max_iterations;
+    int iterations;
     int window_size;
-    int n_threads;
+    int threads;
     float subsampling;
     bool verbose;
     bool hierarchical_softmax;
@@ -21,12 +21,12 @@ struct Config {
     bool binary;
 
     Config() :
-        starting_alpha(0.05),
+        learning_rate(0.05),
         dimension(100),
         min_count(5),
-        max_iterations(5),
+        iterations(5),
         window_size(5),
-        n_threads(4),
+        threads(4),
         subsampling(1e-03),
         verbose(false),
         hierarchical_softmax(false),
@@ -41,9 +41,9 @@ struct Config {
         std::cout << "dimension:   " << dimension << std::endl;
         std::cout << "window size: " << window_size << std::endl;
         std::cout << "min count:   " << min_count << std::endl;
-        std::cout << "alpha:       " << starting_alpha << std::endl;
-        std::cout << "iterations:  " << max_iterations << std::endl;
-        std::cout << "threads:     " << n_threads << std::endl;
+        std::cout << "alpha:       " << learning_rate << std::endl;
+        std::cout << "iterations:  " << iterations << std::endl;
+        std::cout << "threads:     " << threads << std::endl;
         std::cout << "subsampling: " << subsampling << std::endl;
         std::cout << "skip-gram:   " << skip_gram << std::endl;
         std::cout << "HS:          " << hierarchical_softmax << std::endl;

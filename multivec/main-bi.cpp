@@ -92,10 +92,10 @@ int main(int argc, char **argv) {
             case 'a': config.dimension = atoi(optarg);      break;
             case 'b': config.min_count = atoi(optarg);      break;
             case 'c': config.window_size = atoi(optarg);    break;
-            case 'd': config.n_threads = atoi(optarg);      break;
-            case 'e': config.max_iterations = atoi(optarg); break;
+            case 'd': config.threads = atoi(optarg);      break;
+            case 'e': config.iterations = atoi(optarg); break;
             case 'f': config.negative = atoi(optarg);       break;
-            case 'g': config.starting_alpha = atof(optarg); break;
+            case 'g': config.learning_rate = atof(optarg); break;
             case 'i': config.beta = atof(optarg);           break;
             case 'j': config.subsampling = atof(optarg);    break;
             case 'k': config.skip_gram = true;              break;

@@ -61,8 +61,8 @@ public:
     MonolingualModel(Config config) : config(config) {}
 
     vec wordVec(const string& word, int policy = 0) const; // word embedding
-    vec sentVec(const string& sentence, int policy = 0); // paragraph vector (Le & Mikolov)
-    void sentVec(istream& infile, int policy); // compute paragraph vector for all lines in a stream
+    vec sentVec(const string& sentence); // paragraph vector (Le & Mikolov)
+    void sentVec(istream& infile); // compute paragraph vector for all lines in a stream
 
     void train(const string& training_file, bool initialize = true); // training from scratch (resets vocabulary and weights)
 
@@ -82,9 +82,9 @@ public:
 
     int getDimension() const { return config.dimension; };
 
-    vector<pair<string, float>> closest(const string& word, int n = 50, int policy = 0) const; // n closest words to given word
+    vector<pair<string, float>> closest(const string& word, int n = 10, int policy = 0) const; // n closest words to given word
     vector<pair<string, float>> closest(const string& word, const vector<string>& words, int policy = 0) const;
-    vector<pair<string, float>> closest(const vec& v, int n = 50, int policy = 0) const;
+    vector<pair<string, float>> closest(const vec& v, int n = 10, int policy = 0) const;
 
     vector<pair<string, int>> getWords() const; // get words with their counts
 };

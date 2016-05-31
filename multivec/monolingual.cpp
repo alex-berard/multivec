@@ -320,12 +320,12 @@ vec MonolingualModel::wordVec(const string& word, int policy) const {
     }
 }
 
-void MonolingualModel::sentVec(istream& input, int policy) {
+void MonolingualModel::sentVec(istream& input) {
     string line;
     while(getline(input, line)) {
         vec embedding(config.dimension, 0);
         try {
-            embedding = sentVec(line, policy);
+            embedding = sentVec(line);
         } catch (runtime_error) {
             // in case of error (empty sentence, or all words are OOV), print a vector of zeros
         };
@@ -344,12 +344,11 @@ void MonolingualModel::sentVec(istream& input, int policy) {
  * TODO: integrate this in the normal training procedure
  *
  * @param sentence
- * @param policy (TODO)
  * @return sent_vec
  */
-vec MonolingualModel::sentVec(const string& sentence, int policy) {
+vec MonolingualModel::sentVec(const string& sentence) {
     int dimension = config.dimension;
-    float alpha = config.starting_alpha;  // TODO: decreasing learning rate
+    float alpha = config.learning_rate;  // TODO: decreasing learning rate
 
     auto nodes = getNodes(sentence);  // no subsampling here
     nodes.erase(
@@ -361,7 +360,7 @@ vec MonolingualModel::sentVec(const string& sentence, int policy) {
 
     vec sent_vec(dimension, 0);
 
-    for (int k = 0; k < config.max_iterations; ++k) {
+    for (int k = 0; k < config.iterations; ++k) {
         for (int word_pos = 0; word_pos < nodes.size(); ++word_pos) {
             vec hidden(dimension, 0);
             HuffmanNode cur_node = nodes[word_pos];
@@ -421,11 +420,11 @@ void MonolingualModel::train(const string& training_file, bool initialize) {
 
     // TODO: also serialize training state
     words_processed = 0;
-    alpha = config.starting_alpha;
+    alpha = config.learning_rate;
 
     // read file to find out the beginning of each chunk
     // also counts the number of lines and words
-    auto chunks = chunkify(training_file, config.n_threads);
+    auto chunks = chunkify(training_file, config.threads);
 
     if (config.verbose)
         std::cout << "Number of lines: " << training_lines
@@ -436,12 +435,12 @@ void MonolingualModel::train(const string& training_file, bool initialize) {
         initSentWeights();
 
     high_resolution_clock::time_point start = high_resolution_clock::now();
-    if (config.n_threads == 1) {
+    if (config.threads == 1) {
         trainChunk(training_file, chunks, 0);
     } else {
         vector<thread> threads;
 
-        for (int i = 0; i < config.n_threads; ++i) {
+        for (int i = 0; i < config.threads; ++i) {
             threads.push_back(thread(&MonolingualModel::trainChunk, this,
                 training_file, chunks, i));
         }
@@ -500,8 +499,8 @@ void MonolingualModel::trainChunk(const string& training_file,
                                   const vector<long long>& chunks,
                                   int chunk_id) {
     ifstream infile(training_file);
-    float starting_alpha = config.starting_alpha;
-    int max_iterations = config.max_iterations;
+    float starting_alpha = config.learning_rate;
+    int max_iterations = config.iterations;
 
     if (!infile.is_open()) {
         throw runtime_error("couldn't open file " + training_file);
