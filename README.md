@@ -41,14 +41,14 @@ The `bin` directory should now contain 4 binaries:
     cd python-wrapper
     make
 
-Use from Python (`multivec.so` must be in the PYTHONPATH, e.g. working directory):
+Use from Python (`multivec.so` must be in the `PYTHONPATH`, e.g. working directory):
 
     python2
     >>> from multivec import BiModel
-    >>> model.load('models/news.en-fr.bin')
-    >>> model.src_model
+    >>> model.load('models/news-commentary.fr-en.bin')
+    >>> model.trg_model
     <monomodel.MonoModel object at 0x7fbd5585d138>
-    >>> model.src_model.word_vec('france')
+    >>> model.trg_model.word_vec('France')
     array([ 0.33916989,  1.50113714, -1.37295866, -1.49976909, -1.75945604,
             0.17705017,  1.73590481,  2.26124287, -1.98765969, -2.01758456,
            -1.00831568, -0.47787675, -0.19950299, -2.3867569 , -0.01307649,
@@ -56,7 +56,7 @@ Use from Python (`multivec.so` must be in the PYTHONPATH, e.g. working directory
 
 ## Usage examples
 First create two directories `data` and `models` at the root of the project, where you will put the text corpora and trained models.
-The script `scripts/prepare.sh` can be used to pre-process a corpus (punctuation normalization, tokenization and lowercasing).
+The script `scripts/prepare-data.py` can be used to pre-process a corpus (punctuation normalization, tokenization, etc.)
 
     mkdir data
     mkdir models
