@@ -61,41 +61,38 @@ The script `scripts/prepare.sh` can be used to pre-process a corpus (punctuation
     mkdir data
     mkdir models
     wget http://www.statmt.org/wmt14/training-parallel-nc-v9.tgz -P data
-    tar xzf data/de-en.tgz -C data
-    scripts/prepare.py data/europarl-v7.de-en.en en > data/europarl.en
-    scripts/prepare.py data/europarl-v7.de-en.de de > data/europarl.de
+    tar xzf data/training-parallel-nc-v9.tgz -C data
+    scripts/prepare-data.py data/training/news-commentary-v9.fr-en data/news-commentary fr en --tokenize --normalize-punk
 
-To train a monolingual model using text corpus `data/europarl.en`:
+To train a monolingual model using text corpus `data/news-commentary.en`:
 
-    bin/multivec-mono --train data/europarl.en --save models/europarl.en.bin --threads 16
+    bin/multivec-mono --train data/news-commentary.en --save models/news-commentary.en.bin --threads 16
 
-To train a bilingual model using parallel corpus `data/europarl.en`, `data/europarl.de`:
+To train a bilingual model using parallel corpus `data/news-commentary.fr` and `data/news-commentary.en`:
 
-    bin/multivec-bi --train-src data/europarl.en --train-trg data/europarl.de --save models/europarl.en-de.bin --threads 16
+    bin/multivec-bi --train-src data/news-commentary.fr --train-trg data/news-commentary.en --save models/news-commentary.fr-en.bin --threads 16
 
 To load a bilingual model and export it to source and target monolingual models:
 
-    bin/multivec-bi --load models/europarl.en-de.bin --save-src models/europarl.en.bin --save-trg models/europarl.en.bin
+    bin/multivec-bi --load models/news-commentary.fr-en.bin --save-src models/news-commentary.fr.bin --save-trg models/news-commentary.en.bin
 
 To evaluate a trained English model on the analogical reasoning task, first export the model to the word2vec format, then use `compute-accuracy`:
 
-    bin/multivec-mono --load models/europarl.en.bin --save-vectors-bin models/vectors.bin
-    bin/compute-accuracy models/vectors.bin 0 < word2vec/questions-words.txt
+    bin/multivec-mono --load models/news-commentary.en.bin --save-vectors models/vectors.txt
+    bin/compute-accuracy models/vectors.txt 0 < word2vec/questions-words.txt
 
 ## TODO
-* better software architecture for paragraph vector/online paragraph vector
 * paragraph vector: DBOW model (similar to skip-gram)
 * paragraph vector: option to concatenate, sum or average with word vectors on projection layer.
-* incremental training: possibility to train without erasing the model
 * GIZA alignment for bilingual model
 * bilingual paragraph vector training
 
-## Acknowledgement
+## Acknowledgements
 
-This toolkit is part of the project KEHATH (https://kehath.imag.fr/) funded by the French National Research Agency.
+This toolkit is part of the project KEHATH (https://kehath.imag.fr) funded by the French National Research Agency.
 
 
-## Scientific paper
+## LREC Paper
 
 When you use this toolkit, please cite:
 
