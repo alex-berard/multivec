@@ -27,6 +27,8 @@ static int monolingual_init(MonoModel *self, PyObject *args, PyObject *keywds) {
     self->model = new MonolingualModel();
     Config *config = &self->model->config;
 
+    // TODO: clean up + possibility to put None values
+
     static char *kwlist[] = {"name", "learning_rate", "dimension", "min_count", "iterations", "window_size", "threads",
                              "subsampling", "verbose", "hierarchical_softmax", "skip_gram", "negative", "sent_vector",
                              NULL};
@@ -444,7 +446,10 @@ static PyTypeObject MonoModelType = {
     0,                            /*tp_setattro*/
     0,                            /*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-    "MonoModel objects",           /* tp_doc */
+    "MonolingualModel(name=None, learning_rate=0.05, dimension=100, min_count=5, "
+    "iterations=5, window_size=5, threads=4, subsampling=1e-03, verbose=False, "
+    "hierarchical_softmax=False, skip_gram=False, negative=5, sent_vector=False)"
+    ,     /* tp_doc */
     0,		                      /* tp_traverse */
     0,		                      /* tp_clear */
     0,		                      /* tp_richcompare */
@@ -669,7 +674,7 @@ static PyTypeObject BiModelType = {
     0,                            /*tp_setattro*/
     0,                            /*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-    "BiModel objects",              /* tp_doc */
+    "",              /* tp_doc */
     0,		                      /* tp_traverse */
     0,		                      /* tp_clear */
     0,		                      /* tp_richcompare */
@@ -700,7 +705,7 @@ initmultivec(void)
     if (PyType_Ready(&MonoModelType) < 0 || PyType_Ready(&BiModelType) < 0)
         return;
 
-    m = Py_InitModule3("multivec", monolingual_methods, "");
+    m = Py_InitModule3("multivec", NULL, "");
     import_array(); // for numpy
 
     Py_INCREF(&MonoModelType);

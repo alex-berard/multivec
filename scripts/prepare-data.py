@@ -73,7 +73,7 @@ def process_file(corpus, id_, args):
                               '-threads', str(args.threads)])
         if args.lowercase:
             processes.append([path_to('lowercase.perl')])
-        if args.normalize_numbers:
+        if args.normalize_digits:
             processes.append(['sed', 's/[[:digit:]]/0/g'])
 
         ps = None
@@ -189,7 +189,7 @@ if __name__ == '__main__':
                         'codes (when different than file extensions)')
     parser.add_argument('--normalize-punk', help='normalize punctuation',
                         action='store_true')
-    parser.add_argument('--normalize-numbers', help='normalize numbers '
+    parser.add_argument('--normalize-digits', help='normalize digits '
                         '(replace all digits with 0)', action='store_true')
     parser.add_argument('--lowercase', help='put everything to lowercase',
                         action='store_true')
@@ -201,7 +201,7 @@ if __name__ == '__main__':
                         action='store_true')
     parser.add_argument('--min', type=int, default=1,
                         help='min number of tokens per line')
-    parser.add_argument('--max', type=int, default=50,
+    parser.add_argument('--max', type=int, default=0,
                         help='max number of tokens per line (0 for no limit)')
     parser.add_argument('--threads', type=int, default=16,
                         help='number of threads for tokenizer')
