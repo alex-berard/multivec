@@ -9,6 +9,10 @@ class BilingualModel
     friend void load(ifstream& infile, BilingualModel& model);
 
 private:
+    // Configuration of the model (monolingual models have the same configuration)
+    BilingualConfig* config = NULL;
+    BilingualConfig default_config;
+
     long long words_processed; // number of words processed so far
     float alpha;
 
@@ -36,16 +40,14 @@ private:
         int, int, float);
 
 public:
-    // Configuration of the model (monolingual models have the same configuration)
-    BilingualConfig config;
-
     // A bilingual model is comprised of two monolingual models
     MonolingualModel src_model;
     MonolingualModel trg_model;
 
-    BilingualModel() : src_model(config), trg_model(config) {}
-    BilingualModel(const string& model_file) { load(model_file); }
-    BilingualModel(BilingualConfig config) : config(config), src_model(config), trg_model(config) {}
+    // empty constructor needed by python wrapper
+    BilingualModel() : config(&default_config), src_model(&default_config), trg_model(&default_config) {}
+    // prefer this constructor
+    BilingualModel(BilingualConfig* config) : config(config), src_model(config), trg_model(config) {}
 
     void train(const string& src_file, const string& trg_file, bool initialize = true);
     void load(const string& filename);

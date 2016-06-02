@@ -120,7 +120,7 @@ inline void load(ifstream& infile, HuffmanNode& node) {
 }
 
 inline void save(ofstream& outfile, const MonolingualModel& model) {
-    save(outfile, model.config);
+    save(outfile, *model.config);
     save(outfile, model.vocabulary.size());
 
     // transform into map to save in lexicographical order (for consistency)
@@ -136,7 +136,7 @@ inline void save(ofstream& outfile, const MonolingualModel& model) {
 }
 
 inline void load(ifstream& infile, MonolingualModel& model) {
-    load(infile, model.config);
+    load(infile, *model.config);
 
     size_t vocabulary_size = 0;
     load(infile, vocabulary_size);
@@ -155,13 +155,13 @@ inline void load(ifstream& infile, MonolingualModel& model) {
 }
 
 inline void save(ofstream& outfile, const BilingualModel& model) {
-    save(outfile, model.config);
+    save(outfile, *model.config);
     save(outfile, model.src_model);
     save(outfile, model.trg_model);
 }
 
 inline void load(ifstream& infile, BilingualModel& model) {
-    load(infile, model.config);
+    load(infile, *model.config);
     load(infile, model.src_model);
     load(infile, model.trg_model);
 }

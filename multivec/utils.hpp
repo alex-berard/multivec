@@ -163,3 +163,4 @@ struct BilingualConfig : Config {
         std::cout << "beta:        " << beta << std::endl;
     }
 };
+

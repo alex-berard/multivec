@@ -5,7 +5,7 @@ void BilingualModel::train(const string& src_file, const string& trg_file, bool 
     std::cout << "Training files: " << src_file << ", " << trg_file << std::endl;
 
     if (initialize) {
-        if (config.verbose)
+        if (config->verbose)
             std::cout << "Creating new model" << std::endl;
 
         src_model.readVocab(src_file);
@@ -17,19 +17,19 @@ void BilingualModel::train(const string& src_file, const string& trg_file, bool 
     }
 
     words_processed = 0;
-    alpha = config.learning_rate;
+    alpha = config->learning_rate;
 
     // read files to find out the beginning of each chunk
-    auto src_chunks = src_model.chunkify(src_file, config.threads);
-    auto trg_chunks = trg_model.chunkify(trg_file, config.threads);
+    auto src_chunks = src_model.chunkify(src_file, config->threads);
+    auto trg_chunks = trg_model.chunkify(trg_file, config->threads);
 
     high_resolution_clock::time_point start = high_resolution_clock::now();
-    if (config.threads == 1) {
+    if (config->threads == 1) {
         trainChunk(src_file, trg_file, src_chunks, trg_chunks, 0);
     } else {
         vector<thread> threads;
 
-        for (int i = 0; i < config.threads; ++i) {
+        for (int i = 0; i < config->threads; ++i) {
             threads.push_back(thread(&BilingualModel::trainChunk, this,
                 src_file, trg_file, src_chunks, trg_chunks, i));
         }
@@ -41,7 +41,7 @@ void BilingualModel::train(const string& src_file, const string& trg_file, bool 
     high_resolution_clock::time_point end = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(end - start).count();
 
-    if (config.verbose)
+    if (config->verbose)
         std::cout << std::endl;
 
     std::cout << "Training time: " << static_cast<float>(duration) / 1000000 << std::endl;
@@ -54,8 +54,8 @@ void BilingualModel::trainChunk(const string& src_file,
                                 int chunk_id) {
     ifstream src_infile(src_file);
     ifstream trg_infile(trg_file);
-    float starting_alpha = config.learning_rate;
-    int max_iterations = config.iterations;
+    float starting_alpha = config->learning_rate;
+    int max_iterations = config->iterations;
     long long training_words = src_model.training_words + trg_model.training_words;
 
     if (!src_infile.is_open()) {
@@ -86,7 +86,7 @@ void BilingualModel::trainChunk(const string& src_file,
                 alpha = starting_alpha * (1 - static_cast<float>(words_processed) / (max_iterations * training_words));
                 alpha = std::max(alpha, starting_alpha * 0.0001f);
 
-                if (config.verbose) {
+                if (config->verbose) {
                     printf("\rAlpha: %f  Progress: %.2f%%", alpha, 100.0 * words_processed /
                                     (max_iterations * training_words));
                     fflush(stdout);
@@ -132,7 +132,7 @@ int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent
     words += src_nodes.size() - count(src_nodes.begin(), src_nodes.end(), HuffmanNode::UNK);
     words += trg_nodes.size() - count(trg_nodes.begin(), trg_nodes.end(), HuffmanNode::UNK);
 
-    if (config.subsampling > 0) {
+    if (config->subsampling > 0) {
         src_model.subsample(src_nodes); // puts <UNK> tokens in place of the discarded tokens
         trg_model.subsample(trg_nodes);
     }
@@ -162,7 +162,7 @@ int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent
         trainWord(trg_model, trg_model, trg_nodes, trg_nodes, trg_pos, trg_pos, alpha);
     }
 
-    if (config.beta == 0)
+    if (config->beta == 0)
         return words;
 
     // Bilingual training
@@ -171,8 +171,8 @@ int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent
         int trg_pos = alignment[src_pos];
 
         if (trg_pos != -1) { // target word isn't OOV
-            trainWord(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha * config.beta);
-            trainWord(trg_model, src_model, trg_nodes, src_nodes, trg_pos, src_pos, alpha * config.beta);
+            trainWord(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha * config->beta);
+            trainWord(trg_model, src_model, trg_nodes, src_nodes, trg_pos, src_pos, alpha * config->beta);
         }
     }
 
@@ -183,7 +183,7 @@ void BilingualModel::trainWord(MonolingualModel& src_model, MonolingualModel& tr
                                const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes,
                                int src_pos, int trg_pos, float alpha) {
 
-    if (config.skip_gram) {
+    if (config->skip_gram) {
         return trainWordSkipGram(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha);
     } else {
         return trainWordCBOW(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha);
@@ -199,11 +199,11 @@ void BilingualModel::trainWordCBOW(MonolingualModel& src_model, MonolingualModel
 
     // 'src_pos' is the position in the source sentence of the current node to predict
     // 'trg_pos' is the position of the corresponding node in the target sentence
-    int dimension = config.dimension;
+    int dimension = config->dimension;
     vec hidden(dimension, 0);
     HuffmanNode cur_node = src_nodes[src_pos];
 
-    int this_window_size = 1 + multivec::rand() % config.window_size;
+    int this_window_size = 1 + multivec::rand() % config->window_size;
     int count = 0;
 
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
@@ -216,10 +216,10 @@ void BilingualModel::trainWordCBOW(MonolingualModel& src_model, MonolingualModel
     hidden /= count;
 
     vec error(dimension, 0); // compute error & update output weights
-    if (config.hierarchical_softmax) {
+    if (config->hierarchical_softmax) {
         error += src_model.hierarchicalUpdate(cur_node, hidden, alpha);
     }
-    if (config.negative > 0) {
+    if (config->negative > 0) {
         error += src_model.negSamplingUpdate(cur_node, hidden, alpha);
     }
 
@@ -235,17 +235,17 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
                                        int src_pos, int trg_pos, float alpha) {
     HuffmanNode input_word = src_nodes[src_pos];
 
-    int this_window_size = 1 + multivec::rand() % config.window_size;
+    int this_window_size = 1 + multivec::rand() % config->window_size;
 
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= trg_nodes.size() || pos == trg_pos) continue;
         HuffmanNode output_word = trg_nodes[pos];
 
-        vec error(config.dimension, 0);
-        if (config.hierarchical_softmax) {
+        vec error(config->dimension, 0);
+        if (config->hierarchical_softmax) {
             error += trg_model.hierarchicalUpdate(output_word, src_model.input_weights[input_word.index], alpha);
         }
-        if (config.negative > 0) {
+        if (config->negative > 0) {
             error += trg_model.negSamplingUpdate(output_word, src_model.input_weights[input_word.index], alpha);
         }
 
@@ -254,7 +254,7 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
 }
 
 void BilingualModel::load(const string& filename) {
-    if (config.verbose)
+    if (config->verbose)
         std::cout << "Loading model" << std::endl;
 
     ifstream infile(filename);
@@ -269,7 +269,7 @@ void BilingualModel::load(const string& filename) {
 }
 
 void BilingualModel::save(const string& filename) const {
-    if (config.verbose)
+    if (config->verbose)
         std::cout << "Saving model" << std::endl;
 
     ofstream outfile(filename);

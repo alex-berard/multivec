@@ -159,8 +159,8 @@ float MonolingualModel::similaritySentence(const string& seq1, const string& seq
     auto words1 = split(seq1);
     auto words2 = split(seq2);
     
-    vec vec1(config.dimension);
-    vec vec2(config.dimension);
+    vec vec1(config->dimension);
+    vec vec2(config->dimension);
     
     for (auto it = words1.begin(); it != words1.end(); ++it) {
         try {
@@ -301,8 +301,8 @@ float BilingualModel::similaritySentence(const string& src_seq, const string& tr
     auto src_words = split(src_seq);
     auto trg_words = split(trg_seq);
     
-    vec src_vec(config.dimension);
-    vec trg_vec(config.dimension);
+    vec src_vec(config->dimension);
+    vec trg_vec(config->dimension);
     
     for (auto it = src_words.begin(); it != src_words.end(); ++it) {
         try {

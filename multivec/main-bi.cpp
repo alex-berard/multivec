@@ -65,8 +65,8 @@ int main(int argc, char **argv) {
         }
     }
 
-    BilingualModel model;
-    BilingualConfig& config = model.config;
+    BilingualConfig config;
+    BilingualModel model(&config);
 
     // model file needs to be loaded before anything else (otherwise it overwrites the parameters)
     if (!load_file.empty()) {

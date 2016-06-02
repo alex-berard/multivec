@@ -8,6 +8,9 @@ class MonolingualModel
     friend void load(ifstream& infile, MonolingualModel& model);
 
 private:
+    Config* config = NULL;
+    Config default_config;
+
     mat input_weights;
     mat output_weights; // output weights for negative sampling
     mat output_weights_hs; // output weights for hierarchical softmax
@@ -53,12 +56,9 @@ private:
     vector<long long> chunkify(const string& filename, int n_chunks);
     vec wordVec(int index, int policy) const;
 
-public:
-    Config config;
-
-    MonolingualModel() {}
-    MonolingualModel(const string& model_file) { load(model_file); }
-    MonolingualModel(Config config) : config(config) {}
+public:   
+    MonolingualModel() : config(&default_config) {}  // empty constructor needed by python wrapper
+    MonolingualModel(Config* config) : config(config) {}  // prefer this constructor
 
     vec wordVec(const string& word, int policy = 0) const; // word embedding
     vec sentVec(const string& sentence); // paragraph vector (Le & Mikolov)
@@ -80,7 +80,7 @@ public:
     float similaritySentence(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two variable-size sequences
     float softWER(const string& hyp, const string& ref, int policy = 0) const; // soft Word Error Rate
 
-    int getDimension() const { return config.dimension; };
+    int getDimension() const { return config->dimension; };
 
     vector<pair<string, float>> closest(const string& word, int n = 10, int policy = 0) const; // n closest words to given word
     vector<pair<string, float>> closest(const string& word, const vector<string>& words, int policy = 0) const;

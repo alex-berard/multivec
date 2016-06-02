@@ -68,8 +68,8 @@ int main(int argc, char **argv) {
         }
     }
 
-    MonolingualModel model;
-    Config& config = model.config;
+    Config config;
+    MonolingualModel model(&config);
 
     // model file needs to be loaded before anything else (otherwise it overwrites the parameters)
     if (!load_file.empty()) {
