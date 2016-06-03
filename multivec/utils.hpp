@@ -49,6 +49,24 @@ inline vector<string> split(const string& sequence) {
     return words;
 }
 
+inline void check_is_open(ifstream& infile, const string& filename) {
+    if (!infile.is_open()) {
+        throw runtime_error("couldn't open file " + filename);
+    }
+}
+
+inline void check_is_open(ofstream& outfile, const string& filename) {
+    if (!outfile.is_open()) {
+        throw runtime_error("couldn't open file " + filename);
+    }
+}
+
+inline void check_is_non_empty(ifstream& infile, const string& filename) {
+    if (infile.peek() == std::ifstream::traits_type::eof()) {
+        throw runtime_error("training file " + filename + " is empty");
+    }
+}
+
 namespace multivec {
     /**
      * @brief Custom random generator. std::rand is thread-safe but very slow with multiple threads.

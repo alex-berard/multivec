@@ -54,17 +54,19 @@ void BilingualModel::trainChunk(const string& src_file,
                                 int chunk_id) {
     ifstream src_infile(src_file);
     ifstream trg_infile(trg_file);
+
+    try {
+        check_is_open(src_infile, src_file);
+        check_is_open(trg_infile, trg_file);
+        check_is_non_empty(src_infile, src_file);
+        check_is_non_empty(trg_infile, trg_file);
+    } catch (...) {
+        throw;
+    }
+    
     float starting_alpha = config->learning_rate;
     int max_iterations = config->iterations;
     long long training_words = src_model.training_words + trg_model.training_words;
-
-    if (!src_infile.is_open()) {
-        throw "couldn't open file " + src_file;
-    }
-
-    if (!trg_infile.is_open()) {
-        throw "couldn't open file " + trg_file;
-    }
 
     for (int k = 0; k < max_iterations; ++k) {
         int word_count = 0, last_count = 0;
@@ -259,8 +261,10 @@ void BilingualModel::load(const string& filename) {
 
     ifstream infile(filename);
 
-    if (!infile.is_open()) {
-        throw runtime_error("couldn't open file " + filename);
+    try {
+        check_is_open(infile, filename);
+    } catch (...) {
+        throw;
     }
 
     ::load(infile, *this);
@@ -274,8 +278,10 @@ void BilingualModel::save(const string& filename) const {
 
     ofstream outfile(filename);
 
-    if (!outfile.is_open()) {
-        throw runtime_error("couldn't open file " + filename);
+    try {
+        check_is_open(outfile, filename);
+    } catch (...) {
+        throw;
     }
 
     ::save(outfile, *this);

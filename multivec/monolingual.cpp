@@ -28,8 +28,11 @@ void MonolingualModel::reduceVocab() {
 void MonolingualModel::readVocab(const string& training_file) {
     ifstream infile(training_file);
 
-    if (!infile.is_open()) {
-        throw runtime_error("couldn't open file " + training_file);
+    try {
+        check_is_open(infile, training_file);
+        check_is_non_empty(infile, training_file);
+    } catch (...) {
+        throw;
     }
 
     vocabulary.clear();
@@ -189,8 +192,10 @@ void MonolingualModel::saveVectorsBin(const string &filename, int policy) const 
 
     ofstream outfile(filename, ios::binary | ios::out);
 
-    if (!outfile.is_open()) {
-        throw runtime_error("couldn't open file " + filename);
+    try {
+        check_is_open(outfile, filename);
+    } catch (...) {
+        throw;
     }
 
     outfile << vocabulary.size() << " " << config->dimension << endl;
@@ -212,8 +217,10 @@ void MonolingualModel::saveVectors(const string &filename, int policy) const {
 
     ofstream outfile(filename, ios::binary | ios::out);
 
-    if (!outfile.is_open()) {
-        throw runtime_error("couldn't open file " + filename);
+    try {
+        check_is_open(outfile, filename);
+    } catch (...) {
+        throw;
     }
 
     outfile << vocabulary.size() << " " << config->dimension << endl;
@@ -234,8 +241,10 @@ void MonolingualModel::saveSentVectors(const string &filename) const {
 
     ofstream outfile(filename, ios::binary | ios::out);
 
-    if (!outfile.is_open()) {
-        throw runtime_error("couldn't open file " + filename);
+    try {
+        check_is_open(outfile, filename);
+    } catch (...) {
+        throw;
     }
 
     for (auto it = sent_weights.begin(); it != sent_weights.end(); ++it) {
@@ -253,8 +262,10 @@ void MonolingualModel::load(const string& filename) {
 
     ifstream infile(filename);
 
-    if (!infile.is_open()) {
-        throw runtime_error("couldn't open file " + filename);
+    try {
+        check_is_open(infile, filename);
+    } catch (...) {
+        throw;
     }
 
     ::load(infile, *this);
@@ -269,8 +280,10 @@ void MonolingualModel::save(const string& filename) const {
 
     ofstream outfile(filename);
 
-    if (!outfile.is_open()) {
-        throw runtime_error("couldn't open file " + filename);
+    try {
+        check_is_open(outfile, filename);
+    } catch (...) {
+        throw;
     }
 
     ::save(outfile, *this);
@@ -468,8 +481,11 @@ void MonolingualModel::train(const string& training_file, bool initialize) {
 vector<long long> MonolingualModel::chunkify(const string& filename, int n_chunks) {
     ifstream infile(filename);
 
-    if (!infile.is_open()) {
-        throw runtime_error("couldn't open file " + filename);
+    try {
+        check_is_open(infile, filename);
+        check_is_non_empty(infile, filename);
+    } catch (...) {
+        throw;
     }
 
     vector<long long> chunks;
@@ -502,8 +518,11 @@ void MonolingualModel::trainChunk(const string& training_file,
     float starting_alpha = config->learning_rate;
     int max_iterations = config->iterations;
 
-    if (!infile.is_open()) {
-        throw runtime_error("couldn't open file " + training_file);
+    try {
+        check_is_open(infile, training_file);
+        check_is_non_empty(infile, training_file);
+    } catch (...) {
+        throw;
     }
 
     for (int k = 0; k < max_iterations; ++k) {
