@@ -61,7 +61,7 @@ public:
     MonolingualModel(Config* config) : config(config) {}  // prefer this constructor
 
     vec wordVec(const string& word, int policy = 0) const; // word embedding
-    vec sentVec(const string& sentence); // paragraph vector (Le & Mikolov)
+    vec sentVec(const string& sentence); // paragraph vector (Le & Mikolov), TODO: custom alpha and iterations
     void sentVec(istream& infile); // compute paragraph vector for all lines in a stream
 
     void train(const string& training_file, bool initialize = true); // training from scratch (resets vocabulary and weights)
