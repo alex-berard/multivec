@@ -31,8 +31,6 @@ static vector<option_plus> options_plus = {
     {"save-sent-vectors", required_argument, 0, 'r', "save sentence vectors"},
     {"save-vectors-bin",  required_argument, 0, 's', "save word vectors in binary format"},
     {"train-online",      required_argument, 0, 't', "use existing model to train online sentence vectors"},
-    {"load-vectors",      required_argument, 0, 'u', "load word vectors"},
-    {"load-vectors-bin",  required_argument, 0, 'v', "load word vectors in binary format"},
     {0, 0, 0, 0, 0}
 };
 
