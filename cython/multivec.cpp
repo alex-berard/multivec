@@ -494,33 +494,49 @@ static const char *__pyx_f[] = {
 struct __pyx_obj_8multivec_MonolingualModel;
 struct __pyx_obj_8multivec_BilingualModel;
 
-/* "multivec.pyx":71
+/* "multivec.pyx":75
  * 
  * 
  * cdef class MonolingualModel:             # <<<<<<<<<<<<<<
- *     cdef Config* config
- *     cdef MonolingualModelCpp model
+ *     """
+ *     MonolingualModel(name=None, **kwargs)
  */
 struct __pyx_obj_8multivec_MonolingualModel {
   PyObject_HEAD
+  struct __pyx_vtabstruct_8multivec_MonolingualModel *__pyx_vtab;
   Config *config;
-  MonolingualModel model;
+  MonolingualModel *model;
+  int alloc;
 };
 
 
-/* "multivec.pyx":170
+/* "multivec.pyx":268
  * 
  * 
  * cdef class BilingualModel:             # <<<<<<<<<<<<<<
- *     cdef BilingualConfig* config
- *     cdef BilingualModelCpp model
+ *     """
+ *     MonolingualModel(name=None, **kwargs)
  */
 struct __pyx_obj_8multivec_BilingualModel {
   PyObject_HEAD
   BilingualConfig *config;
-  BilingualModel model;
+  BilingualModel *model;
 };
 
+
+
+/* "multivec.pyx":75
+ * 
+ * 
+ * cdef class MonolingualModel:             # <<<<<<<<<<<<<<
+ *     """
+ *     MonolingualModel(name=None, **kwargs)
+ */
+
+struct __pyx_vtabstruct_8multivec_MonolingualModel {
+  PyObject *(*set_members)(struct __pyx_obj_8multivec_MonolingualModel *, MonolingualModel *, Config *);
+};
+static struct __pyx_vtabstruct_8multivec_MonolingualModel *__pyx_vtabptr_8multivec_MonolingualModel;
 
 /* --- Runtime support code (head) --- */
 #ifndef CYTHON_REFNANNY
@@ -602,14 +618,16 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject
 
 static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
+static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
+    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
+
+static CYTHON_INLINE int __Pyx_CheckKeywordStrings(PyObject *kwdict, const char* function_name, int kw_allowed);
+
 static void __Pyx_RaiseDoubleKeywordsError(const char* func_name, PyObject* kw_name);
 
 static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject **argnames[],\
     PyObject *kwds2, PyObject *values[], Py_ssize_t num_pos_args,\
     const char* function_name);
-
-static void __Pyx_RaiseArgtupleInvalid(const char* func_name, int exact,
-    Py_ssize_t num_min, Py_ssize_t num_max, Py_ssize_t num_found);
 
 static CYTHON_INLINE PyObject* __Pyx_PyDict_Items(PyObject* d);
 
@@ -671,6 +689,8 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject
 
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObject *arg);
 
+static int __Pyx_SetVtable(PyObject *dict, void *vtable);
+
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
 
 typedef struct {
@@ -689,8 +709,6 @@ static void __pyx_insert_code_object(int code_line, PyCodeObject* code_object);
 
 static void __Pyx_AddTraceback(const char *funcname, int c_line,
                                int py_line, const char *filename);
-
-#include <new>
 
 #ifndef __Pyx_CppExn2PyErr
 #include <new>
@@ -745,6 +763,7 @@ static int __Pyx_check_binary_version(void);
 
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
+static PyObject *__pyx_f_8multivec_16MonolingualModel_set_members(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, MonolingualModel *__pyx_v_model, Config *__pyx_v_config); /* proto*/
 
 /* Module declarations from 'libc.string' */
 
@@ -794,9 +813,14 @@ static char __pyx_k_word2[] = "word2";
 static char __pyx_k_words[] = "words";
 static char __pyx_k_import[] = "__import__";
 static char __pyx_k_policy[] = "policy";
+static char __pyx_k_src_seq[] = "src_seq";
+static char __pyx_k_trg_seq[] = "trg_seq";
 static char __pyx_k_src_name[] = "src_name";
+static char __pyx_k_src_word[] = "src_word";
 static char __pyx_k_trg_name[] = "trg_name";
+static char __pyx_k_trg_word[] = "trg_word";
 static char __pyx_k_initialize[] = "initialize";
+static char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static PyObject *__pyx_n_s_array;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_initialize;
@@ -807,36 +831,43 @@ static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_np;
 static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_n_s_policy;
+static PyObject *__pyx_n_s_pyx_vtable;
 static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_seq1;
 static PyObject *__pyx_n_s_seq2;
 static PyObject *__pyx_n_s_src_name;
+static PyObject *__pyx_n_s_src_seq;
+static PyObject *__pyx_n_s_src_word;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_trg_name;
+static PyObject *__pyx_n_s_trg_seq;
+static PyObject *__pyx_n_s_trg_word;
 static PyObject *__pyx_n_s_vec;
 static PyObject *__pyx_n_s_word;
 static PyObject *__pyx_n_s_word1;
 static PyObject *__pyx_n_s_word2;
 static PyObject *__pyx_n_s_words;
-static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_kwargs); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_2word_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_4sent_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_sequence); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_6train(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_initialize); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_8load(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_10save(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_12save_vectors(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_14save_vectors_bin(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_16save_sent_vectors(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_18similarity(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word1, PyObject *__pyx_v_word2, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_20distance(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word1, PyObject *__pyx_v_word2, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_22similarity_n_grams(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_24similarity_bag_of_words(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_26soft_word_error_rate(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_28closest(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_n, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_30closest_to_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_vec, PyObject *__pyx_v_n, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_32closest_words(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_words, PyObject *__pyx_v_policy); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_34get_vocabulary(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_36get_counts(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_kwargs); /* proto */
+static int __pyx_pf_8multivec_16MonolingualModel_2__init__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_kwargs); /* proto */
+static void __pyx_pf_8multivec_16MonolingualModel_4__dealloc__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_6word_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_8sent_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_sequence); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_10train(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_initialize); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_12load(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_14save(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_16save_vectors(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_18save_vectors_bin(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_20save_sent_vectors(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_22similarity(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word1, PyObject *__pyx_v_word2, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_24distance(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word1, PyObject *__pyx_v_word2, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_26similarity_ngrams(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_28similarity_bag_of_words(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_30soft_word_error_rate(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_32closest(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_n, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_34closest_to_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_vec, PyObject *__pyx_v_n, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_36closest_words(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_words, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_38get_vocabulary(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_40get_counts(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_8multivec_16MonolingualModel_13learning_rate___get__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self); /* proto */
 static int __pyx_pf_8multivec_16MonolingualModel_13learning_rate_2__set__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_learning_rate); /* proto */
 static PyObject *__pyx_pf_8multivec_16MonolingualModel_9dimension___get__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self); /* proto */
@@ -861,28 +892,233 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_8negative___get__(struct 
 static int __pyx_pf_8multivec_16MonolingualModel_8negative_2__set__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_negative); /* proto */
 static PyObject *__pyx_pf_8multivec_16MonolingualModel_11sent_vector___get__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self); /* proto */
 static int __pyx_pf_8multivec_16MonolingualModel_11sent_vector_2__set__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_sent_vector); /* proto */
-static int __pyx_pf_8multivec_14BilingualModel___cinit__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_name, CYTHON_UNUSED PyObject *__pyx_v_kwargs); /* proto */
-static PyObject *__pyx_pf_8multivec_14BilingualModel_2train(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_name, PyObject *__pyx_v_trg_name, PyObject *__pyx_v_initialize); /* proto */
-static PyObject *__pyx_pf_8multivec_14BilingualModel_4load(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_name); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel___cinit__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_kwargs); /* proto */
+static void __pyx_pf_8multivec_14BilingualModel_2__dealloc__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_4train(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_name, PyObject *__pyx_v_trg_name, PyObject *__pyx_v_initialize); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_6load(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_name); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_8similarity(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_word, PyObject *__pyx_v_trg_word, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_10distance(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_word, PyObject *__pyx_v_trg_word, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_12similarity_ngrams(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_seq, PyObject *__pyx_v_trg_seq, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_14similarity_bag_of_words(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_seq, PyObject *__pyx_v_trg_seq, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_16trg_closest(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_word, PyObject *__pyx_v_n, PyObject *__pyx_v_policy); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_18src_closest(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_trg_word, PyObject *__pyx_v_n, PyObject *__pyx_v_policy); /* proto */
 static PyObject *__pyx_pf_8multivec_14BilingualModel_9src_model___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_8multivec_14BilingualModel_9trg_model___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_4beta___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_4beta_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_beta); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_13learning_rate___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_13learning_rate_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_learning_rate); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_9dimension___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_9dimension_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_dimension); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_9min_count___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_9min_count_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_min_count); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_10iterations___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_10iterations_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_iterations); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_11window_size___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_11window_size_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_window_size); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_7threads___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_7threads_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_threads); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_11subsampling___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_11subsampling_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_subsampling); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_7verbose___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_7verbose_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_verbose); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_20hierarchical_softmax___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_20hierarchical_softmax_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_hierarchical_softmax); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_9skip_gram___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_9skip_gram_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_skip_gram); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_8negative___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_8negative_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_negative); /* proto */
+static PyObject *__pyx_pf_8multivec_14BilingualModel_11sent_vector___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self); /* proto */
+static int __pyx_pf_8multivec_14BilingualModel_11sent_vector_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_sent_vector); /* proto */
 static PyObject *__pyx_tp_new_8multivec_MonolingualModel(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_8multivec_BilingualModel(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_items = {0, &__pyx_n_s_items, 0, 0, 0};
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_10;
 
-/* "multivec.pyx":74
- *     cdef Config* config
- *     cdef MonolingualModelCpp model
- *     def __cinit__(self, name=None, **kwargs):             # <<<<<<<<<<<<<<
- *         self.config = new Config()
- *         self.model = MonolingualModelCpp(self.config)
+/* "multivec.pyx":115
+ *     cdef int alloc
+ * 
+ *     def __cinit__(self, **kwargs):             # <<<<<<<<<<<<<<
+ *         # if alloc is False, manual deallocation of config and model
+ *         self.alloc = True
  */
 
 /* Python wrapper */
 static int __pyx_pw_8multivec_16MonolingualModel_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static int __pyx_pw_8multivec_16MonolingualModel_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  CYTHON_UNUSED PyObject *__pyx_v_kwargs = 0;
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__cinit__ (wrapper)", 0);
+  if (unlikely(PyTuple_GET_SIZE(__pyx_args) > 0)) {
+    __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 0, 0, PyTuple_GET_SIZE(__pyx_args)); return -1;}
+  if (unlikely(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "__cinit__", 1))) return -1;
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel___cinit__(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_kwargs);
+
+  /* function exit code */
+  __Pyx_XDECREF(__pyx_v_kwargs);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_kwargs) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  MonolingualModel *__pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__cinit__", 0);
+
+  /* "multivec.pyx":117
+ *     def __cinit__(self, **kwargs):
+ *         # if alloc is False, manual deallocation of config and model
+ *         self.alloc = True             # <<<<<<<<<<<<<<
+ *         self.config = new Config()
+ *         self.model = new MonolingualModelCpp(self.config)
+ */
+  __pyx_v_self->alloc = 1;
+
+  /* "multivec.pyx":118
+ *         # if alloc is False, manual deallocation of config and model
+ *         self.alloc = True
+ *         self.config = new Config()             # <<<<<<<<<<<<<<
+ *         self.model = new MonolingualModelCpp(self.config)
+ * 
+ */
+  __pyx_v_self->config = new Config();
+
+  /* "multivec.pyx":119
+ *         self.alloc = True
+ *         self.config = new Config()
+ *         self.model = new MonolingualModelCpp(self.config)             # <<<<<<<<<<<<<<
+ * 
+ *     cdef set_members(self, MonolingualModelCpp* model, Config* config):
+ */
+  try {
+    __pyx_t_1 = new MonolingualModel(__pyx_v_self->config);
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_v_self->model = __pyx_t_1;
+
+  /* "multivec.pyx":115
+ *     cdef int alloc
+ * 
+ *     def __cinit__(self, **kwargs):             # <<<<<<<<<<<<<<
+ *         # if alloc is False, manual deallocation of config and model
+ *         self.alloc = True
+ */
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.MonolingualModel.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":121
+ *         self.model = new MonolingualModelCpp(self.config)
+ * 
+ *     cdef set_members(self, MonolingualModelCpp* model, Config* config):             # <<<<<<<<<<<<<<
+ *         # used by BilingualModel to initialize self.model and self.config to existing values
+ *         del self.config
+ */
+
+static PyObject *__pyx_f_8multivec_16MonolingualModel_set_members(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, MonolingualModel *__pyx_v_model, Config *__pyx_v_config) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("set_members", 0);
+
+  /* "multivec.pyx":123
+ *     cdef set_members(self, MonolingualModelCpp* model, Config* config):
+ *         # used by BilingualModel to initialize self.model and self.config to existing values
+ *         del self.config             # <<<<<<<<<<<<<<
+ *         del self.model
+ *         self.config = config
+ */
+  delete __pyx_v_self->config;
+
+  /* "multivec.pyx":124
+ *         # used by BilingualModel to initialize self.model and self.config to existing values
+ *         del self.config
+ *         del self.model             # <<<<<<<<<<<<<<
+ *         self.config = config
+ *         self.model = model
+ */
+  delete __pyx_v_self->model;
+
+  /* "multivec.pyx":125
+ *         del self.config
+ *         del self.model
+ *         self.config = config             # <<<<<<<<<<<<<<
+ *         self.model = model
+ *         self.alloc = False
+ */
+  __pyx_v_self->config = __pyx_v_config;
+
+  /* "multivec.pyx":126
+ *         del self.model
+ *         self.config = config
+ *         self.model = model             # <<<<<<<<<<<<<<
+ *         self.alloc = False
+ *         return self
+ */
+  __pyx_v_self->model = __pyx_v_model;
+
+  /* "multivec.pyx":127
+ *         self.config = config
+ *         self.model = model
+ *         self.alloc = False             # <<<<<<<<<<<<<<
+ *         return self
+ * 
+ */
+  __pyx_v_self->alloc = 0;
+
+  /* "multivec.pyx":128
+ *         self.model = model
+ *         self.alloc = False
+ *         return self             # <<<<<<<<<<<<<<
+ * 
+ *     def __init__(self, name=None, **kwargs):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(((PyObject *)__pyx_v_self));
+  __pyx_r = ((PyObject *)__pyx_v_self);
+  goto __pyx_L0;
+
+  /* "multivec.pyx":121
+ *         self.model = new MonolingualModelCpp(self.config)
+ * 
+ *     cdef set_members(self, MonolingualModelCpp* model, Config* config):             # <<<<<<<<<<<<<<
+ *         # used by BilingualModel to initialize self.model and self.config to existing values
+ *         del self.config
+ */
+
+  /* function exit code */
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":130
+ *         return self
+ * 
+ *     def __init__(self, name=None, **kwargs):             # <<<<<<<<<<<<<<
+ *         if name is not None:
+ *             self.model.load(name)
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_16MonolingualModel_3__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_8multivec_16MonolingualModel_3__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_name = 0;
   PyObject *__pyx_v_kwargs = 0;
   int __pyx_lineno = 0;
@@ -890,7 +1126,7 @@ static int __pyx_pw_8multivec_16MonolingualModel_1__cinit__(PyObject *__pyx_v_se
   int __pyx_clineno = 0;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("__cinit__ (wrapper)", 0);
+  __Pyx_RefNannySetupContext("__init__ (wrapper)", 0);
   __pyx_v_kwargs = PyDict_New(); if (unlikely(!__pyx_v_kwargs)) return -1;
   __Pyx_GOTREF(__pyx_v_kwargs);
   {
@@ -914,7 +1150,7 @@ static int __pyx_pw_8multivec_16MonolingualModel_1__cinit__(PyObject *__pyx_v_se
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, __pyx_v_kwargs, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, __pyx_v_kwargs, values, pos_args, "__init__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -927,14 +1163,14 @@ static int __pyx_pw_8multivec_16MonolingualModel_1__cinit__(PyObject *__pyx_v_se
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__init__", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_DECREF(__pyx_v_kwargs); __pyx_v_kwargs = 0;
-  __Pyx_AddTraceback("multivec.MonolingualModel.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("multivec.MonolingualModel.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel___cinit__(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_name, __pyx_v_kwargs);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_2__init__(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_name, __pyx_v_kwargs);
 
   /* function exit code */
   __Pyx_XDECREF(__pyx_v_kwargs);
@@ -942,7 +1178,7 @@ static int __pyx_pw_8multivec_16MonolingualModel_1__cinit__(PyObject *__pyx_v_se
   return __pyx_r;
 }
 
-static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_kwargs) {
+static int __pyx_pf_8multivec_16MonolingualModel_2__init__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_kwargs) {
   PyObject *__pyx_v_key = NULL;
   PyObject *__pyx_v_value = NULL;
   int __pyx_r;
@@ -962,29 +1198,11 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("__cinit__", 0);
+  __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "multivec.pyx":75
- *     cdef MonolingualModelCpp model
- *     def __cinit__(self, name=None, **kwargs):
- *         self.config = new Config()             # <<<<<<<<<<<<<<
- *         self.model = MonolingualModelCpp(self.config)
- *         if name is not None:
- */
-  __pyx_v_self->config = new Config();
-
-  /* "multivec.pyx":76
- *     def __cinit__(self, name=None, **kwargs):
- *         self.config = new Config()
- *         self.model = MonolingualModelCpp(self.config)             # <<<<<<<<<<<<<<
- *         if name is not None:
- *             self.model.load(name)
- */
-  __pyx_v_self->model = MonolingualModel(__pyx_v_self->config);
-
-  /* "multivec.pyx":77
- *         self.config = new Config()
- *         self.model = MonolingualModelCpp(self.config)
+  /* "multivec.pyx":131
+ * 
+ *     def __init__(self, name=None, **kwargs):
  *         if name is not None:             # <<<<<<<<<<<<<<
  *             self.model.load(name)
  * 
@@ -993,46 +1211,46 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "multivec.pyx":78
- *         self.model = MonolingualModelCpp(self.config)
+    /* "multivec.pyx":132
+ *     def __init__(self, name=None, **kwargs):
  *         if name is not None:
  *             self.model.load(name)             # <<<<<<<<<<<<<<
  * 
- *         for key, value in kwargs.items():
+ *         # overwrites previous configuration
  */
-    __pyx_t_3 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     try {
-      __pyx_v_self->model.load(__pyx_t_3);
+      __pyx_v_self->model->load(__pyx_t_3);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
 
-    /* "multivec.pyx":77
- *         self.config = new Config()
- *         self.model = MonolingualModelCpp(self.config)
+    /* "multivec.pyx":131
+ * 
+ *     def __init__(self, name=None, **kwargs):
  *         if name is not None:             # <<<<<<<<<<<<<<
  *             self.model.load(name)
  * 
  */
   }
 
-  /* "multivec.pyx":80
- *             self.model.load(name)
+  /* "multivec.pyx":135
  * 
+ *         # overwrites previous configuration
  *         for key, value in kwargs.items():             # <<<<<<<<<<<<<<
  *             if value is not None:
  *                 setattr(self, key, value)
  */
-  __pyx_t_4 = __Pyx_PyDict_Items(__pyx_v_kwargs); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyDict_Items(__pyx_v_kwargs); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   if (likely(PyList_CheckExact(__pyx_t_4)) || PyTuple_CheckExact(__pyx_t_4)) {
     __pyx_t_5 = __pyx_t_4; __Pyx_INCREF(__pyx_t_5); __pyx_t_6 = 0;
     __pyx_t_7 = NULL;
   } else {
-    __pyx_t_6 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = -1; __pyx_t_5 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = Py_TYPE(__pyx_t_5)->tp_iternext; if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_7 = Py_TYPE(__pyx_t_5)->tp_iternext; if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   for (;;) {
@@ -1040,17 +1258,17 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
       if (likely(PyList_CheckExact(__pyx_t_5))) {
         if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_5)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_6); __Pyx_INCREF(__pyx_t_4); __pyx_t_6++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_5, __pyx_t_6); __Pyx_INCREF(__pyx_t_4); __pyx_t_6++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_5, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_5, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       } else {
         if (__pyx_t_6 >= PyTuple_GET_SIZE(__pyx_t_5)) break;
         #if CYTHON_COMPILING_IN_CPYTHON
-        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_6); __Pyx_INCREF(__pyx_t_4); __pyx_t_6++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_5, __pyx_t_6); __Pyx_INCREF(__pyx_t_4); __pyx_t_6++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_5, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_5, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       }
@@ -1060,7 +1278,7 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
         }
         break;
       }
@@ -1076,7 +1294,7 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
       if (unlikely(size != 2)) {
         if (size > 2) __Pyx_RaiseTooManyValuesError(2);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
       #if CYTHON_COMPILING_IN_CPYTHON
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -1089,15 +1307,15 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
       __Pyx_INCREF(__pyx_t_8);
       __Pyx_INCREF(__pyx_t_9);
       #else
-      __pyx_t_8 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_9 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_9);
       #endif
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_10 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_10 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_11 = Py_TYPE(__pyx_t_10)->tp_iternext;
@@ -1105,7 +1323,7 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
       __Pyx_GOTREF(__pyx_t_8);
       index = 1; __pyx_t_9 = __pyx_t_11(__pyx_t_10); if (unlikely(!__pyx_t_9)) goto __pyx_L6_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_9);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_10), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_10), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __pyx_t_11 = NULL;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       goto __pyx_L7_unpacking_done;
@@ -1113,7 +1331,7 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __pyx_t_11 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __pyx_L7_unpacking_done:;
     }
     __Pyx_XDECREF_SET(__pyx_v_key, __pyx_t_8);
@@ -1121,8 +1339,8 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
     __Pyx_XDECREF_SET(__pyx_v_value, __pyx_t_9);
     __pyx_t_9 = 0;
 
-    /* "multivec.pyx":81
- * 
+    /* "multivec.pyx":136
+ *         # overwrites previous configuration
  *         for key, value in kwargs.items():
  *             if value is not None:             # <<<<<<<<<<<<<<
  *                 setattr(self, key, value)
@@ -1132,17 +1350,17 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
     __pyx_t_1 = (__pyx_t_2 != 0);
     if (__pyx_t_1) {
 
-      /* "multivec.pyx":82
+      /* "multivec.pyx":137
  *         for key, value in kwargs.items():
  *             if value is not None:
  *                 setattr(self, key, value)             # <<<<<<<<<<<<<<
  * 
- *     def word_vec(self, word, policy=0):
+ *     def __dealloc__(self):
  */
-      __pyx_t_12 = PyObject_SetAttr(((PyObject *)__pyx_v_self), __pyx_v_key, __pyx_v_value); if (unlikely(__pyx_t_12 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_12 = PyObject_SetAttr(((PyObject *)__pyx_v_self), __pyx_v_key, __pyx_v_value); if (unlikely(__pyx_t_12 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 137; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-      /* "multivec.pyx":81
- * 
+      /* "multivec.pyx":136
+ *         # overwrites previous configuration
  *         for key, value in kwargs.items():
  *             if value is not None:             # <<<<<<<<<<<<<<
  *                 setattr(self, key, value)
@@ -1150,9 +1368,9 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
  */
     }
 
-    /* "multivec.pyx":80
- *             self.model.load(name)
+    /* "multivec.pyx":135
  * 
+ *         # overwrites previous configuration
  *         for key, value in kwargs.items():             # <<<<<<<<<<<<<<
  *             if value is not None:
  *                 setattr(self, key, value)
@@ -1160,12 +1378,12 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
   }
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "multivec.pyx":74
- *     cdef Config* config
- *     cdef MonolingualModelCpp model
- *     def __cinit__(self, name=None, **kwargs):             # <<<<<<<<<<<<<<
- *         self.config = new Config()
- *         self.model = MonolingualModelCpp(self.config)
+  /* "multivec.pyx":130
+ *         return self
+ * 
+ *     def __init__(self, name=None, **kwargs):             # <<<<<<<<<<<<<<
+ *         if name is not None:
+ *             self.model.load(name)
  */
 
   /* function exit code */
@@ -1177,7 +1395,7 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_AddTraceback("multivec.MonolingualModel.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("multivec.MonolingualModel.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_key);
@@ -1186,17 +1404,91 @@ static int __pyx_pf_8multivec_16MonolingualModel___cinit__(struct __pyx_obj_8mul
   return __pyx_r;
 }
 
-/* "multivec.pyx":84
+/* "multivec.pyx":139
  *                 setattr(self, key, value)
  * 
- *     def word_vec(self, word, policy=0):             # <<<<<<<<<<<<<<
- *         cdef Vec vec = self.model.wordVec(word, policy)
- *         cdef float* data = vec.data()
+ *     def __dealloc__(self):             # <<<<<<<<<<<<<<
+ *         if self.alloc:  # we don't want to dealloc parent bilingual model's parameters
+ *             del self.model
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_3word_vec(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_3word_vec(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static void __pyx_pw_8multivec_16MonolingualModel_5__dealloc__(PyObject *__pyx_v_self); /*proto*/
+static void __pyx_pw_8multivec_16MonolingualModel_5__dealloc__(PyObject *__pyx_v_self) {
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__dealloc__ (wrapper)", 0);
+  __pyx_pf_8multivec_16MonolingualModel_4__dealloc__(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+}
+
+static void __pyx_pf_8multivec_16MonolingualModel_4__dealloc__(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self) {
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  __Pyx_RefNannySetupContext("__dealloc__", 0);
+
+  /* "multivec.pyx":140
+ * 
+ *     def __dealloc__(self):
+ *         if self.alloc:  # we don't want to dealloc parent bilingual model's parameters             # <<<<<<<<<<<<<<
+ *             del self.model
+ *             del self.config
+ */
+  __pyx_t_1 = (__pyx_v_self->alloc != 0);
+  if (__pyx_t_1) {
+
+    /* "multivec.pyx":141
+ *     def __dealloc__(self):
+ *         if self.alloc:  # we don't want to dealloc parent bilingual model's parameters
+ *             del self.model             # <<<<<<<<<<<<<<
+ *             del self.config
+ * 
+ */
+    delete __pyx_v_self->model;
+
+    /* "multivec.pyx":142
+ *         if self.alloc:  # we don't want to dealloc parent bilingual model's parameters
+ *             del self.model
+ *             del self.config             # <<<<<<<<<<<<<<
+ * 
+ *     def word_vec(self, word, policy=0):
+ */
+    delete __pyx_v_self->config;
+
+    /* "multivec.pyx":140
+ * 
+ *     def __dealloc__(self):
+ *         if self.alloc:  # we don't want to dealloc parent bilingual model's parameters             # <<<<<<<<<<<<<<
+ *             del self.model
+ *             del self.config
+ */
+  }
+
+  /* "multivec.pyx":139
+ *                 setattr(self, key, value)
+ * 
+ *     def __dealloc__(self):             # <<<<<<<<<<<<<<
+ *         if self.alloc:  # we don't want to dealloc parent bilingual model's parameters
+ *             del self.model
+ */
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "multivec.pyx":144
+ *             del self.config
+ * 
+ *     def word_vec(self, word, policy=0):             # <<<<<<<<<<<<<<
+ *         """
+ *         word_vec(word, policy=0)
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_7word_vec(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_8multivec_16MonolingualModel_6word_vec[] = "\n        word_vec(word, policy=0)\n        \n        Return the vector representation of word\n        Raise RuntimeError if word is out of vocabulary\n        \n        Policy determines which weights to use:\n            0) take the input weights\n            1) concatenation of input and output weights\n            2) sum of input and output weights\n            3) output weights\n        ";
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_7word_vec(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_word = 0;
   PyObject *__pyx_v_policy = 0;
   int __pyx_lineno = 0;
@@ -1230,7 +1522,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_3word_vec(PyObject *__pyx
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "word_vec") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "word_vec") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -1245,20 +1537,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_3word_vec(PyObject *__pyx
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("word_vec", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("word_vec", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.word_vec", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_2word_vec(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_word, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_6word_vec(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_word, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_2word_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_6word_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_policy) {
   Vec __pyx_v_vec;
   float *__pyx_v_data;
   int __pyx_v_i;
@@ -1278,25 +1570,25 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_2word_vec(struct __pyx_ob
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("word_vec", 0);
 
-  /* "multivec.pyx":85
- * 
- *     def word_vec(self, word, policy=0):
+  /* "multivec.pyx":157
+ *             3) output weights
+ *         """
  *         cdef Vec vec = self.model.wordVec(word, policy)             # <<<<<<<<<<<<<<
  *         cdef float* data = vec.data()
  *         return np.array([data[i] for i in range(vec.size())])
  */
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_t_3 = __pyx_v_self->model.wordVec(__pyx_t_1, __pyx_t_2);
+    __pyx_t_3 = __pyx_v_self->model->wordVec(__pyx_t_1, __pyx_t_2);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_v_vec = __pyx_t_3;
 
-  /* "multivec.pyx":86
- *     def word_vec(self, word, policy=0):
+  /* "multivec.pyx":158
+ *         """
  *         cdef Vec vec = self.model.wordVec(word, policy)
  *         cdef float* data = vec.data()             # <<<<<<<<<<<<<<
  *         return np.array([data[i] for i in range(vec.size())])
@@ -1304,7 +1596,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_2word_vec(struct __pyx_ob
  */
   __pyx_v_data = __pyx_v_vec.data();
 
-  /* "multivec.pyx":87
+  /* "multivec.pyx":159
  *         cdef Vec vec = self.model.wordVec(word, policy)
  *         cdef float* data = vec.data()
  *         return np.array([data[i] for i in range(vec.size())])             # <<<<<<<<<<<<<<
@@ -1312,19 +1604,19 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_2word_vec(struct __pyx_ob
  *     def sent_vec(self, sequence):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_array); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_array); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_2 = __pyx_v_vec.size();
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_2; __pyx_t_7+=1) {
     __pyx_v_i = __pyx_t_7;
-    __pyx_t_8 = PyFloat_FromDouble((__pyx_v_data[__pyx_v_i])); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = PyFloat_FromDouble((__pyx_v_data[__pyx_v_i])); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_8);
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_8))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_8))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   }
   __pyx_t_8 = NULL;
@@ -1338,17 +1630,17 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_2word_vec(struct __pyx_ob
     }
   }
   if (!__pyx_t_8) {
-    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_GOTREF(__pyx_t_4);
   } else {
-    __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_8); __pyx_t_8 = NULL;
     __Pyx_GIVEREF(__pyx_t_5);
     PyTuple_SET_ITEM(__pyx_t_9, 0+1, __pyx_t_5);
     __pyx_t_5 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   }
@@ -1357,12 +1649,12 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_2word_vec(struct __pyx_ob
   __pyx_t_4 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":84
- *                 setattr(self, key, value)
+  /* "multivec.pyx":144
+ *             del self.config
  * 
  *     def word_vec(self, word, policy=0):             # <<<<<<<<<<<<<<
- *         cdef Vec vec = self.model.wordVec(word, policy)
- *         cdef float* data = vec.data()
+ *         """
+ *         word_vec(word, policy=0)
  */
 
   /* function exit code */
@@ -1380,28 +1672,29 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_2word_vec(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "multivec.pyx":89
+/* "multivec.pyx":161
  *         return np.array([data[i] for i in range(vec.size())])
  * 
  *     def sent_vec(self, sequence):             # <<<<<<<<<<<<<<
- *         cdef Vec vec = self.model.sentVec(sequence)
- *         cdef float* data = vec.data()
+ *         """
+ *         sent_vec(sequence)
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_5sent_vec(PyObject *__pyx_v_self, PyObject *__pyx_v_sequence); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_5sent_vec(PyObject *__pyx_v_self, PyObject *__pyx_v_sequence) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_9sent_vec(PyObject *__pyx_v_self, PyObject *__pyx_v_sequence); /*proto*/
+static char __pyx_doc_8multivec_16MonolingualModel_8sent_vec[] = "\n        sent_vec(sequence)\n        \n        Perform paragraph vector inference step on given sequence.\n        Sequence must be a whitespace-delimited string of words.\n        \n        Raise RuntimeError if sequence is empty or all words are OOV.\n        ";
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_9sent_vec(PyObject *__pyx_v_self, PyObject *__pyx_v_sequence) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("sent_vec (wrapper)", 0);
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_4sent_vec(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_sequence));
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_8sent_vec(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_sequence));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_4sent_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_sequence) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_8sent_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_sequence) {
   Vec __pyx_v_vec;
   float *__pyx_v_data;
   int __pyx_v_i;
@@ -1421,24 +1714,24 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_4sent_vec(struct __pyx_ob
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sent_vec", 0);
 
-  /* "multivec.pyx":90
- * 
- *     def sent_vec(self, sequence):
+  /* "multivec.pyx":170
+ *         Raise RuntimeError if sequence is empty or all words are OOV.
+ *         """
  *         cdef Vec vec = self.model.sentVec(sequence)             # <<<<<<<<<<<<<<
  *         cdef float* data = vec.data()
  *         return np.array([data[i] for i in range(vec.size())])
  */
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_sequence); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_sequence); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_t_2 = __pyx_v_self->model.sentVec(__pyx_t_1);
+    __pyx_t_2 = __pyx_v_self->model->sentVec(__pyx_t_1);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_v_vec = __pyx_t_2;
 
-  /* "multivec.pyx":91
- *     def sent_vec(self, sequence):
+  /* "multivec.pyx":171
+ *         """
  *         cdef Vec vec = self.model.sentVec(sequence)
  *         cdef float* data = vec.data()             # <<<<<<<<<<<<<<
  *         return np.array([data[i] for i in range(vec.size())])
@@ -1446,27 +1739,27 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_4sent_vec(struct __pyx_ob
  */
   __pyx_v_data = __pyx_v_vec.data();
 
-  /* "multivec.pyx":92
+  /* "multivec.pyx":172
  *         cdef Vec vec = self.model.sentVec(sequence)
  *         cdef float* data = vec.data()
  *         return np.array([data[i] for i in range(vec.size())])             # <<<<<<<<<<<<<<
  * 
- *     def train(self, name, initialize=True): self.model.train(name, initialize)
+ *     def train(self, name, initialize=True):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_array); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_array); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_6 = __pyx_v_vec.size();
   for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
     __pyx_v_i = __pyx_t_7;
-    __pyx_t_8 = PyFloat_FromDouble((__pyx_v_data[__pyx_v_i])); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = PyFloat_FromDouble((__pyx_v_data[__pyx_v_i])); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_8);
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_8))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_8))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   }
   __pyx_t_8 = NULL;
@@ -1480,17 +1773,17 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_4sent_vec(struct __pyx_ob
     }
   }
   if (!__pyx_t_8) {
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_4); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_t_4); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_3);
   } else {
-    __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_8); __pyx_t_8 = NULL;
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_9, 0+1, __pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_9, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_9, NULL); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   }
@@ -1499,12 +1792,12 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_4sent_vec(struct __pyx_ob
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":89
+  /* "multivec.pyx":161
  *         return np.array([data[i] for i in range(vec.size())])
  * 
  *     def sent_vec(self, sequence):             # <<<<<<<<<<<<<<
- *         cdef Vec vec = self.model.sentVec(sequence)
- *         cdef float* data = vec.data()
+ *         """
+ *         sent_vec(sequence)
  */
 
   /* function exit code */
@@ -1522,17 +1815,18 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_4sent_vec(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "multivec.pyx":94
+/* "multivec.pyx":174
  *         return np.array([data[i] for i in range(vec.size())])
  * 
- *     def train(self, name, initialize=True): self.model.train(name, initialize)             # <<<<<<<<<<<<<<
- *     def load(self, name): self.model.load(name)
- *     def save(self, name): self.model.save(name)
+ *     def train(self, name, initialize=True):             # <<<<<<<<<<<<<<
+ *         """
+ *         train(name, initialize=True)
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_7train(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_7train(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_11train(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_8multivec_16MonolingualModel_10train[] = "\n        train(name, initialize=True)\n        \n        Train model with training file of path `name`.\n        Raise RuntimeError if file is empty or cannot be opened.\n\n        Initialize will create a new vocabulary from training file, and initialize the model's\n        weight to random values.\n        Set this value to False to continue training of an existing model (learning rate will\n        be reset to its initial value, i.e. self.learning_rate)\n        ";
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_11train(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_name = 0;
   PyObject *__pyx_v_initialize = 0;
   int __pyx_lineno = 0;
@@ -1566,7 +1860,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_7train(PyObject *__pyx_v_
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "train") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "train") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -1581,20 +1875,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_7train(PyObject *__pyx_v_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("train", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("train", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.train", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_6train(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_name, __pyx_v_initialize);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_10train(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_name, __pyx_v_initialize);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_6train(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_initialize) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_10train(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_initialize) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -1602,13 +1896,29 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_6train(struct __pyx_obj_8
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("train", 0);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+  /* "multivec.pyx":186
+ *         be reset to its initial value, i.e. self.learning_rate)
+ *         """
+ *         self.model.train(name, initialize)             # <<<<<<<<<<<<<<
+ * 
+ *     def load(self, name):
+ */
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_v_self->model.train(__pyx_t_1, __pyx_v_initialize);
+    __pyx_v_self->model->train(__pyx_t_1, __pyx_v_initialize);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
+
+  /* "multivec.pyx":174
+ *         return np.array([data[i] for i in range(vec.size())])
+ * 
+ *     def train(self, name, initialize=True):             # <<<<<<<<<<<<<<
+ *         """
+ *         train(name, initialize=True)
+ */
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
@@ -1622,28 +1932,28 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_6train(struct __pyx_obj_8
   return __pyx_r;
 }
 
-/* "multivec.pyx":95
+/* "multivec.pyx":188
+ *         self.model.train(name, initialize)
  * 
- *     def train(self, name, initialize=True): self.model.train(name, initialize)
- *     def load(self, name): self.model.load(name)             # <<<<<<<<<<<<<<
- *     def save(self, name): self.model.save(name)
- *     def save_vectors(self, name, policy=0): self.model.saveVectorsBin(name, policy)
+ *     def load(self, name):             # <<<<<<<<<<<<<<
+ *         self.model.load(name)
+ *     def save(self, name):
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_9load(PyObject *__pyx_v_self, PyObject *__pyx_v_name); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_9load(PyObject *__pyx_v_self, PyObject *__pyx_v_name) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_13load(PyObject *__pyx_v_self, PyObject *__pyx_v_name); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_13load(PyObject *__pyx_v_self, PyObject *__pyx_v_name) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("load (wrapper)", 0);
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_8load(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_name));
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_12load(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_name));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_8load(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_12load(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -1651,13 +1961,29 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_8load(struct __pyx_obj_8m
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("load", 0);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+  /* "multivec.pyx":189
+ * 
+ *     def load(self, name):
+ *         self.model.load(name)             # <<<<<<<<<<<<<<
+ *     def save(self, name):
+ *         self.model.save(name)
+ */
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_v_self->model.load(__pyx_t_1);
+    __pyx_v_self->model->load(__pyx_t_1);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
+
+  /* "multivec.pyx":188
+ *         self.model.train(name, initialize)
+ * 
+ *     def load(self, name):             # <<<<<<<<<<<<<<
+ *         self.model.load(name)
+ *     def save(self, name):
+ */
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
@@ -1671,28 +1997,28 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_8load(struct __pyx_obj_8m
   return __pyx_r;
 }
 
-/* "multivec.pyx":96
- *     def train(self, name, initialize=True): self.model.train(name, initialize)
- *     def load(self, name): self.model.load(name)
- *     def save(self, name): self.model.save(name)             # <<<<<<<<<<<<<<
- *     def save_vectors(self, name, policy=0): self.model.saveVectorsBin(name, policy)
- *     def save_vectors_bin(self, name, policy=0): self.model.saveVectorsBin(name, policy)
+/* "multivec.pyx":190
+ *     def load(self, name):
+ *         self.model.load(name)
+ *     def save(self, name):             # <<<<<<<<<<<<<<
+ *         self.model.save(name)
+ *     def save_vectors(self, name, policy=0):
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_11save(PyObject *__pyx_v_self, PyObject *__pyx_v_name); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_11save(PyObject *__pyx_v_self, PyObject *__pyx_v_name) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_15save(PyObject *__pyx_v_self, PyObject *__pyx_v_name); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_15save(PyObject *__pyx_v_self, PyObject *__pyx_v_name) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("save (wrapper)", 0);
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_10save(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_name));
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_14save(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_name));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_10save(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_14save(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -1700,13 +2026,29 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_10save(struct __pyx_obj_8
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("save", 0);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+  /* "multivec.pyx":191
+ *         self.model.load(name)
+ *     def save(self, name):
+ *         self.model.save(name)             # <<<<<<<<<<<<<<
+ *     def save_vectors(self, name, policy=0):
+ *         self.model.saveVectorsBin(name, policy)
+ */
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_v_self->model.save(__pyx_t_1);
+    __pyx_v_self->model->save(__pyx_t_1);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 191; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
+
+  /* "multivec.pyx":190
+ *     def load(self, name):
+ *         self.model.load(name)
+ *     def save(self, name):             # <<<<<<<<<<<<<<
+ *         self.model.save(name)
+ *     def save_vectors(self, name, policy=0):
+ */
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
@@ -1720,17 +2062,17 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_10save(struct __pyx_obj_8
   return __pyx_r;
 }
 
-/* "multivec.pyx":97
- *     def load(self, name): self.model.load(name)
- *     def save(self, name): self.model.save(name)
- *     def save_vectors(self, name, policy=0): self.model.saveVectorsBin(name, policy)             # <<<<<<<<<<<<<<
- *     def save_vectors_bin(self, name, policy=0): self.model.saveVectorsBin(name, policy)
- *     def save_sent_vectors(self, name): self.model.saveSentVectors(name)
+/* "multivec.pyx":192
+ *     def save(self, name):
+ *         self.model.save(name)
+ *     def save_vectors(self, name, policy=0):             # <<<<<<<<<<<<<<
+ *         self.model.saveVectorsBin(name, policy)
+ *     def save_vectors_bin(self, name, policy=0):
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_13save_vectors(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_13save_vectors(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_17save_vectors(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_17save_vectors(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_name = 0;
   PyObject *__pyx_v_policy = 0;
   int __pyx_lineno = 0;
@@ -1764,7 +2106,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_13save_vectors(PyObject *
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "save_vectors") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "save_vectors") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 192; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -1779,20 +2121,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_13save_vectors(PyObject *
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("save_vectors", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("save_vectors", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 192; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.save_vectors", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_12save_vectors(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_name, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_16save_vectors(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_name, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_12save_vectors(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_16save_vectors(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_policy) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -1801,14 +2143,30 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_12save_vectors(struct __p
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("save_vectors", 0);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+  /* "multivec.pyx":193
+ *         self.model.save(name)
+ *     def save_vectors(self, name, policy=0):
+ *         self.model.saveVectorsBin(name, policy)             # <<<<<<<<<<<<<<
+ *     def save_vectors_bin(self, name, policy=0):
+ *         self.model.saveVectorsBin(name, policy)
+ */
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 193; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 193; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_v_self->model.saveVectorsBin(__pyx_t_1, __pyx_t_2);
+    __pyx_v_self->model->saveVectorsBin(__pyx_t_1, __pyx_t_2);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 193; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
+
+  /* "multivec.pyx":192
+ *     def save(self, name):
+ *         self.model.save(name)
+ *     def save_vectors(self, name, policy=0):             # <<<<<<<<<<<<<<
+ *         self.model.saveVectorsBin(name, policy)
+ *     def save_vectors_bin(self, name, policy=0):
+ */
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
@@ -1822,17 +2180,17 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_12save_vectors(struct __p
   return __pyx_r;
 }
 
-/* "multivec.pyx":98
- *     def save(self, name): self.model.save(name)
- *     def save_vectors(self, name, policy=0): self.model.saveVectorsBin(name, policy)
- *     def save_vectors_bin(self, name, policy=0): self.model.saveVectorsBin(name, policy)             # <<<<<<<<<<<<<<
- *     def save_sent_vectors(self, name): self.model.saveSentVectors(name)
- * 
+/* "multivec.pyx":194
+ *     def save_vectors(self, name, policy=0):
+ *         self.model.saveVectorsBin(name, policy)
+ *     def save_vectors_bin(self, name, policy=0):             # <<<<<<<<<<<<<<
+ *         self.model.saveVectorsBin(name, policy)
+ *     def save_sent_vectors(self, name):
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_15save_vectors_bin(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_15save_vectors_bin(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_19save_vectors_bin(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_19save_vectors_bin(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_name = 0;
   PyObject *__pyx_v_policy = 0;
   int __pyx_lineno = 0;
@@ -1866,7 +2224,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_15save_vectors_bin(PyObje
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "save_vectors_bin") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "save_vectors_bin") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 194; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -1881,20 +2239,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_15save_vectors_bin(PyObje
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("save_vectors_bin", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("save_vectors_bin", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 194; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.save_vectors_bin", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_14save_vectors_bin(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_name, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_18save_vectors_bin(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_name, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_14save_vectors_bin(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_18save_vectors_bin(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_policy) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -1903,14 +2261,30 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_14save_vectors_bin(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("save_vectors_bin", 0);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+  /* "multivec.pyx":195
+ *         self.model.saveVectorsBin(name, policy)
+ *     def save_vectors_bin(self, name, policy=0):
+ *         self.model.saveVectorsBin(name, policy)             # <<<<<<<<<<<<<<
+ *     def save_sent_vectors(self, name):
+ *         self.model.saveSentVectors(name)
+ */
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 195; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 195; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_v_self->model.saveVectorsBin(__pyx_t_1, __pyx_t_2);
+    __pyx_v_self->model->saveVectorsBin(__pyx_t_1, __pyx_t_2);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 195; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
+
+  /* "multivec.pyx":194
+ *     def save_vectors(self, name, policy=0):
+ *         self.model.saveVectorsBin(name, policy)
+ *     def save_vectors_bin(self, name, policy=0):             # <<<<<<<<<<<<<<
+ *         self.model.saveVectorsBin(name, policy)
+ *     def save_sent_vectors(self, name):
+ */
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
@@ -1924,28 +2298,28 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_14save_vectors_bin(struct
   return __pyx_r;
 }
 
-/* "multivec.pyx":99
- *     def save_vectors(self, name, policy=0): self.model.saveVectorsBin(name, policy)
- *     def save_vectors_bin(self, name, policy=0): self.model.saveVectorsBin(name, policy)
- *     def save_sent_vectors(self, name): self.model.saveSentVectors(name)             # <<<<<<<<<<<<<<
+/* "multivec.pyx":196
+ *     def save_vectors_bin(self, name, policy=0):
+ *         self.model.saveVectorsBin(name, policy)
+ *     def save_sent_vectors(self, name):             # <<<<<<<<<<<<<<
+ *         self.model.saveSentVectors(name)
  * 
- *     def similarity(self, word1, word2, policy=0):
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_17save_sent_vectors(PyObject *__pyx_v_self, PyObject *__pyx_v_name); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_17save_sent_vectors(PyObject *__pyx_v_self, PyObject *__pyx_v_name) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_21save_sent_vectors(PyObject *__pyx_v_self, PyObject *__pyx_v_name); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_21save_sent_vectors(PyObject *__pyx_v_self, PyObject *__pyx_v_name) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("save_sent_vectors (wrapper)", 0);
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_16save_sent_vectors(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_name));
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_20save_sent_vectors(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_name));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_16save_sent_vectors(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_20save_sent_vectors(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_name) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -1953,13 +2327,29 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_16save_sent_vectors(struc
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("save_sent_vectors", 0);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 99; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+  /* "multivec.pyx":197
+ *         self.model.saveVectorsBin(name, policy)
+ *     def save_sent_vectors(self, name):
+ *         self.model.saveSentVectors(name)             # <<<<<<<<<<<<<<
+ * 
+ *     def similarity(self, word1, word2, policy=0):
+ */
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_v_self->model.saveSentVectors(__pyx_t_1);
+    __pyx_v_self->model->saveSentVectors(__pyx_t_1);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 99; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 197; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
+
+  /* "multivec.pyx":196
+ *     def save_vectors_bin(self, name, policy=0):
+ *         self.model.saveVectorsBin(name, policy)
+ *     def save_sent_vectors(self, name):             # <<<<<<<<<<<<<<
+ *         self.model.saveSentVectors(name)
+ * 
+ */
 
   /* function exit code */
   __pyx_r = Py_None; __Pyx_INCREF(Py_None);
@@ -1973,8 +2363,8 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_16save_sent_vectors(struc
   return __pyx_r;
 }
 
-/* "multivec.pyx":101
- *     def save_sent_vectors(self, name): self.model.saveSentVectors(name)
+/* "multivec.pyx":199
+ *         self.model.saveSentVectors(name)
  * 
  *     def similarity(self, word1, word2, policy=0):             # <<<<<<<<<<<<<<
  *         return self.model.similarity(word1, word2, policy)
@@ -1982,8 +2372,8 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_16save_sent_vectors(struc
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_19similarity(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_19similarity(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_23similarity(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_23similarity(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_word1 = 0;
   PyObject *__pyx_v_word2 = 0;
   PyObject *__pyx_v_policy = 0;
@@ -2015,7 +2405,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_19similarity(PyObject *__
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_word2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("similarity", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("similarity", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 199; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (kw_args > 0) {
@@ -2024,7 +2414,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_19similarity(PyObject *__
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "similarity") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "similarity") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 199; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2041,20 +2431,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_19similarity(PyObject *__
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("similarity", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("similarity", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 199; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.similarity", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_18similarity(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_word1, __pyx_v_word2, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_22similarity(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_word1, __pyx_v_word2, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_18similarity(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word1, PyObject *__pyx_v_word2, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_22similarity(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word1, PyObject *__pyx_v_word2, PyObject *__pyx_v_policy) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -2067,7 +2457,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_18similarity(struct __pyx
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("similarity", 0);
 
-  /* "multivec.pyx":102
+  /* "multivec.pyx":200
  * 
  *     def similarity(self, word1, word2, policy=0):
  *         return self.model.similarity(word1, word2, policy)             # <<<<<<<<<<<<<<
@@ -2075,23 +2465,23 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_18similarity(struct __pyx
  *         return self.model.distance(word1, word2, policy)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 200; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 200; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 200; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_t_4 = __pyx_v_self->model.similarity(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+    __pyx_t_4 = __pyx_v_self->model->similarity(__pyx_t_1, __pyx_t_2, __pyx_t_3);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 200; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 102; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 200; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":101
- *     def save_sent_vectors(self, name): self.model.saveSentVectors(name)
+  /* "multivec.pyx":199
+ *         self.model.saveSentVectors(name)
  * 
  *     def similarity(self, word1, word2, policy=0):             # <<<<<<<<<<<<<<
  *         return self.model.similarity(word1, word2, policy)
@@ -2109,7 +2499,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_18similarity(struct __pyx
   return __pyx_r;
 }
 
-/* "multivec.pyx":103
+/* "multivec.pyx":201
  *     def similarity(self, word1, word2, policy=0):
  *         return self.model.similarity(word1, word2, policy)
  *     def distance(self, word1, word2, policy=0):             # <<<<<<<<<<<<<<
@@ -2118,8 +2508,8 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_18similarity(struct __pyx
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_21distance(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_21distance(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_25distance(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_25distance(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_word1 = 0;
   PyObject *__pyx_v_word2 = 0;
   PyObject *__pyx_v_policy = 0;
@@ -2151,7 +2541,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_21distance(PyObject *__py
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_word2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("distance", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("distance", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 201; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (kw_args > 0) {
@@ -2160,7 +2550,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_21distance(PyObject *__py
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "distance") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "distance") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 201; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2177,20 +2567,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_21distance(PyObject *__py
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("distance", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 103; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("distance", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 201; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_20distance(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_word1, __pyx_v_word2, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_24distance(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_word1, __pyx_v_word2, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_20distance(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word1, PyObject *__pyx_v_word2, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_24distance(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word1, PyObject *__pyx_v_word2, PyObject *__pyx_v_policy) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -2203,30 +2593,30 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_20distance(struct __pyx_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("distance", 0);
 
-  /* "multivec.pyx":104
+  /* "multivec.pyx":202
  *         return self.model.similarity(word1, word2, policy)
  *     def distance(self, word1, word2, policy=0):
  *         return self.model.distance(word1, word2, policy)             # <<<<<<<<<<<<<<
  * 
- *     def similarity_n_grams(self, seq1, seq2, policy=0):
+ *     def similarity_ngrams(self, seq1, seq2, policy=0):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 202; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 202; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 202; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_t_4 = __pyx_v_self->model.distance(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+    __pyx_t_4 = __pyx_v_self->model->distance(__pyx_t_1, __pyx_t_2, __pyx_t_3);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 202; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 104; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 202; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":103
+  /* "multivec.pyx":201
  *     def similarity(self, word1, word2, policy=0):
  *         return self.model.similarity(word1, word2, policy)
  *     def distance(self, word1, word2, policy=0):             # <<<<<<<<<<<<<<
@@ -2245,17 +2635,17 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_20distance(struct __pyx_o
   return __pyx_r;
 }
 
-/* "multivec.pyx":106
+/* "multivec.pyx":204
  *         return self.model.distance(word1, word2, policy)
  * 
- *     def similarity_n_grams(self, seq1, seq2, policy=0):             # <<<<<<<<<<<<<<
+ *     def similarity_ngrams(self, seq1, seq2, policy=0):             # <<<<<<<<<<<<<<
  *         return self.model.similarityNgrams(seq1, seq2, policy)
  *     def similarity_bag_of_words(self, seq1, seq2, policy=0):
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_23similarity_n_grams(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_23similarity_n_grams(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_27similarity_ngrams(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_27similarity_ngrams(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_seq1 = 0;
   PyObject *__pyx_v_seq2 = 0;
   PyObject *__pyx_v_policy = 0;
@@ -2264,7 +2654,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_23similarity_n_grams(PyOb
   int __pyx_clineno = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("similarity_n_grams (wrapper)", 0);
+  __Pyx_RefNannySetupContext("similarity_ngrams (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_seq1,&__pyx_n_s_seq2,&__pyx_n_s_policy,0};
     PyObject* values[3] = {0,0,0};
@@ -2287,7 +2677,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_23similarity_n_grams(PyOb
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_seq2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("similarity_n_grams", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("similarity_ngrams", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (kw_args > 0) {
@@ -2296,7 +2686,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_23similarity_n_grams(PyOb
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "similarity_n_grams") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "similarity_ngrams") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2313,20 +2703,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_23similarity_n_grams(PyOb
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("similarity_n_grams", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("similarity_ngrams", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 204; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
-  __Pyx_AddTraceback("multivec.MonolingualModel.similarity_n_grams", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("multivec.MonolingualModel.similarity_ngrams", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_22similarity_n_grams(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_seq1, __pyx_v_seq2, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_26similarity_ngrams(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_seq1, __pyx_v_seq2, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_22similarity_n_grams(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_26similarity_ngrams(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -2337,35 +2727,35 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_22similarity_n_grams(stru
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("similarity_n_grams", 0);
+  __Pyx_RefNannySetupContext("similarity_ngrams", 0);
 
-  /* "multivec.pyx":107
+  /* "multivec.pyx":205
  * 
- *     def similarity_n_grams(self, seq1, seq2, policy=0):
+ *     def similarity_ngrams(self, seq1, seq2, policy=0):
  *         return self.model.similarityNgrams(seq1, seq2, policy)             # <<<<<<<<<<<<<<
  *     def similarity_bag_of_words(self, seq1, seq2, policy=0):
  *         return self.model.similaritySentence(seq1, seq2, policy)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 205; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 205; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 205; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_t_4 = __pyx_v_self->model.similarityNgrams(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+    __pyx_t_4 = __pyx_v_self->model->similarityNgrams(__pyx_t_1, __pyx_t_2, __pyx_t_3);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 205; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 107; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 205; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":106
+  /* "multivec.pyx":204
  *         return self.model.distance(word1, word2, policy)
  * 
- *     def similarity_n_grams(self, seq1, seq2, policy=0):             # <<<<<<<<<<<<<<
+ *     def similarity_ngrams(self, seq1, seq2, policy=0):             # <<<<<<<<<<<<<<
  *         return self.model.similarityNgrams(seq1, seq2, policy)
  *     def similarity_bag_of_words(self, seq1, seq2, policy=0):
  */
@@ -2373,7 +2763,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_22similarity_n_grams(stru
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("multivec.MonolingualModel.similarity_n_grams", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("multivec.MonolingualModel.similarity_ngrams", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2381,8 +2771,8 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_22similarity_n_grams(stru
   return __pyx_r;
 }
 
-/* "multivec.pyx":108
- *     def similarity_n_grams(self, seq1, seq2, policy=0):
+/* "multivec.pyx":206
+ *     def similarity_ngrams(self, seq1, seq2, policy=0):
  *         return self.model.similarityNgrams(seq1, seq2, policy)
  *     def similarity_bag_of_words(self, seq1, seq2, policy=0):             # <<<<<<<<<<<<<<
  *         return self.model.similaritySentence(seq1, seq2, policy)
@@ -2390,8 +2780,8 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_22similarity_n_grams(stru
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_25similarity_bag_of_words(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_25similarity_bag_of_words(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_29similarity_bag_of_words(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_29similarity_bag_of_words(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_seq1 = 0;
   PyObject *__pyx_v_seq2 = 0;
   PyObject *__pyx_v_policy = 0;
@@ -2423,7 +2813,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_25similarity_bag_of_words
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_seq2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("similarity_bag_of_words", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("similarity_bag_of_words", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 206; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (kw_args > 0) {
@@ -2432,7 +2822,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_25similarity_bag_of_words
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "similarity_bag_of_words") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "similarity_bag_of_words") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 206; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2449,20 +2839,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_25similarity_bag_of_words
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("similarity_bag_of_words", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 108; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("similarity_bag_of_words", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 206; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.similarity_bag_of_words", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_24similarity_bag_of_words(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_seq1, __pyx_v_seq2, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_28similarity_bag_of_words(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_seq1, __pyx_v_seq2, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_24similarity_bag_of_words(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_28similarity_bag_of_words(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -2475,7 +2865,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_24similarity_bag_of_words
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("similarity_bag_of_words", 0);
 
-  /* "multivec.pyx":109
+  /* "multivec.pyx":207
  *         return self.model.similarityNgrams(seq1, seq2, policy)
  *     def similarity_bag_of_words(self, seq1, seq2, policy=0):
  *         return self.model.similaritySentence(seq1, seq2, policy)             # <<<<<<<<<<<<<<
@@ -2483,23 +2873,23 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_24similarity_bag_of_words
  *         return self.model.softWER(seq1, seq2, policy)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_t_4 = __pyx_v_self->model.similaritySentence(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+    __pyx_t_4 = __pyx_v_self->model->similaritySentence(__pyx_t_1, __pyx_t_2, __pyx_t_3);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 207; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":108
- *     def similarity_n_grams(self, seq1, seq2, policy=0):
+  /* "multivec.pyx":206
+ *     def similarity_ngrams(self, seq1, seq2, policy=0):
  *         return self.model.similarityNgrams(seq1, seq2, policy)
  *     def similarity_bag_of_words(self, seq1, seq2, policy=0):             # <<<<<<<<<<<<<<
  *         return self.model.similaritySentence(seq1, seq2, policy)
@@ -2517,7 +2907,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_24similarity_bag_of_words
   return __pyx_r;
 }
 
-/* "multivec.pyx":110
+/* "multivec.pyx":208
  *     def similarity_bag_of_words(self, seq1, seq2, policy=0):
  *         return self.model.similaritySentence(seq1, seq2, policy)
  *     def soft_word_error_rate(self, seq1, seq2, policy=0):             # <<<<<<<<<<<<<<
@@ -2526,8 +2916,8 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_24similarity_bag_of_words
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_27soft_word_error_rate(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_27soft_word_error_rate(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_31soft_word_error_rate(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_31soft_word_error_rate(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_seq1 = 0;
   PyObject *__pyx_v_seq2 = 0;
   PyObject *__pyx_v_policy = 0;
@@ -2559,7 +2949,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_27soft_word_error_rate(Py
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_seq2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("soft_word_error_rate", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("soft_word_error_rate", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (kw_args > 0) {
@@ -2568,7 +2958,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_27soft_word_error_rate(Py
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "soft_word_error_rate") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "soft_word_error_rate") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2585,20 +2975,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_27soft_word_error_rate(Py
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("soft_word_error_rate", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("soft_word_error_rate", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 208; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.soft_word_error_rate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_26soft_word_error_rate(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_seq1, __pyx_v_seq2, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_30soft_word_error_rate(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_seq1, __pyx_v_seq2, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_26soft_word_error_rate(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_30soft_word_error_rate(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_seq1, PyObject *__pyx_v_seq2, PyObject *__pyx_v_policy) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -2611,7 +3001,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_26soft_word_error_rate(st
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("soft_word_error_rate", 0);
 
-  /* "multivec.pyx":111
+  /* "multivec.pyx":209
  *         return self.model.similaritySentence(seq1, seq2, policy)
  *     def soft_word_error_rate(self, seq1, seq2, policy=0):
  *         return self.model.softWER(seq1, seq2, policy)             # <<<<<<<<<<<<<<
@@ -2619,22 +3009,22 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_26soft_word_error_rate(st
  *     def closest(self, word, n=10, policy=0):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_seq2); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_t_4 = __pyx_v_self->model.softWER(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+    __pyx_t_4 = __pyx_v_self->model->softWER(__pyx_t_1, __pyx_t_2, __pyx_t_3);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 209; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":110
+  /* "multivec.pyx":208
  *     def similarity_bag_of_words(self, seq1, seq2, policy=0):
  *         return self.model.similaritySentence(seq1, seq2, policy)
  *     def soft_word_error_rate(self, seq1, seq2, policy=0):             # <<<<<<<<<<<<<<
@@ -2653,7 +3043,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_26soft_word_error_rate(st
   return __pyx_r;
 }
 
-/* "multivec.pyx":113
+/* "multivec.pyx":211
  *         return self.model.softWER(seq1, seq2, policy)
  * 
  *     def closest(self, word, n=10, policy=0):             # <<<<<<<<<<<<<<
@@ -2662,8 +3052,8 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_26soft_word_error_rate(st
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_29closest(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_29closest(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_33closest(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_33closest(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_word = 0;
   PyObject *__pyx_v_n = 0;
   PyObject *__pyx_v_policy = 0;
@@ -2705,7 +3095,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_29closest(PyObject *__pyx
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "closest") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "closest") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 211; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2722,20 +3112,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_29closest(PyObject *__pyx
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("closest", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("closest", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 211; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.closest", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_28closest(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_word, __pyx_v_n, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_32closest(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_word, __pyx_v_n, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_28closest(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_n, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_32closest(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_n, PyObject *__pyx_v_policy) {
   std::vector<std::pair<std::string,float> >  __pyx_v_res;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -2750,25 +3140,25 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_28closest(struct __pyx_ob
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("closest", 0);
 
-  /* "multivec.pyx":114
+  /* "multivec.pyx":212
  * 
  *     def closest(self, word, n=10, policy=0):
  *         cdef vector[pair[string, float]] res = self.model.closest(<const string&> word, <int> n, <int> policy)             # <<<<<<<<<<<<<<
  *         return list(res)
  *     def closest_to_vec(self, vec, n=10, policy=0):
  */
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_n); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 212; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_n); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 212; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 212; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_t_4 = __pyx_v_self->model.closest(((std::string const &)__pyx_t_1), ((int)__pyx_t_2), ((int)__pyx_t_3));
+    __pyx_t_4 = __pyx_v_self->model->closest(((std::string const &)__pyx_t_1), ((int)__pyx_t_2), ((int)__pyx_t_3));
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 212; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_v_res = __pyx_t_4;
 
-  /* "multivec.pyx":115
+  /* "multivec.pyx":213
  *     def closest(self, word, n=10, policy=0):
  *         cdef vector[pair[string, float]] res = self.model.closest(<const string&> word, <int> n, <int> policy)
  *         return list(res)             # <<<<<<<<<<<<<<
@@ -2776,16 +3166,16 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_28closest(struct __pyx_ob
  *         cdef Vec vec_cpp = Vec(<vector[float]> vec)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_5 = __pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string_2c_float_3e___(__pyx_v_res); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 115; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = __pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string_2c_float_3e___(__pyx_v_res); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 213; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = PySequence_List(__pyx_t_5); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 115; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = PySequence_List(__pyx_t_5); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 213; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_r = __pyx_t_6;
   __pyx_t_6 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":113
+  /* "multivec.pyx":211
  *         return self.model.softWER(seq1, seq2, policy)
  * 
  *     def closest(self, word, n=10, policy=0):             # <<<<<<<<<<<<<<
@@ -2805,7 +3195,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_28closest(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "multivec.pyx":116
+/* "multivec.pyx":214
  *         cdef vector[pair[string, float]] res = self.model.closest(<const string&> word, <int> n, <int> policy)
  *         return list(res)
  *     def closest_to_vec(self, vec, n=10, policy=0):             # <<<<<<<<<<<<<<
@@ -2814,8 +3204,8 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_28closest(struct __pyx_ob
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_31closest_to_vec(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_31closest_to_vec(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_35closest_to_vec(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_35closest_to_vec(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_vec = 0;
   PyObject *__pyx_v_n = 0;
   PyObject *__pyx_v_policy = 0;
@@ -2857,7 +3247,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_31closest_to_vec(PyObject
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "closest_to_vec") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "closest_to_vec") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2874,20 +3264,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_31closest_to_vec(PyObject
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("closest_to_vec", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("closest_to_vec", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 214; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.closest_to_vec", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_30closest_to_vec(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_vec, __pyx_v_n, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_34closest_to_vec(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_vec, __pyx_v_n, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_30closest_to_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_vec, PyObject *__pyx_v_n, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_34closest_to_vec(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_vec, PyObject *__pyx_v_n, PyObject *__pyx_v_policy) {
   Vec __pyx_v_vec_cpp;
   std::vector<std::pair<std::string,float> >  __pyx_v_res;
   PyObject *__pyx_r = NULL;
@@ -2903,34 +3293,34 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_30closest_to_vec(struct _
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("closest_to_vec", 0);
 
-  /* "multivec.pyx":117
+  /* "multivec.pyx":215
  *         return list(res)
  *     def closest_to_vec(self, vec, n=10, policy=0):
  *         cdef Vec vec_cpp = Vec(<vector[float]> vec)             # <<<<<<<<<<<<<<
  *         res = self.model.closest(<const Vec&> vec_cpp, <int> n, <int> policy)
  *         return list(res)
  */
-  __pyx_t_1 = __pyx_convert_vector_from_py_float(__pyx_v_vec); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 117; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_vector_from_py_float(__pyx_v_vec); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 215; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_vec_cpp = Vec(((std::vector<float> )__pyx_t_1));
 
-  /* "multivec.pyx":118
+  /* "multivec.pyx":216
  *     def closest_to_vec(self, vec, n=10, policy=0):
  *         cdef Vec vec_cpp = Vec(<vector[float]> vec)
  *         res = self.model.closest(<const Vec&> vec_cpp, <int> n, <int> policy)             # <<<<<<<<<<<<<<
  *         return list(res)
  *     def closest_words(self, word, words, policy=0):
  */
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_n); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_n); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 216; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 216; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_t_4 = __pyx_v_self->model.closest(((Vec const &)__pyx_v_vec_cpp), ((int)__pyx_t_2), ((int)__pyx_t_3));
+    __pyx_t_4 = __pyx_v_self->model->closest(((Vec const &)__pyx_v_vec_cpp), ((int)__pyx_t_2), ((int)__pyx_t_3));
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 216; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_v_res = __pyx_t_4;
 
-  /* "multivec.pyx":119
+  /* "multivec.pyx":217
  *         cdef Vec vec_cpp = Vec(<vector[float]> vec)
  *         res = self.model.closest(<const Vec&> vec_cpp, <int> n, <int> policy)
  *         return list(res)             # <<<<<<<<<<<<<<
@@ -2938,16 +3328,16 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_30closest_to_vec(struct _
  *         cdef vector[pair[string, float]] res = self.model.closest(<const string&> word,
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_5 = __pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string_2c_float_3e___(__pyx_v_res); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = __pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string_2c_float_3e___(__pyx_v_res); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 217; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = PySequence_List(__pyx_t_5); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = PySequence_List(__pyx_t_5); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 217; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_r = __pyx_t_6;
   __pyx_t_6 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":116
+  /* "multivec.pyx":214
  *         cdef vector[pair[string, float]] res = self.model.closest(<const string&> word, <int> n, <int> policy)
  *         return list(res)
  *     def closest_to_vec(self, vec, n=10, policy=0):             # <<<<<<<<<<<<<<
@@ -2967,7 +3357,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_30closest_to_vec(struct _
   return __pyx_r;
 }
 
-/* "multivec.pyx":120
+/* "multivec.pyx":218
  *         res = self.model.closest(<const Vec&> vec_cpp, <int> n, <int> policy)
  *         return list(res)
  *     def closest_words(self, word, words, policy=0):             # <<<<<<<<<<<<<<
@@ -2976,8 +3366,8 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_30closest_to_vec(struct _
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_33closest_words(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_33closest_words(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_37closest_words(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_37closest_words(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_word = 0;
   PyObject *__pyx_v_words = 0;
   PyObject *__pyx_v_policy = 0;
@@ -3009,7 +3399,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_33closest_words(PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_words)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("closest_words", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("closest_words", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (kw_args > 0) {
@@ -3018,7 +3408,7 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_33closest_words(PyObject 
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "closest_words") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "closest_words") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -3035,20 +3425,20 @@ static PyObject *__pyx_pw_8multivec_16MonolingualModel_33closest_words(PyObject 
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("closest_words", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("closest_words", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 218; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.MonolingualModel.closest_words", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_32closest_words(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_word, __pyx_v_words, __pyx_v_policy);
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_36closest_words(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self), __pyx_v_word, __pyx_v_words, __pyx_v_policy);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_32closest_words(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_words, PyObject *__pyx_v_policy) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_36closest_words(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self, PyObject *__pyx_v_word, PyObject *__pyx_v_words, PyObject *__pyx_v_policy) {
   std::vector<std::pair<std::string,float> >  __pyx_v_res;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -3063,34 +3453,34 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_32closest_words(struct __
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("closest_words", 0);
 
-  /* "multivec.pyx":121
+  /* "multivec.pyx":219
  *         return list(res)
  *     def closest_words(self, word, words, policy=0):
  *         cdef vector[pair[string, float]] res = self.model.closest(<const string&> word,             # <<<<<<<<<<<<<<
  *                                                                   <const vector[string]&> words,
  *                                                                   <int> policy)
  */
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 219; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "multivec.pyx":122
+  /* "multivec.pyx":220
  *     def closest_words(self, word, words, policy=0):
  *         cdef vector[pair[string, float]] res = self.model.closest(<const string&> word,
  *                                                                   <const vector[string]&> words,             # <<<<<<<<<<<<<<
  *                                                                   <int> policy)
  *         return list(res)
  */
-  __pyx_t_2 = __pyx_convert_vector_from_py_std_3a__3a_string(__pyx_v_words); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_vector_from_py_std_3a__3a_string(__pyx_v_words); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 220; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "multivec.pyx":123
+  /* "multivec.pyx":221
  *         cdef vector[pair[string, float]] res = self.model.closest(<const string&> word,
  *                                                                   <const vector[string]&> words,
  *                                                                   <int> policy)             # <<<<<<<<<<<<<<
  *         return list(res)
  *     def get_vocabulary(self):
  */
-  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 221; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-  /* "multivec.pyx":121
+  /* "multivec.pyx":219
  *         return list(res)
  *     def closest_words(self, word, words, policy=0):
  *         cdef vector[pair[string, float]] res = self.model.closest(<const string&> word,             # <<<<<<<<<<<<<<
@@ -3098,14 +3488,14 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_32closest_words(struct __
  *                                                                   <int> policy)
  */
   try {
-    __pyx_t_4 = __pyx_v_self->model.closest(((std::string const &)__pyx_t_1), ((std::vector<std::string>  const &)__pyx_t_2), ((int)__pyx_t_3));
+    __pyx_t_4 = __pyx_v_self->model->closest(((std::string const &)__pyx_t_1), ((std::vector<std::string>  const &)__pyx_t_2), ((int)__pyx_t_3));
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 219; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_v_res = __pyx_t_4;
 
-  /* "multivec.pyx":124
+  /* "multivec.pyx":222
  *                                                                   <const vector[string]&> words,
  *                                                                   <int> policy)
  *         return list(res)             # <<<<<<<<<<<<<<
@@ -3113,16 +3503,16 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_32closest_words(struct __
  *         cdef vector[pair[string, int]] word_counts = self.model.getWords()
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_5 = __pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string_2c_float_3e___(__pyx_v_res); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = __pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string_2c_float_3e___(__pyx_v_res); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = PySequence_List(__pyx_t_5); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = PySequence_List(__pyx_t_5); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 222; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_r = __pyx_t_6;
   __pyx_t_6 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":120
+  /* "multivec.pyx":218
  *         res = self.model.closest(<const Vec&> vec_cpp, <int> n, <int> policy)
  *         return list(res)
  *     def closest_words(self, word, words, policy=0):             # <<<<<<<<<<<<<<
@@ -3142,7 +3532,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_32closest_words(struct __
   return __pyx_r;
 }
 
-/* "multivec.pyx":125
+/* "multivec.pyx":223
  *                                                                   <int> policy)
  *         return list(res)
  *     def get_vocabulary(self):             # <<<<<<<<<<<<<<
@@ -3151,47 +3541,54 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_32closest_words(struct __
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_35get_vocabulary(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_35get_vocabulary(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_39get_vocabulary(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_39get_vocabulary(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_vocabulary (wrapper)", 0);
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_34get_vocabulary(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_38get_vocabulary(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_34get_vocabulary(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_38get_vocabulary(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self) {
   std::vector<std::pair<std::string,int> >  __pyx_v_word_counts;
   PyObject *__pyx_v_w = NULL;
   CYTHON_UNUSED PyObject *__pyx_v__ = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  std::vector<std::pair<std::string,int> > ::iterator __pyx_t_2;
-  std::pair<std::string,int>  __pyx_t_3;
-  PyObject *__pyx_t_4 = NULL;
+  std::vector<std::pair<std::string,int> >  __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
+  std::vector<std::pair<std::string,int> > ::iterator __pyx_t_3;
+  std::pair<std::string,int>  __pyx_t_4;
   PyObject *__pyx_t_5 = NULL;
   PyObject *__pyx_t_6 = NULL;
   PyObject *__pyx_t_7 = NULL;
-  PyObject *(*__pyx_t_8)(PyObject *);
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *(*__pyx_t_9)(PyObject *);
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_vocabulary", 0);
 
-  /* "multivec.pyx":126
+  /* "multivec.pyx":224
  *         return list(res)
  *     def get_vocabulary(self):
  *         cdef vector[pair[string, int]] word_counts = self.model.getWords()             # <<<<<<<<<<<<<<
  *         return [w for w, _ in word_counts]
  *     def get_counts(self):
  */
-  __pyx_v_word_counts = __pyx_v_self->model.getWords();
+  try {
+    __pyx_t_1 = __pyx_v_self->model->getWords();
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 224; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_v_word_counts = __pyx_t_1;
 
-  /* "multivec.pyx":127
+  /* "multivec.pyx":225
  *     def get_vocabulary(self):
  *         cdef vector[pair[string, int]] word_counts = self.model.getWords()
  *         return [w for w, _ in word_counts]             # <<<<<<<<<<<<<<
@@ -3199,17 +3596,17 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_34get_vocabulary(struct _
  *         cdef vector[pair[string, int]] word_counts = self.model.getWords()
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __pyx_v_word_counts.begin();
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __pyx_v_word_counts.begin();
   for (;;) {
-    if (!(__pyx_t_2 != __pyx_v_word_counts.end())) break;
-    __pyx_t_3 = *__pyx_t_2;
-    ++__pyx_t_2;
-    __pyx_t_4 = __pyx_convert_pair_to_py_std_3a__3a_string____int(__pyx_t_3); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-    __Pyx_GOTREF(__pyx_t_4);
-    if ((likely(PyTuple_CheckExact(__pyx_t_4))) || (PyList_CheckExact(__pyx_t_4))) {
-      PyObject* sequence = __pyx_t_4;
+    if (!(__pyx_t_3 != __pyx_v_word_counts.end())) break;
+    __pyx_t_4 = *__pyx_t_3;
+    ++__pyx_t_3;
+    __pyx_t_5 = __pyx_convert_pair_to_py_std_3a__3a_string____int(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_5);
+    if ((likely(PyTuple_CheckExact(__pyx_t_5))) || (PyList_CheckExact(__pyx_t_5))) {
+      PyObject* sequence = __pyx_t_5;
       #if CYTHON_COMPILING_IN_CPYTHON
       Py_ssize_t size = Py_SIZE(sequence);
       #else
@@ -3218,57 +3615,57 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_34get_vocabulary(struct _
       if (unlikely(size != 2)) {
         if (size > 2) __Pyx_RaiseTooManyValuesError(2);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       }
       #if CYTHON_COMPILING_IN_CPYTHON
       if (likely(PyTuple_CheckExact(sequence))) {
-        __pyx_t_5 = PyTuple_GET_ITEM(sequence, 0); 
-        __pyx_t_6 = PyTuple_GET_ITEM(sequence, 1); 
+        __pyx_t_6 = PyTuple_GET_ITEM(sequence, 0); 
+        __pyx_t_7 = PyTuple_GET_ITEM(sequence, 1); 
       } else {
-        __pyx_t_5 = PyList_GET_ITEM(sequence, 0); 
-        __pyx_t_6 = PyList_GET_ITEM(sequence, 1); 
+        __pyx_t_6 = PyList_GET_ITEM(sequence, 0); 
+        __pyx_t_7 = PyList_GET_ITEM(sequence, 1); 
       }
-      __Pyx_INCREF(__pyx_t_5);
       __Pyx_INCREF(__pyx_t_6);
+      __Pyx_INCREF(__pyx_t_7);
       #else
-      __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_6 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_7 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
       #endif
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_7 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_7);
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_8 = Py_TYPE(__pyx_t_7)->tp_iternext;
-      index = 0; __pyx_t_5 = __pyx_t_8(__pyx_t_7); if (unlikely(!__pyx_t_5)) goto __pyx_L5_unpacking_failed;
-      __Pyx_GOTREF(__pyx_t_5);
-      index = 1; __pyx_t_6 = __pyx_t_8(__pyx_t_7); if (unlikely(!__pyx_t_6)) goto __pyx_L5_unpacking_failed;
+      __pyx_t_8 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __pyx_t_9 = Py_TYPE(__pyx_t_8)->tp_iternext;
+      index = 0; __pyx_t_6 = __pyx_t_9(__pyx_t_8); if (unlikely(!__pyx_t_6)) goto __pyx_L5_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_6);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_8(__pyx_t_7), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __pyx_t_8 = NULL;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      index = 1; __pyx_t_7 = __pyx_t_9(__pyx_t_8); if (unlikely(!__pyx_t_7)) goto __pyx_L5_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_7);
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_9(__pyx_t_8), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = NULL;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       goto __pyx_L6_unpacking_done;
       __pyx_L5_unpacking_failed:;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_8 = NULL;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __pyx_t_9 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __pyx_L6_unpacking_done:;
     }
-    __Pyx_XDECREF_SET(__pyx_v_w, __pyx_t_5);
-    __pyx_t_5 = 0;
-    __Pyx_XDECREF_SET(__pyx_v__, __pyx_t_6);
+    __Pyx_XDECREF_SET(__pyx_v_w, __pyx_t_6);
     __pyx_t_6 = 0;
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_v_w))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_XDECREF_SET(__pyx_v__, __pyx_t_7);
+    __pyx_t_7 = 0;
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_v_w))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 225; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":125
+  /* "multivec.pyx":223
  *                                                                   <int> policy)
  *         return list(res)
  *     def get_vocabulary(self):             # <<<<<<<<<<<<<<
@@ -3278,11 +3675,11 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_34get_vocabulary(struct _
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
   __Pyx_AddTraceback("multivec.MonolingualModel.get_vocabulary", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -3293,7 +3690,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_34get_vocabulary(struct _
   return __pyx_r;
 }
 
-/* "multivec.pyx":128
+/* "multivec.pyx":226
  *         cdef vector[pair[string, int]] word_counts = self.model.getWords()
  *         return [w for w, _ in word_counts]
  *     def get_counts(self):             # <<<<<<<<<<<<<<
@@ -3302,39 +3699,46 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_34get_vocabulary(struct _
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_37get_counts(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_8multivec_16MonolingualModel_37get_counts(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_41get_counts(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_8multivec_16MonolingualModel_41get_counts(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("get_counts (wrapper)", 0);
-  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_36get_counts(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8multivec_16MonolingualModel_40get_counts(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_16MonolingualModel_36get_counts(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self) {
+static PyObject *__pyx_pf_8multivec_16MonolingualModel_40get_counts(struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_self) {
   std::vector<std::pair<std::string,int> >  __pyx_v_word_counts;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
+  std::vector<std::pair<std::string,int> >  __pyx_t_1;
   PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_counts", 0);
 
-  /* "multivec.pyx":129
+  /* "multivec.pyx":227
  *         return [w for w, _ in word_counts]
  *     def get_counts(self):
  *         cdef vector[pair[string, int]] word_counts = self.model.getWords()             # <<<<<<<<<<<<<<
  *         return dict(word_counts)
  * 
  */
-  __pyx_v_word_counts = __pyx_v_self->model.getWords();
+  try {
+    __pyx_t_1 = __pyx_v_self->model->getWords();
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 227; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_v_word_counts = __pyx_t_1;
 
-  /* "multivec.pyx":130
+  /* "multivec.pyx":228
  *     def get_counts(self):
  *         cdef vector[pair[string, int]] word_counts = self.model.getWords()
  *         return dict(word_counts)             # <<<<<<<<<<<<<<
@@ -3342,21 +3746,21 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_36get_counts(struct __pyx
  *     property learning_rate:
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string_2c_int_3e___(__pyx_v_word_counts); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string_2c_int_3e___(__pyx_v_word_counts); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 228; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
-  __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)(&PyDict_Type)), __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 228; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
+  __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)(&PyDict_Type)), __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 228; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":128
+  /* "multivec.pyx":226
  *         cdef vector[pair[string, int]] word_counts = self.model.getWords()
  *         return [w for w, _ in word_counts]
  *     def get_counts(self):             # <<<<<<<<<<<<<<
@@ -3366,8 +3770,8 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_36get_counts(struct __pyx
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
   __Pyx_AddTraceback("multivec.MonolingualModel.get_counts", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -3376,7 +3780,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_36get_counts(struct __pyx
   return __pyx_r;
 }
 
-/* "multivec.pyx":133
+/* "multivec.pyx":231
  * 
  *     property learning_rate:
  *         def __get__(self): return self.config.learning_rate             # <<<<<<<<<<<<<<
@@ -3406,7 +3810,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_13learning_rate___get__(s
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->config->learning_rate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->config->learning_rate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 231; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3423,7 +3827,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_13learning_rate___get__(s
   return __pyx_r;
 }
 
-/* "multivec.pyx":134
+/* "multivec.pyx":232
  *     property learning_rate:
  *         def __get__(self): return self.config.learning_rate
  *         def __set__(self, learning_rate): self.config.learning_rate = learning_rate             # <<<<<<<<<<<<<<
@@ -3452,7 +3856,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_13learning_rate_2__set__(struct
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsFloat(__pyx_v_learning_rate); if (unlikely((__pyx_t_1 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 134; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsFloat(__pyx_v_learning_rate); if (unlikely((__pyx_t_1 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 232; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->learning_rate = __pyx_t_1;
 
   /* function exit code */
@@ -3466,7 +3870,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_13learning_rate_2__set__(struct
   return __pyx_r;
 }
 
-/* "multivec.pyx":136
+/* "multivec.pyx":234
  *         def __set__(self, learning_rate): self.config.learning_rate = learning_rate
  *     property dimension:
  *         def __get__(self): return self.config.dimension             # <<<<<<<<<<<<<<
@@ -3496,7 +3900,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_9dimension___get__(struct
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->dimension); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->dimension); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 234; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3513,7 +3917,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_9dimension___get__(struct
   return __pyx_r;
 }
 
-/* "multivec.pyx":137
+/* "multivec.pyx":235
  *     property dimension:
  *         def __get__(self): return self.config.dimension
  *         def __set__(self, dimension): self.config.dimension = dimension             # <<<<<<<<<<<<<<
@@ -3542,7 +3946,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_9dimension_2__set__(struct __py
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_dimension); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 137; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_dimension); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 235; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->dimension = __pyx_t_1;
 
   /* function exit code */
@@ -3556,7 +3960,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_9dimension_2__set__(struct __py
   return __pyx_r;
 }
 
-/* "multivec.pyx":139
+/* "multivec.pyx":237
  *         def __set__(self, dimension): self.config.dimension = dimension
  *     property min_count:
  *         def __get__(self): return self.config.min_count             # <<<<<<<<<<<<<<
@@ -3586,7 +3990,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_9min_count___get__(struct
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->min_count); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->min_count); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 237; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3603,7 +4007,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_9min_count___get__(struct
   return __pyx_r;
 }
 
-/* "multivec.pyx":140
+/* "multivec.pyx":238
  *     property min_count:
  *         def __get__(self): return self.config.min_count
  *         def __set__(self, min_count): self.config.min_count = min_count             # <<<<<<<<<<<<<<
@@ -3632,7 +4036,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_9min_count_2__set__(struct __py
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_min_count); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 140; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_min_count); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 238; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->min_count = __pyx_t_1;
 
   /* function exit code */
@@ -3646,7 +4050,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_9min_count_2__set__(struct __py
   return __pyx_r;
 }
 
-/* "multivec.pyx":142
+/* "multivec.pyx":240
  *         def __set__(self, min_count): self.config.min_count = min_count
  *     property iterations:
  *         def __get__(self): return self.config.iterations             # <<<<<<<<<<<<<<
@@ -3676,7 +4080,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_10iterations___get__(stru
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->iterations); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 142; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->iterations); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 240; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3693,7 +4097,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_10iterations___get__(stru
   return __pyx_r;
 }
 
-/* "multivec.pyx":143
+/* "multivec.pyx":241
  *     property iterations:
  *         def __get__(self): return self.config.iterations
  *         def __set__(self, iterations): self.config.iterations = iterations             # <<<<<<<<<<<<<<
@@ -3722,7 +4126,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_10iterations_2__set__(struct __
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_iterations); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_iterations); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 241; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->iterations = __pyx_t_1;
 
   /* function exit code */
@@ -3736,7 +4140,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_10iterations_2__set__(struct __
   return __pyx_r;
 }
 
-/* "multivec.pyx":145
+/* "multivec.pyx":243
  *         def __set__(self, iterations): self.config.iterations = iterations
  *     property window_size:
  *         def __get__(self): return self.config.window_size             # <<<<<<<<<<<<<<
@@ -3766,7 +4170,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_11window_size___get__(str
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->window_size); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->window_size); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 243; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3783,7 +4187,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_11window_size___get__(str
   return __pyx_r;
 }
 
-/* "multivec.pyx":146
+/* "multivec.pyx":244
  *     property window_size:
  *         def __get__(self): return self.config.window_size
  *         def __set__(self, window_size): self.config.window_size = window_size             # <<<<<<<<<<<<<<
@@ -3812,7 +4216,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_11window_size_2__set__(struct _
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_window_size); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 146; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_window_size); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 244; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->window_size = __pyx_t_1;
 
   /* function exit code */
@@ -3826,7 +4230,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_11window_size_2__set__(struct _
   return __pyx_r;
 }
 
-/* "multivec.pyx":148
+/* "multivec.pyx":246
  *         def __set__(self, window_size): self.config.window_size = window_size
  *     property threads:
  *         def __get__(self): return self.config.threads             # <<<<<<<<<<<<<<
@@ -3856,7 +4260,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_7threads___get__(struct _
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->threads); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->threads); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 246; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3873,7 +4277,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_7threads___get__(struct _
   return __pyx_r;
 }
 
-/* "multivec.pyx":149
+/* "multivec.pyx":247
  *     property threads:
  *         def __get__(self): return self.config.threads
  *         def __set__(self, threads): self.config.threads = threads             # <<<<<<<<<<<<<<
@@ -3902,7 +4306,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_7threads_2__set__(struct __pyx_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_threads); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_threads); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 247; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->threads = __pyx_t_1;
 
   /* function exit code */
@@ -3916,7 +4320,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_7threads_2__set__(struct __pyx_
   return __pyx_r;
 }
 
-/* "multivec.pyx":151
+/* "multivec.pyx":249
  *         def __set__(self, threads): self.config.threads = threads
  *     property subsampling:
  *         def __get__(self): return self.config.subsampling             # <<<<<<<<<<<<<<
@@ -3946,7 +4350,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_11subsampling___get__(str
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->config->subsampling); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 151; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->config->subsampling); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 249; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3963,7 +4367,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_11subsampling___get__(str
   return __pyx_r;
 }
 
-/* "multivec.pyx":152
+/* "multivec.pyx":250
  *     property subsampling:
  *         def __get__(self): return self.config.subsampling
  *         def __set__(self, subsampling): self.config.subsampling = subsampling             # <<<<<<<<<<<<<<
@@ -3992,7 +4396,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_11subsampling_2__set__(struct _
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __pyx_PyFloat_AsFloat(__pyx_v_subsampling); if (unlikely((__pyx_t_1 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 152; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_PyFloat_AsFloat(__pyx_v_subsampling); if (unlikely((__pyx_t_1 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 250; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->subsampling = __pyx_t_1;
 
   /* function exit code */
@@ -4006,7 +4410,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_11subsampling_2__set__(struct _
   return __pyx_r;
 }
 
-/* "multivec.pyx":154
+/* "multivec.pyx":252
  *         def __set__(self, subsampling): self.config.subsampling = subsampling
  *     property verbose:
  *         def __get__(self): return self.config.verbose             # <<<<<<<<<<<<<<
@@ -4036,7 +4440,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_7verbose___get__(struct _
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->verbose); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 154; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->verbose); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 252; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4053,7 +4457,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_7verbose___get__(struct _
   return __pyx_r;
 }
 
-/* "multivec.pyx":155
+/* "multivec.pyx":253
  *     property verbose:
  *         def __get__(self): return self.config.verbose
  *         def __set__(self, verbose): self.config.verbose = verbose             # <<<<<<<<<<<<<<
@@ -4082,7 +4486,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_7verbose_2__set__(struct __pyx_
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_verbose); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_verbose); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 253; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->verbose = __pyx_t_1;
 
   /* function exit code */
@@ -4096,7 +4500,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_7verbose_2__set__(struct __pyx_
   return __pyx_r;
 }
 
-/* "multivec.pyx":157
+/* "multivec.pyx":255
  *         def __set__(self, verbose): self.config.verbose = verbose
  *     property hierarchical_softmax:
  *         def __get__(self): return self.config.hierarchical_softmax             # <<<<<<<<<<<<<<
@@ -4126,7 +4530,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_20hierarchical_softmax___
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->hierarchical_softmax); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->hierarchical_softmax); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 255; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4143,7 +4547,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_20hierarchical_softmax___
   return __pyx_r;
 }
 
-/* "multivec.pyx":158
+/* "multivec.pyx":256
  *     property hierarchical_softmax:
  *         def __get__(self): return self.config.hierarchical_softmax
  *         def __set__(self, hierarchical_softmax): self.config.hierarchical_softmax = hierarchical_softmax             # <<<<<<<<<<<<<<
@@ -4172,7 +4576,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_20hierarchical_softmax_2__set__
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_hierarchical_softmax); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_hierarchical_softmax); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 256; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->hierarchical_softmax = __pyx_t_1;
 
   /* function exit code */
@@ -4186,7 +4590,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_20hierarchical_softmax_2__set__
   return __pyx_r;
 }
 
-/* "multivec.pyx":160
+/* "multivec.pyx":258
  *         def __set__(self, hierarchical_softmax): self.config.hierarchical_softmax = hierarchical_softmax
  *     property skip_gram:
  *         def __get__(self): return self.config.skip_gram             # <<<<<<<<<<<<<<
@@ -4216,7 +4620,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_9skip_gram___get__(struct
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->skip_gram); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 160; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->skip_gram); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 258; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4233,7 +4637,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_9skip_gram___get__(struct
   return __pyx_r;
 }
 
-/* "multivec.pyx":161
+/* "multivec.pyx":259
  *     property skip_gram:
  *         def __get__(self): return self.config.skip_gram
  *         def __set__(self, skip_gram): self.config.skip_gram = skip_gram             # <<<<<<<<<<<<<<
@@ -4262,7 +4666,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_9skip_gram_2__set__(struct __py
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_skip_gram); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_skip_gram); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 259; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->skip_gram = __pyx_t_1;
 
   /* function exit code */
@@ -4276,7 +4680,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_9skip_gram_2__set__(struct __py
   return __pyx_r;
 }
 
-/* "multivec.pyx":163
+/* "multivec.pyx":261
  *         def __set__(self, skip_gram): self.config.skip_gram = skip_gram
  *     property negative:
  *         def __get__(self): return self.config.negative             # <<<<<<<<<<<<<<
@@ -4306,7 +4710,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_8negative___get__(struct 
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->negative); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->negative); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 261; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4323,7 +4727,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_8negative___get__(struct 
   return __pyx_r;
 }
 
-/* "multivec.pyx":164
+/* "multivec.pyx":262
  *     property negative:
  *         def __get__(self): return self.config.negative
  *         def __set__(self, negative): self.config.negative = negative             # <<<<<<<<<<<<<<
@@ -4352,7 +4756,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_8negative_2__set__(struct __pyx
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_negative); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_negative); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 262; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->negative = __pyx_t_1;
 
   /* function exit code */
@@ -4366,7 +4770,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_8negative_2__set__(struct __pyx
   return __pyx_r;
 }
 
-/* "multivec.pyx":166
+/* "multivec.pyx":264
  *         def __set__(self, negative): self.config.negative = negative
  *     property sent_vector:
  *         def __get__(self): return self.config.sent_vector             # <<<<<<<<<<<<<<
@@ -4396,7 +4800,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_11sent_vector___get__(str
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->sent_vector); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 166; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->sent_vector); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 264; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4413,7 +4817,7 @@ static PyObject *__pyx_pf_8multivec_16MonolingualModel_11sent_vector___get__(str
   return __pyx_r;
 }
 
-/* "multivec.pyx":167
+/* "multivec.pyx":265
  *     property sent_vector:
  *         def __get__(self): return self.config.sent_vector
  *         def __set__(self, sent_vector): self.config.sent_vector = sent_vector             # <<<<<<<<<<<<<<
@@ -4442,7 +4846,7 @@ static int __pyx_pf_8multivec_16MonolingualModel_11sent_vector_2__set__(struct _
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_sent_vector); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_sent_vector); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 265; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->config->sent_vector = __pyx_t_1;
 
   /* function exit code */
@@ -4456,19 +4860,19 @@ static int __pyx_pf_8multivec_16MonolingualModel_11sent_vector_2__set__(struct _
   return __pyx_r;
 }
 
-/* "multivec.pyx":173
+/* "multivec.pyx":311
  *     cdef BilingualConfig* config
- *     cdef BilingualModelCpp model
+ *     cdef BilingualModelCpp* model
  *     def __cinit__(self, name=None, **kwargs):             # <<<<<<<<<<<<<<
- *         self.config = new BilingualConfig()  # memory leak, or not?
- *         self.model = BilingualModelCpp(self.config)
+ *         self.config = new BilingualConfig()
+ *         self.model = new BilingualModelCpp(self.config)
  */
 
 /* Python wrapper */
 static int __pyx_pw_8multivec_14BilingualModel_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static int __pyx_pw_8multivec_14BilingualModel_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_name = 0;
-  CYTHON_UNUSED PyObject *__pyx_v_kwargs = 0;
+  PyObject *__pyx_v_kwargs = 0;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -4498,7 +4902,7 @@ static int __pyx_pw_8multivec_14BilingualModel_1__cinit__(PyObject *__pyx_v_self
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, __pyx_v_kwargs, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, __pyx_v_kwargs, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 311; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -4511,7 +4915,7 @@ static int __pyx_pw_8multivec_14BilingualModel_1__cinit__(PyObject *__pyx_v_self
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 311; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_DECREF(__pyx_v_kwargs); __pyx_v_kwargs = 0;
   __Pyx_AddTraceback("multivec.BilingualModel.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
@@ -4526,91 +4930,312 @@ static int __pyx_pw_8multivec_14BilingualModel_1__cinit__(PyObject *__pyx_v_self
   return __pyx_r;
 }
 
-static int __pyx_pf_8multivec_14BilingualModel___cinit__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_name, CYTHON_UNUSED PyObject *__pyx_v_kwargs) {
+static int __pyx_pf_8multivec_14BilingualModel___cinit__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_name, PyObject *__pyx_v_kwargs) {
+  PyObject *__pyx_v_key = NULL;
+  PyObject *__pyx_v_value = NULL;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
+  BilingualModel *__pyx_t_1;
   int __pyx_t_2;
-  std::string __pyx_t_3;
+  int __pyx_t_3;
+  std::string __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  Py_ssize_t __pyx_t_7;
+  PyObject *(*__pyx_t_8)(PyObject *);
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
+  PyObject *(*__pyx_t_12)(PyObject *);
+  int __pyx_t_13;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "multivec.pyx":174
- *     cdef BilingualModelCpp model
+  /* "multivec.pyx":312
+ *     cdef BilingualModelCpp* model
  *     def __cinit__(self, name=None, **kwargs):
- *         self.config = new BilingualConfig()  # memory leak, or not?             # <<<<<<<<<<<<<<
- *         self.model = BilingualModelCpp(self.config)
+ *         self.config = new BilingualConfig()             # <<<<<<<<<<<<<<
+ *         self.model = new BilingualModelCpp(self.config)
  *         if name is not None:
  */
   __pyx_v_self->config = new BilingualConfig();
 
-  /* "multivec.pyx":175
+  /* "multivec.pyx":313
  *     def __cinit__(self, name=None, **kwargs):
- *         self.config = new BilingualConfig()  # memory leak, or not?
- *         self.model = BilingualModelCpp(self.config)             # <<<<<<<<<<<<<<
+ *         self.config = new BilingualConfig()
+ *         self.model = new BilingualModelCpp(self.config)             # <<<<<<<<<<<<<<
  *         if name is not None:
  *             self.model.load(name)
  */
-  __pyx_v_self->model = BilingualModel(__pyx_v_self->config);
+  try {
+    __pyx_t_1 = new BilingualModel(__pyx_v_self->config);
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 313; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_v_self->model = __pyx_t_1;
 
-  /* "multivec.pyx":176
- *         self.config = new BilingualConfig()  # memory leak, or not?
- *         self.model = BilingualModelCpp(self.config)
+  /* "multivec.pyx":314
+ *         self.config = new BilingualConfig()
+ *         self.model = new BilingualModelCpp(self.config)
  *         if name is not None:             # <<<<<<<<<<<<<<
  *             self.model.load(name)
  * 
  */
-  __pyx_t_1 = (__pyx_v_name != Py_None);
-  __pyx_t_2 = (__pyx_t_1 != 0);
-  if (__pyx_t_2) {
+  __pyx_t_2 = (__pyx_v_name != Py_None);
+  __pyx_t_3 = (__pyx_t_2 != 0);
+  if (__pyx_t_3) {
 
-    /* "multivec.pyx":177
- *         self.model = BilingualModelCpp(self.config)
+    /* "multivec.pyx":315
+ *         self.model = new BilingualModelCpp(self.config)
  *         if name is not None:
  *             self.model.load(name)             # <<<<<<<<<<<<<<
  * 
- *     def train(self, src_name, trg_name, initialize=True):
+ *         # overwrites previous configuration
  */
-    __pyx_t_3 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     try {
-      __pyx_v_self->model.load(__pyx_t_3);
+      __pyx_v_self->model->load(__pyx_t_4);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 315; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
 
-    /* "multivec.pyx":176
- *         self.config = new BilingualConfig()  # memory leak, or not?
- *         self.model = BilingualModelCpp(self.config)
+    /* "multivec.pyx":314
+ *         self.config = new BilingualConfig()
+ *         self.model = new BilingualModelCpp(self.config)
  *         if name is not None:             # <<<<<<<<<<<<<<
  *             self.model.load(name)
  * 
  */
   }
 
-  /* "multivec.pyx":173
+  /* "multivec.pyx":318
+ * 
+ *         # overwrites previous configuration
+ *         for key, value in kwargs.items():             # <<<<<<<<<<<<<<
+ *             if value is not None:
+ *                 setattr(self, key, value)
+ */
+  __pyx_t_5 = __Pyx_PyDict_Items(__pyx_v_kwargs); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_5);
+  if (likely(PyList_CheckExact(__pyx_t_5)) || PyTuple_CheckExact(__pyx_t_5)) {
+    __pyx_t_6 = __pyx_t_5; __Pyx_INCREF(__pyx_t_6); __pyx_t_7 = 0;
+    __pyx_t_8 = NULL;
+  } else {
+    __pyx_t_7 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __Pyx_GOTREF(__pyx_t_6);
+    __pyx_t_8 = Py_TYPE(__pyx_t_6)->tp_iternext; if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  for (;;) {
+    if (likely(!__pyx_t_8)) {
+      if (likely(PyList_CheckExact(__pyx_t_6))) {
+        if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_6)) break;
+        #if CYTHON_COMPILING_IN_CPYTHON
+        __pyx_t_5 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_7); __Pyx_INCREF(__pyx_t_5); __pyx_t_7++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        #else
+        __pyx_t_5 = PySequence_ITEM(__pyx_t_6, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_5);
+        #endif
+      } else {
+        if (__pyx_t_7 >= PyTuple_GET_SIZE(__pyx_t_6)) break;
+        #if CYTHON_COMPILING_IN_CPYTHON
+        __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_7); __Pyx_INCREF(__pyx_t_5); __pyx_t_7++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        #else
+        __pyx_t_5 = PySequence_ITEM(__pyx_t_6, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        __Pyx_GOTREF(__pyx_t_5);
+        #endif
+      }
+    } else {
+      __pyx_t_5 = __pyx_t_8(__pyx_t_6);
+      if (unlikely(!__pyx_t_5)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_5);
+    }
+    if ((likely(PyTuple_CheckExact(__pyx_t_5))) || (PyList_CheckExact(__pyx_t_5))) {
+      PyObject* sequence = __pyx_t_5;
+      #if CYTHON_COMPILING_IN_CPYTHON
+      Py_ssize_t size = Py_SIZE(sequence);
+      #else
+      Py_ssize_t size = PySequence_Size(sequence);
+      #endif
+      if (unlikely(size != 2)) {
+        if (size > 2) __Pyx_RaiseTooManyValuesError(2);
+        else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+        {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      }
+      #if CYTHON_COMPILING_IN_CPYTHON
+      if (likely(PyTuple_CheckExact(sequence))) {
+        __pyx_t_9 = PyTuple_GET_ITEM(sequence, 0); 
+        __pyx_t_10 = PyTuple_GET_ITEM(sequence, 1); 
+      } else {
+        __pyx_t_9 = PyList_GET_ITEM(sequence, 0); 
+        __pyx_t_10 = PyList_GET_ITEM(sequence, 1); 
+      }
+      __Pyx_INCREF(__pyx_t_9);
+      __Pyx_INCREF(__pyx_t_10);
+      #else
+      __pyx_t_9 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_9);
+      __pyx_t_10 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_10);
+      #endif
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    } else {
+      Py_ssize_t index = -1;
+      __pyx_t_11 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_11);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __pyx_t_12 = Py_TYPE(__pyx_t_11)->tp_iternext;
+      index = 0; __pyx_t_9 = __pyx_t_12(__pyx_t_11); if (unlikely(!__pyx_t_9)) goto __pyx_L6_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_9);
+      index = 1; __pyx_t_10 = __pyx_t_12(__pyx_t_11); if (unlikely(!__pyx_t_10)) goto __pyx_L6_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_10);
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_11), 2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_12 = NULL;
+      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      goto __pyx_L7_unpacking_done;
+      __pyx_L6_unpacking_failed:;
+      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      __pyx_t_12 = NULL;
+      if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+      {__pyx_filename = __pyx_f[0]; __pyx_lineno = 318; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_L7_unpacking_done:;
+    }
+    __Pyx_XDECREF_SET(__pyx_v_key, __pyx_t_9);
+    __pyx_t_9 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_value, __pyx_t_10);
+    __pyx_t_10 = 0;
+
+    /* "multivec.pyx":319
+ *         # overwrites previous configuration
+ *         for key, value in kwargs.items():
+ *             if value is not None:             # <<<<<<<<<<<<<<
+ *                 setattr(self, key, value)
+ * 
+ */
+    __pyx_t_3 = (__pyx_v_value != Py_None);
+    __pyx_t_2 = (__pyx_t_3 != 0);
+    if (__pyx_t_2) {
+
+      /* "multivec.pyx":320
+ *         for key, value in kwargs.items():
+ *             if value is not None:
+ *                 setattr(self, key, value)             # <<<<<<<<<<<<<<
+ * 
+ *     def __dealloc__(self):
+ */
+      __pyx_t_13 = PyObject_SetAttr(((PyObject *)__pyx_v_self), __pyx_v_key, __pyx_v_value); if (unlikely(__pyx_t_13 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 320; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+
+      /* "multivec.pyx":319
+ *         # overwrites previous configuration
+ *         for key, value in kwargs.items():
+ *             if value is not None:             # <<<<<<<<<<<<<<
+ *                 setattr(self, key, value)
+ * 
+ */
+    }
+
+    /* "multivec.pyx":318
+ * 
+ *         # overwrites previous configuration
+ *         for key, value in kwargs.items():             # <<<<<<<<<<<<<<
+ *             if value is not None:
+ *                 setattr(self, key, value)
+ */
+  }
+  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+  /* "multivec.pyx":311
  *     cdef BilingualConfig* config
- *     cdef BilingualModelCpp model
+ *     cdef BilingualModelCpp* model
  *     def __cinit__(self, name=None, **kwargs):             # <<<<<<<<<<<<<<
- *         self.config = new BilingualConfig()  # memory leak, or not?
- *         self.model = BilingualModelCpp(self.config)
+ *         self.config = new BilingualConfig()
+ *         self.model = new BilingualModelCpp(self.config)
  */
 
   /* function exit code */
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
   __Pyx_AddTraceback("multivec.BilingualModel.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_key);
+  __Pyx_XDECREF(__pyx_v_value);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "multivec.pyx":179
- *             self.model.load(name)
+/* "multivec.pyx":322
+ *                 setattr(self, key, value)
+ * 
+ *     def __dealloc__(self):             # <<<<<<<<<<<<<<
+ *         # careful: this will break children monolingual models (because they use the same config and c++ models)
+ *         del self.model
+ */
+
+/* Python wrapper */
+static void __pyx_pw_8multivec_14BilingualModel_3__dealloc__(PyObject *__pyx_v_self); /*proto*/
+static void __pyx_pw_8multivec_14BilingualModel_3__dealloc__(PyObject *__pyx_v_self) {
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__dealloc__ (wrapper)", 0);
+  __pyx_pf_8multivec_14BilingualModel_2__dealloc__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+}
+
+static void __pyx_pf_8multivec_14BilingualModel_2__dealloc__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__dealloc__", 0);
+
+  /* "multivec.pyx":324
+ *     def __dealloc__(self):
+ *         # careful: this will break children monolingual models (because they use the same config and c++ models)
+ *         del self.model             # <<<<<<<<<<<<<<
+ *         del self.config
+ * 
+ */
+  delete __pyx_v_self->model;
+
+  /* "multivec.pyx":325
+ *         # careful: this will break children monolingual models (because they use the same config and c++ models)
+ *         del self.model
+ *         del self.config             # <<<<<<<<<<<<<<
+ * 
+ *     def train(self, src_name, trg_name, initialize=True):
+ */
+  delete __pyx_v_self->config;
+
+  /* "multivec.pyx":322
+ *                 setattr(self, key, value)
+ * 
+ *     def __dealloc__(self):             # <<<<<<<<<<<<<<
+ *         # careful: this will break children monolingual models (because they use the same config and c++ models)
+ *         del self.model
+ */
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+}
+
+/* "multivec.pyx":327
+ *         del self.config
  * 
  *     def train(self, src_name, trg_name, initialize=True):             # <<<<<<<<<<<<<<
  *         self.model.train(src_name, trg_name, initialize)
@@ -4618,8 +5243,8 @@ static int __pyx_pf_8multivec_14BilingualModel___cinit__(struct __pyx_obj_8multi
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_14BilingualModel_3train(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_8multivec_14BilingualModel_3train(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_8multivec_14BilingualModel_5train(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_5train(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_src_name = 0;
   PyObject *__pyx_v_trg_name = 0;
   PyObject *__pyx_v_initialize = 0;
@@ -4651,7 +5276,7 @@ static PyObject *__pyx_pw_8multivec_14BilingualModel_3train(PyObject *__pyx_v_se
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_trg_name)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("train", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 179; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("train", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 327; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (kw_args > 0) {
@@ -4660,7 +5285,7 @@ static PyObject *__pyx_pw_8multivec_14BilingualModel_3train(PyObject *__pyx_v_se
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "train") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 179; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "train") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 327; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -4677,20 +5302,20 @@ static PyObject *__pyx_pw_8multivec_14BilingualModel_3train(PyObject *__pyx_v_se
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("train", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 179; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("train", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 327; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("multivec.BilingualModel.train", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8multivec_14BilingualModel_2train(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), __pyx_v_src_name, __pyx_v_trg_name, __pyx_v_initialize);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_4train(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), __pyx_v_src_name, __pyx_v_trg_name, __pyx_v_initialize);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_14BilingualModel_2train(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_name, PyObject *__pyx_v_trg_name, PyObject *__pyx_v_initialize) {
+static PyObject *__pyx_pf_8multivec_14BilingualModel_4train(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_name, PyObject *__pyx_v_trg_name, PyObject *__pyx_v_initialize) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -4700,24 +5325,24 @@ static PyObject *__pyx_pf_8multivec_14BilingualModel_2train(struct __pyx_obj_8mu
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("train", 0);
 
-  /* "multivec.pyx":180
+  /* "multivec.pyx":328
  * 
  *     def train(self, src_name, trg_name, initialize=True):
  *         self.model.train(src_name, trg_name, initialize)             # <<<<<<<<<<<<<<
  * 
  *     def load(self, name):
  */
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_src_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_trg_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_src_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 328; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_trg_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 328; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_v_self->model.train(__pyx_t_1, __pyx_t_2, __pyx_v_initialize);
+    __pyx_v_self->model->train(__pyx_t_1, __pyx_t_2, __pyx_v_initialize);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 328; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
 
-  /* "multivec.pyx":179
- *             self.model.load(name)
+  /* "multivec.pyx":327
+ *         del self.config
  * 
  *     def train(self, src_name, trg_name, initialize=True):             # <<<<<<<<<<<<<<
  *         self.model.train(src_name, trg_name, initialize)
@@ -4736,7 +5361,7 @@ static PyObject *__pyx_pf_8multivec_14BilingualModel_2train(struct __pyx_obj_8mu
   return __pyx_r;
 }
 
-/* "multivec.pyx":182
+/* "multivec.pyx":330
  *         self.model.train(src_name, trg_name, initialize)
  * 
  *     def load(self, name):             # <<<<<<<<<<<<<<
@@ -4745,19 +5370,19 @@ static PyObject *__pyx_pf_8multivec_14BilingualModel_2train(struct __pyx_obj_8mu
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8multivec_14BilingualModel_5load(PyObject *__pyx_v_self, PyObject *__pyx_v_name); /*proto*/
-static PyObject *__pyx_pw_8multivec_14BilingualModel_5load(PyObject *__pyx_v_self, PyObject *__pyx_v_name) {
+static PyObject *__pyx_pw_8multivec_14BilingualModel_7load(PyObject *__pyx_v_self, PyObject *__pyx_v_name); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_7load(PyObject *__pyx_v_self, PyObject *__pyx_v_name) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("load (wrapper)", 0);
-  __pyx_r = __pyx_pf_8multivec_14BilingualModel_4load(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_name));
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_6load(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_name));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8multivec_14BilingualModel_4load(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_name) {
+static PyObject *__pyx_pf_8multivec_14BilingualModel_6load(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_name) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
@@ -4766,22 +5391,22 @@ static PyObject *__pyx_pf_8multivec_14BilingualModel_4load(struct __pyx_obj_8mul
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("load", 0);
 
-  /* "multivec.pyx":183
+  /* "multivec.pyx":331
  * 
  *     def load(self, name):
  *         self.model.load(name)             # <<<<<<<<<<<<<<
  * 
- *     property src_model:
+ *     def similarity(self, src_word, trg_word, policy=0):
  */
-  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_name); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   try {
-    __pyx_v_self->model.load(__pyx_t_1);
+    __pyx_v_self->model->load(__pyx_t_1);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 331; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
 
-  /* "multivec.pyx":182
+  /* "multivec.pyx":330
  *         self.model.train(src_name, trg_name, initialize)
  * 
  *     def load(self, name):             # <<<<<<<<<<<<<<
@@ -4801,7 +5426,855 @@ static PyObject *__pyx_pf_8multivec_14BilingualModel_4load(struct __pyx_obj_8mul
   return __pyx_r;
 }
 
-/* "multivec.pyx":186
+/* "multivec.pyx":333
+ *         self.model.load(name)
+ * 
+ *     def similarity(self, src_word, trg_word, policy=0):             # <<<<<<<<<<<<<<
+ *         return self.model.similarity(src_word, trg_word, policy)
+ *     def distance(self, src_word, trg_word, policy=0):
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_9similarity(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_9similarity(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_src_word = 0;
+  PyObject *__pyx_v_trg_word = 0;
+  PyObject *__pyx_v_policy = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("similarity (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_src_word,&__pyx_n_s_trg_word,&__pyx_n_s_policy,0};
+    PyObject* values[3] = {0,0,0};
+    values[2] = ((PyObject *)__pyx_int_0);
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_src_word)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_trg_word)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("similarity", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        }
+        case  2:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_policy);
+          if (value) { values[2] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "similarity") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_src_word = values[0];
+    __pyx_v_trg_word = values[1];
+    __pyx_v_policy = values[2];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("similarity", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 333; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.similarity", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_8similarity(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), __pyx_v_src_word, __pyx_v_trg_word, __pyx_v_policy);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_8similarity(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_word, PyObject *__pyx_v_trg_word, PyObject *__pyx_v_policy) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  std::string __pyx_t_1;
+  std::string __pyx_t_2;
+  int __pyx_t_3;
+  float __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("similarity", 0);
+
+  /* "multivec.pyx":334
+ * 
+ *     def similarity(self, src_word, trg_word, policy=0):
+ *         return self.model.similarity(src_word, trg_word, policy)             # <<<<<<<<<<<<<<
+ *     def distance(self, src_word, trg_word, policy=0):
+ *         return self.model.similarity(src_word, trg_word, policy)
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_src_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_trg_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  try {
+    __pyx_t_4 = __pyx_v_self->model->similarity(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 334; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_r = __pyx_t_5;
+  __pyx_t_5 = 0;
+  goto __pyx_L0;
+
+  /* "multivec.pyx":333
+ *         self.model.load(name)
+ * 
+ *     def similarity(self, src_word, trg_word, policy=0):             # <<<<<<<<<<<<<<
+ *         return self.model.similarity(src_word, trg_word, policy)
+ *     def distance(self, src_word, trg_word, policy=0):
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("multivec.BilingualModel.similarity", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":335
+ *     def similarity(self, src_word, trg_word, policy=0):
+ *         return self.model.similarity(src_word, trg_word, policy)
+ *     def distance(self, src_word, trg_word, policy=0):             # <<<<<<<<<<<<<<
+ *         return self.model.similarity(src_word, trg_word, policy)
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_11distance(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_11distance(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_src_word = 0;
+  PyObject *__pyx_v_trg_word = 0;
+  PyObject *__pyx_v_policy = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("distance (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_src_word,&__pyx_n_s_trg_word,&__pyx_n_s_policy,0};
+    PyObject* values[3] = {0,0,0};
+    values[2] = ((PyObject *)__pyx_int_0);
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_src_word)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_trg_word)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("distance", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        }
+        case  2:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_policy);
+          if (value) { values[2] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "distance") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_src_word = values[0];
+    __pyx_v_trg_word = values[1];
+    __pyx_v_policy = values[2];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("distance", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 335; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_10distance(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), __pyx_v_src_word, __pyx_v_trg_word, __pyx_v_policy);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_10distance(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_word, PyObject *__pyx_v_trg_word, PyObject *__pyx_v_policy) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  std::string __pyx_t_1;
+  std::string __pyx_t_2;
+  int __pyx_t_3;
+  float __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("distance", 0);
+
+  /* "multivec.pyx":336
+ *         return self.model.similarity(src_word, trg_word, policy)
+ *     def distance(self, src_word, trg_word, policy=0):
+ *         return self.model.similarity(src_word, trg_word, policy)             # <<<<<<<<<<<<<<
+ * 
+ *     def similarity_ngrams(self, src_seq, trg_seq, policy=0):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_src_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 336; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_trg_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 336; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 336; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  try {
+    __pyx_t_4 = __pyx_v_self->model->similarity(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 336; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 336; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_r = __pyx_t_5;
+  __pyx_t_5 = 0;
+  goto __pyx_L0;
+
+  /* "multivec.pyx":335
+ *     def similarity(self, src_word, trg_word, policy=0):
+ *         return self.model.similarity(src_word, trg_word, policy)
+ *     def distance(self, src_word, trg_word, policy=0):             # <<<<<<<<<<<<<<
+ *         return self.model.similarity(src_word, trg_word, policy)
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("multivec.BilingualModel.distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":338
+ *         return self.model.similarity(src_word, trg_word, policy)
+ * 
+ *     def similarity_ngrams(self, src_seq, trg_seq, policy=0):             # <<<<<<<<<<<<<<
+ *         return self.model.similarityNgrams(src_seq, trg_seq, policy)
+ *     def similarity_bag_of_words(self, src_seq, trg_seq, policy=0):
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_13similarity_ngrams(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_13similarity_ngrams(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_src_seq = 0;
+  PyObject *__pyx_v_trg_seq = 0;
+  PyObject *__pyx_v_policy = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("similarity_ngrams (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_src_seq,&__pyx_n_s_trg_seq,&__pyx_n_s_policy,0};
+    PyObject* values[3] = {0,0,0};
+    values[2] = ((PyObject *)__pyx_int_0);
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_src_seq)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_trg_seq)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("similarity_ngrams", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        }
+        case  2:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_policy);
+          if (value) { values[2] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "similarity_ngrams") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_src_seq = values[0];
+    __pyx_v_trg_seq = values[1];
+    __pyx_v_policy = values[2];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("similarity_ngrams", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 338; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.similarity_ngrams", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_12similarity_ngrams(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), __pyx_v_src_seq, __pyx_v_trg_seq, __pyx_v_policy);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_12similarity_ngrams(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_seq, PyObject *__pyx_v_trg_seq, PyObject *__pyx_v_policy) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  std::string __pyx_t_1;
+  std::string __pyx_t_2;
+  int __pyx_t_3;
+  float __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("similarity_ngrams", 0);
+
+  /* "multivec.pyx":339
+ * 
+ *     def similarity_ngrams(self, src_seq, trg_seq, policy=0):
+ *         return self.model.similarityNgrams(src_seq, trg_seq, policy)             # <<<<<<<<<<<<<<
+ *     def similarity_bag_of_words(self, src_seq, trg_seq, policy=0):
+ *         return self.model.similaritySentence(src_seq, trg_seq, policy)
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_src_seq); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 339; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_trg_seq); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 339; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 339; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  try {
+    __pyx_t_4 = __pyx_v_self->model->similarityNgrams(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 339; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 339; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_r = __pyx_t_5;
+  __pyx_t_5 = 0;
+  goto __pyx_L0;
+
+  /* "multivec.pyx":338
+ *         return self.model.similarity(src_word, trg_word, policy)
+ * 
+ *     def similarity_ngrams(self, src_seq, trg_seq, policy=0):             # <<<<<<<<<<<<<<
+ *         return self.model.similarityNgrams(src_seq, trg_seq, policy)
+ *     def similarity_bag_of_words(self, src_seq, trg_seq, policy=0):
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("multivec.BilingualModel.similarity_ngrams", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":340
+ *     def similarity_ngrams(self, src_seq, trg_seq, policy=0):
+ *         return self.model.similarityNgrams(src_seq, trg_seq, policy)
+ *     def similarity_bag_of_words(self, src_seq, trg_seq, policy=0):             # <<<<<<<<<<<<<<
+ *         return self.model.similaritySentence(src_seq, trg_seq, policy)
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_15similarity_bag_of_words(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_15similarity_bag_of_words(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_src_seq = 0;
+  PyObject *__pyx_v_trg_seq = 0;
+  PyObject *__pyx_v_policy = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("similarity_bag_of_words (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_src_seq,&__pyx_n_s_trg_seq,&__pyx_n_s_policy,0};
+    PyObject* values[3] = {0,0,0};
+    values[2] = ((PyObject *)__pyx_int_0);
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_src_seq)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_trg_seq)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("similarity_bag_of_words", 0, 2, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 340; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        }
+        case  2:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_policy);
+          if (value) { values[2] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "similarity_bag_of_words") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 340; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_src_seq = values[0];
+    __pyx_v_trg_seq = values[1];
+    __pyx_v_policy = values[2];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("similarity_bag_of_words", 0, 2, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 340; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.similarity_bag_of_words", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_14similarity_bag_of_words(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), __pyx_v_src_seq, __pyx_v_trg_seq, __pyx_v_policy);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_14similarity_bag_of_words(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_seq, PyObject *__pyx_v_trg_seq, PyObject *__pyx_v_policy) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  std::string __pyx_t_1;
+  std::string __pyx_t_2;
+  int __pyx_t_3;
+  float __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("similarity_bag_of_words", 0);
+
+  /* "multivec.pyx":341
+ *         return self.model.similarityNgrams(src_seq, trg_seq, policy)
+ *     def similarity_bag_of_words(self, src_seq, trg_seq, policy=0):
+ *         return self.model.similaritySentence(src_seq, trg_seq, policy)             # <<<<<<<<<<<<<<
+ * 
+ *     def trg_closest(self, src_word, n=10, policy=0):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_src_seq); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __pyx_convert_string_from_py_std__in_string(__pyx_v_trg_seq); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  try {
+    __pyx_t_4 = __pyx_v_self->model->similaritySentence(__pyx_t_1, __pyx_t_2, __pyx_t_3);
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_t_4); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 341; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_r = __pyx_t_5;
+  __pyx_t_5 = 0;
+  goto __pyx_L0;
+
+  /* "multivec.pyx":340
+ *     def similarity_ngrams(self, src_seq, trg_seq, policy=0):
+ *         return self.model.similarityNgrams(src_seq, trg_seq, policy)
+ *     def similarity_bag_of_words(self, src_seq, trg_seq, policy=0):             # <<<<<<<<<<<<<<
+ *         return self.model.similaritySentence(src_seq, trg_seq, policy)
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("multivec.BilingualModel.similarity_bag_of_words", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":343
+ *         return self.model.similaritySentence(src_seq, trg_seq, policy)
+ * 
+ *     def trg_closest(self, src_word, n=10, policy=0):             # <<<<<<<<<<<<<<
+ *         cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word, <int> n, <int> policy)
+ *         return list(res)
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_17trg_closest(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_17trg_closest(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_src_word = 0;
+  PyObject *__pyx_v_n = 0;
+  PyObject *__pyx_v_policy = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("trg_closest (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_src_word,&__pyx_n_s_n,&__pyx_n_s_policy,0};
+    PyObject* values[3] = {0,0,0};
+    values[1] = ((PyObject *)__pyx_int_10);
+    values[2] = ((PyObject *)__pyx_int_0);
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_src_word)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_n);
+          if (value) { values[1] = value; kw_args--; }
+        }
+        case  2:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_policy);
+          if (value) { values[2] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "trg_closest") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 343; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_src_word = values[0];
+    __pyx_v_n = values[1];
+    __pyx_v_policy = values[2];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("trg_closest", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 343; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.trg_closest", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_16trg_closest(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), __pyx_v_src_word, __pyx_v_n, __pyx_v_policy);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_16trg_closest(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_src_word, PyObject *__pyx_v_n, PyObject *__pyx_v_policy) {
+  std::vector<std::pair<std::string,float> >  __pyx_v_res;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  std::string __pyx_t_1;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  std::vector<std::pair<std::string,float> >  __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("trg_closest", 0);
+
+  /* "multivec.pyx":344
+ * 
+ *     def trg_closest(self, src_word, n=10, policy=0):
+ *         cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word, <int> n, <int> policy)             # <<<<<<<<<<<<<<
+ *         return list(res)
+ *     def src_closest(self, trg_word, n=10, policy=0):
+ */
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_src_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 344; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_n); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 344; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 344; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  try {
+    __pyx_t_4 = __pyx_v_self->model->trg_closest(((std::string const &)__pyx_t_1), ((int)__pyx_t_2), ((int)__pyx_t_3));
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 344; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_v_res = __pyx_t_4;
+
+  /* "multivec.pyx":345
+ *     def trg_closest(self, src_word, n=10, policy=0):
+ *         cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word, <int> n, <int> policy)
+ *         return list(res)             # <<<<<<<<<<<<<<
+ *     def src_closest(self, trg_word, n=10, policy=0):
+ *         cdef vector[pair[string, float]] res = self.model.src_closest(<const string&> trg_word, <int> n, <int> policy)
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_5 = __pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string_2c_float_3e___(__pyx_v_res); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 345; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_6 = PySequence_List(__pyx_t_5); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 345; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_r = __pyx_t_6;
+  __pyx_t_6 = 0;
+  goto __pyx_L0;
+
+  /* "multivec.pyx":343
+ *         return self.model.similaritySentence(src_seq, trg_seq, policy)
+ * 
+ *     def trg_closest(self, src_word, n=10, policy=0):             # <<<<<<<<<<<<<<
+ *         cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word, <int> n, <int> policy)
+ *         return list(res)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_AddTraceback("multivec.BilingualModel.trg_closest", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":346
+ *         cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word, <int> n, <int> policy)
+ *         return list(res)
+ *     def src_closest(self, trg_word, n=10, policy=0):             # <<<<<<<<<<<<<<
+ *         cdef vector[pair[string, float]] res = self.model.src_closest(<const string&> trg_word, <int> n, <int> policy)
+ *         return list(res)
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_19src_closest(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_19src_closest(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_trg_word = 0;
+  PyObject *__pyx_v_n = 0;
+  PyObject *__pyx_v_policy = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("src_closest (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_trg_word,&__pyx_n_s_n,&__pyx_n_s_policy,0};
+    PyObject* values[3] = {0,0,0};
+    values[1] = ((PyObject *)__pyx_int_10);
+    values[2] = ((PyObject *)__pyx_int_0);
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_trg_word)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_n);
+          if (value) { values[1] = value; kw_args--; }
+        }
+        case  2:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_policy);
+          if (value) { values[2] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "src_closest") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_trg_word = values[0];
+    __pyx_v_n = values[1];
+    __pyx_v_policy = values[2];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("src_closest", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 346; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.src_closest", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_18src_closest(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), __pyx_v_trg_word, __pyx_v_n, __pyx_v_policy);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_18src_closest(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_trg_word, PyObject *__pyx_v_n, PyObject *__pyx_v_policy) {
+  std::vector<std::pair<std::string,float> >  __pyx_v_res;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  std::string __pyx_t_1;
+  int __pyx_t_2;
+  int __pyx_t_3;
+  std::vector<std::pair<std::string,float> >  __pyx_t_4;
+  PyObject *__pyx_t_5 = NULL;
+  PyObject *__pyx_t_6 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("src_closest", 0);
+
+  /* "multivec.pyx":347
+ *         return list(res)
+ *     def src_closest(self, trg_word, n=10, policy=0):
+ *         cdef vector[pair[string, float]] res = self.model.src_closest(<const string&> trg_word, <int> n, <int> policy)             # <<<<<<<<<<<<<<
+ *         return list(res)
+ * 
+ */
+  __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_trg_word); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_v_n); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_v_policy); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  try {
+    __pyx_t_4 = __pyx_v_self->model->src_closest(((std::string const &)__pyx_t_1), ((int)__pyx_t_2), ((int)__pyx_t_3));
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 347; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  }
+  __pyx_v_res = __pyx_t_4;
+
+  /* "multivec.pyx":348
+ *     def src_closest(self, trg_word, n=10, policy=0):
+ *         cdef vector[pair[string, float]] res = self.model.src_closest(<const string&> trg_word, <int> n, <int> policy)
+ *         return list(res)             # <<<<<<<<<<<<<<
+ * 
+ *     property src_model:
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_5 = __pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string_2c_float_3e___(__pyx_v_res); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_6 = PySequence_List(__pyx_t_5); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 348; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_6);
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_r = __pyx_t_6;
+  __pyx_t_6 = 0;
+  goto __pyx_L0;
+
+  /* "multivec.pyx":346
+ *         cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word, <int> n, <int> policy)
+ *         return list(res)
+ *     def src_closest(self, trg_word, n=10, policy=0):             # <<<<<<<<<<<<<<
+ *         cdef vector[pair[string, float]] res = self.model.src_closest(<const string&> trg_word, <int> n, <int> policy)
+ *         return list(res)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_AddTraceback("multivec.BilingualModel.src_closest", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":351
  * 
  *     property src_model:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -4823,62 +6296,33 @@ static PyObject *__pyx_pw_8multivec_14BilingualModel_9src_model_1__get__(PyObjec
 }
 
 static PyObject *__pyx_pf_8multivec_14BilingualModel_9src_model___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
-  struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_model = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  MonolingualModel __pyx_t_2;
-  BilingualConfig *__pyx_t_3;
+  PyObject *__pyx_t_2 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "multivec.pyx":189
+  /* "multivec.pyx":354
  *             # create the model on the fly, because the reference can (in theory) change
  *             # during the lifetime of the object
- *             model = MonolingualModel()             # <<<<<<<<<<<<<<
- *             model.model = self.model.src_model
- *             model.config = self.config
- */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8multivec_MonolingualModel), __pyx_empty_tuple, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_v_model = ((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "multivec.pyx":190
- *             # during the lifetime of the object
- *             model = MonolingualModel()
- *             model.model = self.model.src_model             # <<<<<<<<<<<<<<
- *             model.config = self.config
- *             return model
- */
-  __pyx_t_2 = __pyx_v_self->model.src_model;
-  __pyx_v_model->model = __pyx_t_2;
-
-  /* "multivec.pyx":191
- *             model = MonolingualModel()
- *             model.model = self.model.src_model
- *             model.config = self.config             # <<<<<<<<<<<<<<
- *             return model
- *     property trg_model:
- */
-  __pyx_t_3 = __pyx_v_self->config;
-  __pyx_v_model->config = __pyx_t_3;
-
-  /* "multivec.pyx":192
- *             model.model = self.model.src_model
- *             model.config = self.config
- *             return model             # <<<<<<<<<<<<<<
+ *             return MonolingualModel().set_members(&self.model.src_model, self.config)             # <<<<<<<<<<<<<<
  *     property trg_model:
  *         def __get__(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_INCREF(((PyObject *)__pyx_v_model));
-  __pyx_r = ((PyObject *)__pyx_v_model);
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8multivec_MonolingualModel), __pyx_empty_tuple, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 354; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = ((struct __pyx_vtabstruct_8multivec_MonolingualModel *)((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_t_1)->__pyx_vtab)->set_members(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_t_1), (&__pyx_v_self->model->src_model), __pyx_v_self->config); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 354; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":186
+  /* "multivec.pyx":351
  * 
  *     property src_model:
  *         def __get__(self):             # <<<<<<<<<<<<<<
@@ -4889,21 +6333,21 @@ static PyObject *__pyx_pf_8multivec_14BilingualModel_9src_model___get__(struct _
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
   __Pyx_AddTraceback("multivec.BilingualModel.src_model.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
-  __Pyx_XDECREF((PyObject *)__pyx_v_model);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "multivec.pyx":194
- *             return model
+/* "multivec.pyx":356
+ *             return MonolingualModel().set_members(&self.model.src_model, self.config)
  *     property trg_model:
  *         def __get__(self):             # <<<<<<<<<<<<<<
- *             model = MonolingualModel()
- *             model.model = self.model.trg_model
+ *             return MonolingualModel().set_members(&self.model.trg_model, self.config)
+ * 
  */
 
 /* Python wrapper */
@@ -4920,74 +6364,1217 @@ static PyObject *__pyx_pw_8multivec_14BilingualModel_9trg_model_1__get__(PyObjec
 }
 
 static PyObject *__pyx_pf_8multivec_14BilingualModel_9trg_model___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
-  struct __pyx_obj_8multivec_MonolingualModel *__pyx_v_model = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  MonolingualModel __pyx_t_2;
-  BilingualConfig *__pyx_t_3;
+  PyObject *__pyx_t_2 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "multivec.pyx":195
+  /* "multivec.pyx":357
  *     property trg_model:
  *         def __get__(self):
- *             model = MonolingualModel()             # <<<<<<<<<<<<<<
- *             model.model = self.model.trg_model
- *             model.config = self.config
- */
-  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8multivec_MonolingualModel), __pyx_empty_tuple, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 195; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_v_model = ((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "multivec.pyx":196
- *         def __get__(self):
- *             model = MonolingualModel()
- *             model.model = self.model.trg_model             # <<<<<<<<<<<<<<
- *             model.config = self.config
- *             return model
- */
-  __pyx_t_2 = __pyx_v_self->model.trg_model;
-  __pyx_v_model->model = __pyx_t_2;
-
-  /* "multivec.pyx":197
- *             model = MonolingualModel()
- *             model.model = self.model.trg_model
- *             model.config = self.config             # <<<<<<<<<<<<<<
- *             return model
- */
-  __pyx_t_3 = __pyx_v_self->config;
-  __pyx_v_model->config = __pyx_t_3;
-
-  /* "multivec.pyx":198
- *             model.model = self.model.trg_model
- *             model.config = self.config
- *             return model             # <<<<<<<<<<<<<<
+ *             return MonolingualModel().set_members(&self.model.trg_model, self.config)             # <<<<<<<<<<<<<<
+ * 
+ *     property beta:
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_INCREF(((PyObject *)__pyx_v_model));
-  __pyx_r = ((PyObject *)__pyx_v_model);
+  __pyx_t_1 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_8multivec_MonolingualModel), __pyx_empty_tuple, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 357; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = ((struct __pyx_vtabstruct_8multivec_MonolingualModel *)((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_t_1)->__pyx_vtab)->set_members(((struct __pyx_obj_8multivec_MonolingualModel *)__pyx_t_1), (&__pyx_v_self->model->trg_model), __pyx_v_self->config); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 357; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "multivec.pyx":194
- *             return model
+  /* "multivec.pyx":356
+ *             return MonolingualModel().set_members(&self.model.src_model, self.config)
  *     property trg_model:
  *         def __get__(self):             # <<<<<<<<<<<<<<
- *             model = MonolingualModel()
- *             model.model = self.model.trg_model
+ *             return MonolingualModel().set_members(&self.model.trg_model, self.config)
+ * 
  */
 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
   __Pyx_AddTraceback("multivec.BilingualModel.trg_model.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
-  __Pyx_XDECREF((PyObject *)__pyx_v_model);
   __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":360
+ * 
+ *     property beta:
+ *         def __get__(self): return self.config.beta             # <<<<<<<<<<<<<<
+ *         def __set__(self, beta): self.config.beta = beta
+ *     property learning_rate:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_4beta_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_4beta_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_4beta___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_4beta___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->config->beta); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 360; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.beta.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":361
+ *     property beta:
+ *         def __get__(self): return self.config.beta
+ *         def __set__(self, beta): self.config.beta = beta             # <<<<<<<<<<<<<<
+ *     property learning_rate:
+ *         def __get__(self): return self.config.learning_rate
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_4beta_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_beta); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_4beta_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_beta) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_4beta_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_beta));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_4beta_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_beta) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  float __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __pyx_PyFloat_AsFloat(__pyx_v_beta); if (unlikely((__pyx_t_1 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 361; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->beta = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.beta.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":363
+ *         def __set__(self, beta): self.config.beta = beta
+ *     property learning_rate:
+ *         def __get__(self): return self.config.learning_rate             # <<<<<<<<<<<<<<
+ *         def __set__(self, learning_rate): self.config.learning_rate = learning_rate
+ *     property dimension:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_13learning_rate_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_13learning_rate_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_13learning_rate___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_13learning_rate___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->config->learning_rate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 363; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.learning_rate.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":364
+ *     property learning_rate:
+ *         def __get__(self): return self.config.learning_rate
+ *         def __set__(self, learning_rate): self.config.learning_rate = learning_rate             # <<<<<<<<<<<<<<
+ *     property dimension:
+ *         def __get__(self): return self.config.dimension
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_13learning_rate_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_learning_rate); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_13learning_rate_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_learning_rate) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_13learning_rate_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_learning_rate));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_13learning_rate_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_learning_rate) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  float __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __pyx_PyFloat_AsFloat(__pyx_v_learning_rate); if (unlikely((__pyx_t_1 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 364; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->learning_rate = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.learning_rate.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":366
+ *         def __set__(self, learning_rate): self.config.learning_rate = learning_rate
+ *     property dimension:
+ *         def __get__(self): return self.config.dimension             # <<<<<<<<<<<<<<
+ *         def __set__(self, dimension): self.config.dimension = dimension
+ *     property min_count:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_9dimension_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_9dimension_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_9dimension___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_9dimension___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->dimension); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 366; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.dimension.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":367
+ *     property dimension:
+ *         def __get__(self): return self.config.dimension
+ *         def __set__(self, dimension): self.config.dimension = dimension             # <<<<<<<<<<<<<<
+ *     property min_count:
+ *         def __get__(self): return self.config.min_count
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_9dimension_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_dimension); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_9dimension_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_dimension) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_9dimension_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_dimension));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_9dimension_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_dimension) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_dimension); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 367; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->dimension = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.dimension.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":369
+ *         def __set__(self, dimension): self.config.dimension = dimension
+ *     property min_count:
+ *         def __get__(self): return self.config.min_count             # <<<<<<<<<<<<<<
+ *         def __set__(self, min_count): self.config.min_count = min_count
+ *     property iterations:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_9min_count_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_9min_count_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_9min_count___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_9min_count___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->min_count); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 369; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.min_count.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":370
+ *     property min_count:
+ *         def __get__(self): return self.config.min_count
+ *         def __set__(self, min_count): self.config.min_count = min_count             # <<<<<<<<<<<<<<
+ *     property iterations:
+ *         def __get__(self): return self.config.iterations
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_9min_count_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_min_count); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_9min_count_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_min_count) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_9min_count_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_min_count));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_9min_count_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_min_count) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_min_count); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 370; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->min_count = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.min_count.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":372
+ *         def __set__(self, min_count): self.config.min_count = min_count
+ *     property iterations:
+ *         def __get__(self): return self.config.iterations             # <<<<<<<<<<<<<<
+ *         def __set__(self, iterations): self.config.iterations = iterations
+ *     property window_size:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_10iterations_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_10iterations_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_10iterations___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_10iterations___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->iterations); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 372; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.iterations.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":373
+ *     property iterations:
+ *         def __get__(self): return self.config.iterations
+ *         def __set__(self, iterations): self.config.iterations = iterations             # <<<<<<<<<<<<<<
+ *     property window_size:
+ *         def __get__(self): return self.config.window_size
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_10iterations_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_iterations); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_10iterations_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_iterations) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_10iterations_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_iterations));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_10iterations_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_iterations) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_iterations); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 373; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->iterations = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.iterations.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":375
+ *         def __set__(self, iterations): self.config.iterations = iterations
+ *     property window_size:
+ *         def __get__(self): return self.config.window_size             # <<<<<<<<<<<<<<
+ *         def __set__(self, window_size): self.config.window_size = window_size
+ *     property threads:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_11window_size_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_11window_size_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_11window_size___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_11window_size___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->window_size); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 375; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.window_size.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":376
+ *     property window_size:
+ *         def __get__(self): return self.config.window_size
+ *         def __set__(self, window_size): self.config.window_size = window_size             # <<<<<<<<<<<<<<
+ *     property threads:
+ *         def __get__(self): return self.config.threads
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_11window_size_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_window_size); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_11window_size_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_window_size) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_11window_size_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_window_size));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_11window_size_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_window_size) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_window_size); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 376; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->window_size = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.window_size.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":378
+ *         def __set__(self, window_size): self.config.window_size = window_size
+ *     property threads:
+ *         def __get__(self): return self.config.threads             # <<<<<<<<<<<<<<
+ *         def __set__(self, threads): self.config.threads = threads
+ *     property subsampling:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_7threads_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_7threads_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_7threads___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_7threads___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->threads); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 378; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.threads.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":379
+ *     property threads:
+ *         def __get__(self): return self.config.threads
+ *         def __set__(self, threads): self.config.threads = threads             # <<<<<<<<<<<<<<
+ *     property subsampling:
+ *         def __get__(self): return self.config.subsampling
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_7threads_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_threads); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_7threads_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_threads) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_7threads_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_threads));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_7threads_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_threads) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_threads); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 379; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->threads = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.threads.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":381
+ *         def __set__(self, threads): self.config.threads = threads
+ *     property subsampling:
+ *         def __get__(self): return self.config.subsampling             # <<<<<<<<<<<<<<
+ *         def __set__(self, subsampling): self.config.subsampling = subsampling
+ *     property verbose:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_11subsampling_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_11subsampling_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_11subsampling___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_11subsampling___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->config->subsampling); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 381; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.subsampling.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":382
+ *     property subsampling:
+ *         def __get__(self): return self.config.subsampling
+ *         def __set__(self, subsampling): self.config.subsampling = subsampling             # <<<<<<<<<<<<<<
+ *     property verbose:
+ *         def __get__(self): return self.config.verbose
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_11subsampling_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_subsampling); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_11subsampling_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_subsampling) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_11subsampling_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_subsampling));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_11subsampling_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_subsampling) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  float __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __pyx_PyFloat_AsFloat(__pyx_v_subsampling); if (unlikely((__pyx_t_1 == (float)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 382; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->subsampling = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.subsampling.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":384
+ *         def __set__(self, subsampling): self.config.subsampling = subsampling
+ *     property verbose:
+ *         def __get__(self): return self.config.verbose             # <<<<<<<<<<<<<<
+ *         def __set__(self, verbose): self.config.verbose = verbose
+ *     property hierarchical_softmax:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_7verbose_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_7verbose_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_7verbose___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_7verbose___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->verbose); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 384; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.verbose.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":385
+ *     property verbose:
+ *         def __get__(self): return self.config.verbose
+ *         def __set__(self, verbose): self.config.verbose = verbose             # <<<<<<<<<<<<<<
+ *     property hierarchical_softmax:
+ *         def __get__(self): return self.config.hierarchical_softmax
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_7verbose_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_verbose); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_7verbose_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_verbose) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_7verbose_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_verbose));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_7verbose_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_verbose) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_verbose); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 385; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->verbose = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.verbose.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":387
+ *         def __set__(self, verbose): self.config.verbose = verbose
+ *     property hierarchical_softmax:
+ *         def __get__(self): return self.config.hierarchical_softmax             # <<<<<<<<<<<<<<
+ *         def __set__(self, hierarchical_softmax): self.config.hierarchical_softmax = hierarchical_softmax
+ *     property skip_gram:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_20hierarchical_softmax_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_20hierarchical_softmax_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_20hierarchical_softmax___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_20hierarchical_softmax___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->hierarchical_softmax); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 387; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.hierarchical_softmax.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":388
+ *     property hierarchical_softmax:
+ *         def __get__(self): return self.config.hierarchical_softmax
+ *         def __set__(self, hierarchical_softmax): self.config.hierarchical_softmax = hierarchical_softmax             # <<<<<<<<<<<<<<
+ *     property skip_gram:
+ *         def __get__(self): return self.config.skip_gram
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_20hierarchical_softmax_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_hierarchical_softmax); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_20hierarchical_softmax_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_hierarchical_softmax) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_20hierarchical_softmax_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_hierarchical_softmax));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_20hierarchical_softmax_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_hierarchical_softmax) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_hierarchical_softmax); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 388; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->hierarchical_softmax = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.hierarchical_softmax.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":390
+ *         def __set__(self, hierarchical_softmax): self.config.hierarchical_softmax = hierarchical_softmax
+ *     property skip_gram:
+ *         def __get__(self): return self.config.skip_gram             # <<<<<<<<<<<<<<
+ *         def __set__(self, skip_gram): self.config.skip_gram = skip_gram
+ *     property negative:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_9skip_gram_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_9skip_gram_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_9skip_gram___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_9skip_gram___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->skip_gram); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 390; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.skip_gram.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":391
+ *     property skip_gram:
+ *         def __get__(self): return self.config.skip_gram
+ *         def __set__(self, skip_gram): self.config.skip_gram = skip_gram             # <<<<<<<<<<<<<<
+ *     property negative:
+ *         def __get__(self): return self.config.negative
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_9skip_gram_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_skip_gram); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_9skip_gram_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_skip_gram) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_9skip_gram_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_skip_gram));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_9skip_gram_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_skip_gram) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_skip_gram); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 391; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->skip_gram = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.skip_gram.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":393
+ *         def __set__(self, skip_gram): self.config.skip_gram = skip_gram
+ *     property negative:
+ *         def __get__(self): return self.config.negative             # <<<<<<<<<<<<<<
+ *         def __set__(self, negative): self.config.negative = negative
+ *     property sent_vector:
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_8negative_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_8negative_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_8negative___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_8negative___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->negative); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 393; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.negative.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":394
+ *     property negative:
+ *         def __get__(self): return self.config.negative
+ *         def __set__(self, negative): self.config.negative = negative             # <<<<<<<<<<<<<<
+ *     property sent_vector:
+ *         def __get__(self): return self.config.sent_vector
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_8negative_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_negative); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_8negative_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_negative) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_8negative_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_negative));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_8negative_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_negative) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_negative); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 394; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->negative = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.negative.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":396
+ *         def __set__(self, negative): self.config.negative = negative
+ *     property sent_vector:
+ *         def __get__(self): return self.config.sent_vector             # <<<<<<<<<<<<<<
+ *         def __set__(self, sent_vector): self.config.sent_vector = sent_vector
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8multivec_14BilingualModel_11sent_vector_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8multivec_14BilingualModel_11sent_vector_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_11sent_vector___get__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8multivec_14BilingualModel_11sent_vector___get__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_self->config->sent_vector); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 396; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("multivec.BilingualModel.sent_vector.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "multivec.pyx":397
+ *     property sent_vector:
+ *         def __get__(self): return self.config.sent_vector
+ *         def __set__(self, sent_vector): self.config.sent_vector = sent_vector             # <<<<<<<<<<<<<<
+ * 
+ */
+
+/* Python wrapper */
+static int __pyx_pw_8multivec_14BilingualModel_11sent_vector_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_sent_vector); /*proto*/
+static int __pyx_pw_8multivec_14BilingualModel_11sent_vector_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_sent_vector) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8multivec_14BilingualModel_11sent_vector_2__set__(((struct __pyx_obj_8multivec_BilingualModel *)__pyx_v_self), ((PyObject *)__pyx_v_sent_vector));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8multivec_14BilingualModel_11sent_vector_2__set__(struct __pyx_obj_8multivec_BilingualModel *__pyx_v_self, PyObject *__pyx_v_sent_vector) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_sent_vector); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 397; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_v_self->config->sent_vector = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("multivec.BilingualModel.sent_vector.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -5791,6 +8378,7 @@ static PyObject *__pyx_convert_vector_to_py_std_3a__3a_pair_3c_std_3a__3a_string
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
+static struct __pyx_vtabstruct_8multivec_MonolingualModel __pyx_vtable_8multivec_MonolingualModel;
 
 static PyObject *__pyx_tp_new_8multivec_MonolingualModel(PyTypeObject *t, PyObject *a, PyObject *k) {
   struct __pyx_obj_8multivec_MonolingualModel *p;
@@ -5802,7 +8390,7 @@ static PyObject *__pyx_tp_new_8multivec_MonolingualModel(PyTypeObject *t, PyObje
   }
   if (unlikely(!o)) return 0;
   p = ((struct __pyx_obj_8multivec_MonolingualModel *)o);
-  new((void*)&(p->model)) MonolingualModel();
+  p->__pyx_vtab = __pyx_vtabptr_8multivec_MonolingualModel;
   if (unlikely(__pyx_pw_8multivec_16MonolingualModel_1__cinit__(o, a, k) < 0)) {
     Py_DECREF(o); o = 0;
   }
@@ -5810,13 +8398,19 @@ static PyObject *__pyx_tp_new_8multivec_MonolingualModel(PyTypeObject *t, PyObje
 }
 
 static void __pyx_tp_dealloc_8multivec_MonolingualModel(PyObject *o) {
-  struct __pyx_obj_8multivec_MonolingualModel *p = (struct __pyx_obj_8multivec_MonolingualModel *)o;
   #if PY_VERSION_HEX >= 0x030400a1
   if (unlikely(Py_TYPE(o)->tp_finalize) && (!PyType_IS_GC(Py_TYPE(o)) || !_PyGC_FINALIZED(o))) {
     if (PyObject_CallFinalizerFromDealloc(o)) return;
   }
   #endif
-  __Pyx_call_destructor(p->model);
+  {
+    PyObject *etype, *eval, *etb;
+    PyErr_Fetch(&etype, &eval, &etb);
+    ++Py_REFCNT(o);
+    __pyx_pw_8multivec_16MonolingualModel_5__dealloc__(o);
+    --Py_REFCNT(o);
+    PyErr_Restore(etype, eval, etb);
+  }
   (*Py_TYPE(o)->tp_free)(o);
 }
 
@@ -5989,24 +8583,24 @@ static int __pyx_setprop_8multivec_16MonolingualModel_sent_vector(PyObject *o, P
 }
 
 static PyMethodDef __pyx_methods_8multivec_MonolingualModel[] = {
-  {"word_vec", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_3word_vec, METH_VARARGS|METH_KEYWORDS, 0},
-  {"sent_vec", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_5sent_vec, METH_O, 0},
-  {"train", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_7train, METH_VARARGS|METH_KEYWORDS, 0},
-  {"load", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_9load, METH_O, 0},
-  {"save", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_11save, METH_O, 0},
-  {"save_vectors", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_13save_vectors, METH_VARARGS|METH_KEYWORDS, 0},
-  {"save_vectors_bin", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_15save_vectors_bin, METH_VARARGS|METH_KEYWORDS, 0},
-  {"save_sent_vectors", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_17save_sent_vectors, METH_O, 0},
-  {"similarity", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_19similarity, METH_VARARGS|METH_KEYWORDS, 0},
-  {"distance", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_21distance, METH_VARARGS|METH_KEYWORDS, 0},
-  {"similarity_n_grams", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_23similarity_n_grams, METH_VARARGS|METH_KEYWORDS, 0},
-  {"similarity_bag_of_words", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_25similarity_bag_of_words, METH_VARARGS|METH_KEYWORDS, 0},
-  {"soft_word_error_rate", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_27soft_word_error_rate, METH_VARARGS|METH_KEYWORDS, 0},
-  {"closest", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_29closest, METH_VARARGS|METH_KEYWORDS, 0},
-  {"closest_to_vec", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_31closest_to_vec, METH_VARARGS|METH_KEYWORDS, 0},
-  {"closest_words", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_33closest_words, METH_VARARGS|METH_KEYWORDS, 0},
-  {"get_vocabulary", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_35get_vocabulary, METH_NOARGS, 0},
-  {"get_counts", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_37get_counts, METH_NOARGS, 0},
+  {"word_vec", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_7word_vec, METH_VARARGS|METH_KEYWORDS, __pyx_doc_8multivec_16MonolingualModel_6word_vec},
+  {"sent_vec", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_9sent_vec, METH_O, __pyx_doc_8multivec_16MonolingualModel_8sent_vec},
+  {"train", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_11train, METH_VARARGS|METH_KEYWORDS, __pyx_doc_8multivec_16MonolingualModel_10train},
+  {"load", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_13load, METH_O, 0},
+  {"save", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_15save, METH_O, 0},
+  {"save_vectors", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_17save_vectors, METH_VARARGS|METH_KEYWORDS, 0},
+  {"save_vectors_bin", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_19save_vectors_bin, METH_VARARGS|METH_KEYWORDS, 0},
+  {"save_sent_vectors", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_21save_sent_vectors, METH_O, 0},
+  {"similarity", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_23similarity, METH_VARARGS|METH_KEYWORDS, 0},
+  {"distance", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_25distance, METH_VARARGS|METH_KEYWORDS, 0},
+  {"similarity_ngrams", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_27similarity_ngrams, METH_VARARGS|METH_KEYWORDS, 0},
+  {"similarity_bag_of_words", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_29similarity_bag_of_words, METH_VARARGS|METH_KEYWORDS, 0},
+  {"soft_word_error_rate", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_31soft_word_error_rate, METH_VARARGS|METH_KEYWORDS, 0},
+  {"closest", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_33closest, METH_VARARGS|METH_KEYWORDS, 0},
+  {"closest_to_vec", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_35closest_to_vec, METH_VARARGS|METH_KEYWORDS, 0},
+  {"closest_words", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_37closest_words, METH_VARARGS|METH_KEYWORDS, 0},
+  {"get_vocabulary", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_39get_vocabulary, METH_NOARGS, 0},
+  {"get_counts", (PyCFunction)__pyx_pw_8multivec_16MonolingualModel_41get_counts, METH_NOARGS, 0},
   {0, 0, 0, 0}
 };
 
@@ -6052,7 +8646,7 @@ static PyTypeObject __pyx_type_8multivec_MonolingualModel = {
   0, /*tp_setattro*/
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE, /*tp_flags*/
-  0, /*tp_doc*/
+  "\n    MonolingualModel(name=None, **kwargs)\n    \n    Parameters\n    ----------\n    name : path to an existing model. This model and its parameters\n        (including vocabulary and configuration) will be loaded.\n    kwargs : values for the attributes of the model can be specified here,\n        this will overwrite the existing configuration.\n    \n    Attributes\n    ----------\n    learning_rate : initial learning rate, which will decay to zero during training (default: 0.05)\n    dimension : dimension of the embeddings (default: 100)\n    min_count : minimum count of a word in the training file to be put in the vocabulary (default: 5)\n    iterations : number of training iterations (default: 5)\n    window_size : size of the context window of CBOW and Skip-Gram (default: 5)\n    threads : number of threads used in training (default: 4)\n    subsampling : sub-sampling rate (default: 1e-03)\n    verbose : display useful information during training (default: False)\n    hierarchical_softmax : toggle hierarchical softmax training objective (default: False)\n    skip_gram : use Skip-Gram model instead of CBOW (default: False)\n    negative : number of negative samples per positive sample in negative sampling (set to\n        0 to disable negative sampling) (default: 5)\n    sent_vector : include sentence vectors in training. This is an implementation of\n        batch paragraph vector (default: False)\n    \n    Examples\n    --------\n    >>> model = MonolingualModel('models/news-commentary.en.bin', iterations=10)\n    >>> model.iterations  # overwritten value\n    10\n    >>> model.dimension   # default value is 100, but loaded model has a different config\n    40\n    ", /*tp_doc*/
   0, /*tp_traverse*/
   0, /*tp_clear*/
   0, /*tp_richcompare*/
@@ -6067,7 +8661,7 @@ static PyTypeObject __pyx_type_8multivec_MonolingualModel = {
   0, /*tp_descr_get*/
   0, /*tp_descr_set*/
   0, /*tp_dictoffset*/
-  0, /*tp_init*/
+  __pyx_pw_8multivec_16MonolingualModel_3__init__, /*tp_init*/
   0, /*tp_alloc*/
   __pyx_tp_new_8multivec_MonolingualModel, /*tp_new*/
   0, /*tp_free*/
@@ -6085,7 +8679,6 @@ static PyTypeObject __pyx_type_8multivec_MonolingualModel = {
 };
 
 static PyObject *__pyx_tp_new_8multivec_BilingualModel(PyTypeObject *t, PyObject *a, PyObject *k) {
-  struct __pyx_obj_8multivec_BilingualModel *p;
   PyObject *o;
   if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
     o = (*t->tp_alloc)(t, 0);
@@ -6093,8 +8686,6 @@ static PyObject *__pyx_tp_new_8multivec_BilingualModel(PyTypeObject *t, PyObject
     o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
   }
   if (unlikely(!o)) return 0;
-  p = ((struct __pyx_obj_8multivec_BilingualModel *)o);
-  new((void*)&(p->model)) BilingualModel();
   if (unlikely(__pyx_pw_8multivec_14BilingualModel_1__cinit__(o, a, k) < 0)) {
     Py_DECREF(o); o = 0;
   }
@@ -6102,13 +8693,19 @@ static PyObject *__pyx_tp_new_8multivec_BilingualModel(PyTypeObject *t, PyObject
 }
 
 static void __pyx_tp_dealloc_8multivec_BilingualModel(PyObject *o) {
-  struct __pyx_obj_8multivec_BilingualModel *p = (struct __pyx_obj_8multivec_BilingualModel *)o;
   #if PY_VERSION_HEX >= 0x030400a1
   if (unlikely(Py_TYPE(o)->tp_finalize) && (!PyType_IS_GC(Py_TYPE(o)) || !_PyGC_FINALIZED(o))) {
     if (PyObject_CallFinalizerFromDealloc(o)) return;
   }
   #endif
-  __Pyx_call_destructor(p->model);
+  {
+    PyObject *etype, *eval, *etb;
+    PyErr_Fetch(&etype, &eval, &etb);
+    ++Py_REFCNT(o);
+    __pyx_pw_8multivec_14BilingualModel_3__dealloc__(o);
+    --Py_REFCNT(o);
+    PyErr_Restore(etype, eval, etb);
+  }
   (*Py_TYPE(o)->tp_free)(o);
 }
 
@@ -6120,15 +8717,216 @@ static PyObject *__pyx_getprop_8multivec_14BilingualModel_trg_model(PyObject *o,
   return __pyx_pw_8multivec_14BilingualModel_9trg_model_1__get__(o);
 }
 
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_beta(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_4beta_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_beta(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_4beta_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_learning_rate(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_13learning_rate_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_learning_rate(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_13learning_rate_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_dimension(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_9dimension_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_dimension(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_9dimension_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_min_count(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_9min_count_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_min_count(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_9min_count_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_iterations(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_10iterations_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_iterations(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_10iterations_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_window_size(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_11window_size_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_window_size(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_11window_size_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_threads(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_7threads_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_threads(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_7threads_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_subsampling(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_11subsampling_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_subsampling(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_11subsampling_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_verbose(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_7verbose_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_verbose(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_7verbose_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_hierarchical_softmax(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_20hierarchical_softmax_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_hierarchical_softmax(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_20hierarchical_softmax_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_skip_gram(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_9skip_gram_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_skip_gram(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_9skip_gram_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_negative(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_8negative_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_negative(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_8negative_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8multivec_14BilingualModel_sent_vector(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8multivec_14BilingualModel_11sent_vector_1__get__(o);
+}
+
+static int __pyx_setprop_8multivec_14BilingualModel_sent_vector(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8multivec_14BilingualModel_11sent_vector_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
 static PyMethodDef __pyx_methods_8multivec_BilingualModel[] = {
-  {"train", (PyCFunction)__pyx_pw_8multivec_14BilingualModel_3train, METH_VARARGS|METH_KEYWORDS, 0},
-  {"load", (PyCFunction)__pyx_pw_8multivec_14BilingualModel_5load, METH_O, 0},
+  {"train", (PyCFunction)__pyx_pw_8multivec_14BilingualModel_5train, METH_VARARGS|METH_KEYWORDS, 0},
+  {"load", (PyCFunction)__pyx_pw_8multivec_14BilingualModel_7load, METH_O, 0},
+  {"similarity", (PyCFunction)__pyx_pw_8multivec_14BilingualModel_9similarity, METH_VARARGS|METH_KEYWORDS, 0},
+  {"distance", (PyCFunction)__pyx_pw_8multivec_14BilingualModel_11distance, METH_VARARGS|METH_KEYWORDS, 0},
+  {"similarity_ngrams", (PyCFunction)__pyx_pw_8multivec_14BilingualModel_13similarity_ngrams, METH_VARARGS|METH_KEYWORDS, 0},
+  {"similarity_bag_of_words", (PyCFunction)__pyx_pw_8multivec_14BilingualModel_15similarity_bag_of_words, METH_VARARGS|METH_KEYWORDS, 0},
+  {"trg_closest", (PyCFunction)__pyx_pw_8multivec_14BilingualModel_17trg_closest, METH_VARARGS|METH_KEYWORDS, 0},
+  {"src_closest", (PyCFunction)__pyx_pw_8multivec_14BilingualModel_19src_closest, METH_VARARGS|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
 static struct PyGetSetDef __pyx_getsets_8multivec_BilingualModel[] = {
   {(char *)"src_model", __pyx_getprop_8multivec_14BilingualModel_src_model, 0, 0, 0},
   {(char *)"trg_model", __pyx_getprop_8multivec_14BilingualModel_trg_model, 0, 0, 0},
+  {(char *)"beta", __pyx_getprop_8multivec_14BilingualModel_beta, __pyx_setprop_8multivec_14BilingualModel_beta, 0, 0},
+  {(char *)"learning_rate", __pyx_getprop_8multivec_14BilingualModel_learning_rate, __pyx_setprop_8multivec_14BilingualModel_learning_rate, 0, 0},
+  {(char *)"dimension", __pyx_getprop_8multivec_14BilingualModel_dimension, __pyx_setprop_8multivec_14BilingualModel_dimension, 0, 0},
+  {(char *)"min_count", __pyx_getprop_8multivec_14BilingualModel_min_count, __pyx_setprop_8multivec_14BilingualModel_min_count, 0, 0},
+  {(char *)"iterations", __pyx_getprop_8multivec_14BilingualModel_iterations, __pyx_setprop_8multivec_14BilingualModel_iterations, 0, 0},
+  {(char *)"window_size", __pyx_getprop_8multivec_14BilingualModel_window_size, __pyx_setprop_8multivec_14BilingualModel_window_size, 0, 0},
+  {(char *)"threads", __pyx_getprop_8multivec_14BilingualModel_threads, __pyx_setprop_8multivec_14BilingualModel_threads, 0, 0},
+  {(char *)"subsampling", __pyx_getprop_8multivec_14BilingualModel_subsampling, __pyx_setprop_8multivec_14BilingualModel_subsampling, 0, 0},
+  {(char *)"verbose", __pyx_getprop_8multivec_14BilingualModel_verbose, __pyx_setprop_8multivec_14BilingualModel_verbose, 0, 0},
+  {(char *)"hierarchical_softmax", __pyx_getprop_8multivec_14BilingualModel_hierarchical_softmax, __pyx_setprop_8multivec_14BilingualModel_hierarchical_softmax, 0, 0},
+  {(char *)"skip_gram", __pyx_getprop_8multivec_14BilingualModel_skip_gram, __pyx_setprop_8multivec_14BilingualModel_skip_gram, 0, 0},
+  {(char *)"negative", __pyx_getprop_8multivec_14BilingualModel_negative, __pyx_setprop_8multivec_14BilingualModel_negative, 0, 0},
+  {(char *)"sent_vector", __pyx_getprop_8multivec_14BilingualModel_sent_vector, __pyx_setprop_8multivec_14BilingualModel_sent_vector, 0, 0},
   {0, 0, 0, 0, 0}
 };
 
@@ -6158,7 +8956,7 @@ static PyTypeObject __pyx_type_8multivec_BilingualModel = {
   0, /*tp_setattro*/
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE, /*tp_flags*/
-  0, /*tp_doc*/
+  "\n    MonolingualModel(name=None, **kwargs)\n    \n    Parameters\n    ----------\n    name : path to an existing model. This model and its parameters\n        (including vocabulary and configuration) will be loaded.\n    kwargs : values for the attributes of the model can be specified here,\n        this will overwrite the existing configuration.\n    \n    Attributes\n    ----------\n    src_model : source monolingual model\n    trg_model : target monolingual model\n    beta : weight given to bilingual updates (compared to monolingual updates) (default: 1)\n    learning_rate : initial learning rate, which will decay to zero during training (default: 0.05)\n    dimension : dimension of the embeddings (default: 100)\n    min_count : minimum count of a word in the training file to be put in the vocabulary (default: 5)\n    iterations : number of training iterations (default: 5)\n    window_size : size of the context window of CBOW and Skip-Gram (default: 5)\n    threads : number of threads used in training (default: 4)\n    subsampling : sub-sampling rate (default: 1e-03)\n    verbose : display useful information during training (default: False)\n    hierarchical_softmax : toggle hierarchical softmax training objective (default: False)\n    skip_gram : use Skip-Gram model instead of CBOW (default: False)\n    negative : number of negative samples per positive sample in negative sampling (set to\n        0 to disable negative sampling) (default: 5)\n    sent_vector : include sentence vectors in training. This is an implementation of\n        batch paragraph vector (default: False)\n    \n    Examples\n    --------\n    >>> model = MonolingualModel('models/news-commentary.fr-en.bin', learning_rate=0.1)\n    >>> model.learning_rate\n    0.1\n    >>> model.src_model\n    <multivec.MonolingualModel at 0x7f515c0687b0>\n    >>> model.src_model.learning_rate\n    0.1\n    ", /*tp_doc*/
   0, /*tp_traverse*/
   0, /*tp_clear*/
   0, /*tp_richcompare*/
@@ -6223,12 +9021,17 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_np, __pyx_k_np, sizeof(__pyx_k_np), 0, 0, 1, 1},
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
   {&__pyx_n_s_policy, __pyx_k_policy, sizeof(__pyx_k_policy), 0, 0, 1, 1},
+  {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
   {&__pyx_n_s_seq1, __pyx_k_seq1, sizeof(__pyx_k_seq1), 0, 0, 1, 1},
   {&__pyx_n_s_seq2, __pyx_k_seq2, sizeof(__pyx_k_seq2), 0, 0, 1, 1},
   {&__pyx_n_s_src_name, __pyx_k_src_name, sizeof(__pyx_k_src_name), 0, 0, 1, 1},
+  {&__pyx_n_s_src_seq, __pyx_k_src_seq, sizeof(__pyx_k_src_seq), 0, 0, 1, 1},
+  {&__pyx_n_s_src_word, __pyx_k_src_word, sizeof(__pyx_k_src_word), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_trg_name, __pyx_k_trg_name, sizeof(__pyx_k_trg_name), 0, 0, 1, 1},
+  {&__pyx_n_s_trg_seq, __pyx_k_trg_seq, sizeof(__pyx_k_trg_seq), 0, 0, 1, 1},
+  {&__pyx_n_s_trg_word, __pyx_k_trg_word, sizeof(__pyx_k_trg_word), 0, 0, 1, 1},
   {&__pyx_n_s_vec, __pyx_k_vec, sizeof(__pyx_k_vec), 0, 0, 1, 1},
   {&__pyx_n_s_word, __pyx_k_word, sizeof(__pyx_k_word), 0, 0, 1, 1},
   {&__pyx_n_s_word1, __pyx_k_word1, sizeof(__pyx_k_word1), 0, 0, 1, 1},
@@ -6237,7 +9040,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 159; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -6346,13 +9149,16 @@ PyMODINIT_FUNC PyInit_multivec(void)
   /*--- Variable export code ---*/
   /*--- Function export code ---*/
   /*--- Type init code ---*/
-  if (PyType_Ready(&__pyx_type_8multivec_MonolingualModel) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 71; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_vtabptr_8multivec_MonolingualModel = &__pyx_vtable_8multivec_MonolingualModel;
+  __pyx_vtable_8multivec_MonolingualModel.set_members = (PyObject *(*)(struct __pyx_obj_8multivec_MonolingualModel *, MonolingualModel *, Config *))__pyx_f_8multivec_16MonolingualModel_set_members;
+  if (PyType_Ready(&__pyx_type_8multivec_MonolingualModel) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 75; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_8multivec_MonolingualModel.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "MonolingualModel", (PyObject *)&__pyx_type_8multivec_MonolingualModel) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 71; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (__Pyx_SetVtable(__pyx_type_8multivec_MonolingualModel.tp_dict, __pyx_vtabptr_8multivec_MonolingualModel) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 75; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "MonolingualModel", (PyObject *)&__pyx_type_8multivec_MonolingualModel) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 75; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_8multivec_MonolingualModel = &__pyx_type_8multivec_MonolingualModel;
-  if (PyType_Ready(&__pyx_type_8multivec_BilingualModel) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_8multivec_BilingualModel) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 268; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_8multivec_BilingualModel.tp_print = 0;
-  if (PyObject_SetAttrString(__pyx_m, "BilingualModel", (PyObject *)&__pyx_type_8multivec_BilingualModel) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "BilingualModel", (PyObject *)&__pyx_type_8multivec_BilingualModel) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 268; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_8multivec_BilingualModel = &__pyx_type_8multivec_BilingualModel;
   /*--- Type import code ---*/
   /*--- Variable import code ---*/
@@ -6372,12 +9178,12 @@ PyMODINIT_FUNC PyInit_multivec(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "multivec.pyx":193
- *             model.config = self.config
- *             return model
- *     property trg_model:             # <<<<<<<<<<<<<<
- *         def __get__(self):
- *             model = MonolingualModel()
+  /* "multivec.pyx":395
+ *         def __get__(self): return self.config.negative
+ *         def __set__(self, negative): self.config.negative = negative
+ *     property sent_vector:             # <<<<<<<<<<<<<<
+ *         def __get__(self): return self.config.sent_vector
+ *         def __set__(self, sent_vector): self.config.sent_vector = sent_vector
  */
   __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
@@ -6442,6 +9248,70 @@ static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
 #endif
     }
     return result;
+}
+
+static void __Pyx_RaiseArgtupleInvalid(
+    const char* func_name,
+    int exact,
+    Py_ssize_t num_min,
+    Py_ssize_t num_max,
+    Py_ssize_t num_found)
+{
+    Py_ssize_t num_expected;
+    const char *more_or_less;
+    if (num_found < num_min) {
+        num_expected = num_min;
+        more_or_less = "at least";
+    } else {
+        num_expected = num_max;
+        more_or_less = "at most";
+    }
+    if (exact) {
+        more_or_less = "exactly";
+    }
+    PyErr_Format(PyExc_TypeError,
+                 "%.200s() takes %.8s %" CYTHON_FORMAT_SSIZE_T "d positional argument%.1s (%" CYTHON_FORMAT_SSIZE_T "d given)",
+                 func_name, more_or_less, num_expected,
+                 (num_expected == 1) ? "" : "s", num_found);
+}
+
+static CYTHON_INLINE int __Pyx_CheckKeywordStrings(
+    PyObject *kwdict,
+    const char* function_name,
+    int kw_allowed)
+{
+    PyObject* key = 0;
+    Py_ssize_t pos = 0;
+#if CYTHON_COMPILING_IN_PYPY
+    if (!kw_allowed && PyDict_Next(kwdict, &pos, &key, 0))
+        goto invalid_keyword;
+    return 1;
+#else
+    while (PyDict_Next(kwdict, &pos, &key, 0)) {
+        #if PY_MAJOR_VERSION < 3
+        if (unlikely(!PyString_CheckExact(key)) && unlikely(!PyString_Check(key)))
+        #endif
+            if (unlikely(!PyUnicode_Check(key)))
+                goto invalid_keyword_type;
+    }
+    if ((!kw_allowed) && unlikely(key))
+        goto invalid_keyword;
+    return 1;
+invalid_keyword_type:
+    PyErr_Format(PyExc_TypeError,
+        "%.200s() keywords must be strings", function_name);
+    return 0;
+#endif
+invalid_keyword:
+    PyErr_Format(PyExc_TypeError,
+    #if PY_MAJOR_VERSION < 3
+        "%.200s() got an unexpected keyword argument '%.200s'",
+        function_name, PyString_AsString(key));
+    #else
+        "%s() got an unexpected keyword argument '%U'",
+        function_name, key);
+    #endif
+    return 0;
 }
 
 static void __Pyx_RaiseDoubleKeywordsError(
@@ -6556,31 +9426,6 @@ invalid_keyword:
     #endif
 bad:
     return -1;
-}
-
-static void __Pyx_RaiseArgtupleInvalid(
-    const char* func_name,
-    int exact,
-    Py_ssize_t num_min,
-    Py_ssize_t num_max,
-    Py_ssize_t num_found)
-{
-    Py_ssize_t num_expected;
-    const char *more_or_less;
-    if (num_found < num_min) {
-        num_expected = num_min;
-        more_or_less = "at least";
-    } else {
-        num_expected = num_max;
-        more_or_less = "at most";
-    }
-    if (exact) {
-        more_or_less = "exactly";
-    }
-    PyErr_Format(PyExc_TypeError,
-                 "%.200s() takes %.8s %" CYTHON_FORMAT_SSIZE_T "d positional argument%.1s (%" CYTHON_FORMAT_SSIZE_T "d given)",
-                 func_name, more_or_less, num_expected,
-                 (num_expected == 1) ? "" : "s", num_found);
 }
 
 #if CYTHON_COMPILING_IN_CPYTHON
@@ -6771,6 +9616,23 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallOneArg(PyObject *func, PyObjec
     return result;
 }
 #endif
+
+static int __Pyx_SetVtable(PyObject *dict, void *vtable) {
+#if PY_VERSION_HEX >= 0x02070000
+    PyObject *ob = PyCapsule_New(vtable, 0, 0);
+#else
+    PyObject *ob = PyCObject_FromVoidPtr(vtable, 0);
+#endif
+    if (!ob)
+        goto bad;
+    if (PyDict_SetItem(dict, __pyx_n_s_pyx_vtable, ob) < 0)
+        goto bad;
+    Py_DECREF(ob);
+    return 0;
+bad:
+    Py_XDECREF(ob);
+    return -1;
+}
 
 static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level) {
     PyObject *empty_list = 0;

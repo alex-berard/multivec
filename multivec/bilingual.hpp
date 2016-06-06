@@ -10,8 +10,7 @@ class BilingualModel
 
 private:
     // Configuration of the model (monolingual models have the same configuration)
-    BilingualConfig* config = NULL;
-    BilingualConfig default_config;
+    BilingualConfig* const config;
 
     long long words_processed; // number of words processed so far
     float alpha;
@@ -44,8 +43,6 @@ public:
     MonolingualModel src_model;
     MonolingualModel trg_model;
 
-    // empty constructor needed by python wrapper
-    BilingualModel() : config(&default_config), src_model(&default_config), trg_model(&default_config) {}
     // prefer this constructor
     BilingualModel(BilingualConfig* config) : config(config), src_model(config), trg_model(config) {}
 

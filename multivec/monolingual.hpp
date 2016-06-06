@@ -8,8 +8,7 @@ class MonolingualModel
     friend void load(ifstream& infile, MonolingualModel& model);
 
 private:
-    Config* config = NULL;
-    Config default_config;
+    Config* const config;
 
     mat input_weights;
     mat output_weights; // output weights for negative sampling
@@ -56,8 +55,7 @@ private:
     vector<long long> chunkify(const string& filename, int n_chunks);
     vec wordVec(int index, int policy) const;
 
-public:   
-    MonolingualModel() : config(&default_config) {}  // empty constructor needed by python wrapper
+public:
     MonolingualModel(Config* config) : config(config) {}  // prefer this constructor
 
     vec wordVec(const string& word, int policy = 0) const; // word embedding

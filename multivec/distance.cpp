@@ -39,8 +39,7 @@ vector<pair<string, float>> MonolingualModel::closest(const string& word, int n,
     auto it = vocabulary.find(word);
 
     if (it == vocabulary.end()) {
-        cerr << "OOV word" << endl;
-        return res;
+        throw runtime_error("OOV word");
     }
 
     int index = it->second.index;
@@ -79,8 +78,7 @@ vector<pair<string, float>> MonolingualModel::closest(const string& word, const 
     auto it = vocabulary.find(word);
 
     if (it == vocabulary.end()) {
-        cerr << "OOV word" << endl;
-        return res;
+        throw runtime_error("OOV word");
     }
 
     int index = it->second.index;
@@ -249,8 +247,7 @@ vector<pair<string, float>> BilingualModel::trg_closest(const string& src_word, 
     auto it = src_model.vocabulary.find(src_word);
 
     if (it == src_model.vocabulary.end()) {
-        cerr << "OOV word" << endl;
-        return res;
+        throw runtime_error("OOV word");
     }
 
     vec v = src_model.wordVec(it->second.index, policy);
@@ -263,8 +260,7 @@ vector<pair<string, float>> BilingualModel::src_closest(const string& trg_word, 
     auto it = trg_model.vocabulary.find(trg_word);
 
     if (it == trg_model.vocabulary.end()) {
-        cerr << "OOV word" << endl;
-        return res;
+        throw runtime_error("OOV word");
     }
 
     vec v = trg_model.wordVec(it->second.index, policy);
