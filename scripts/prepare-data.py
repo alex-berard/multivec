@@ -12,6 +12,8 @@ import tempfile
 import os
 import logging
 import sys
+import shlex
+import shutil
 
 
 help_msg = """\
@@ -68,12 +70,14 @@ def process_file(corpus, id_, args):
         if args.normalize_punk:
             processes.append([path_to('normalize-punctuation.perl'), '-l',
                               lang])
+            # replace html entities
+            processes.append(shlex.split("perl -MHTML::Entities -pe 'decode_entities($_);'"))
         if args.tokenize:
             processes.append([path_to('tokenizer.perl'), '-l', lang,
                               '-threads', str(args.threads)])
         if args.lowercase:
             processes.append([path_to('lowercase.perl')])
-        if args.normalize_numbers:
+        if args.normalize_digits:
             processes.append(['sed', 's/[[:digit:]]/0/g'])
 
         ps = None
@@ -104,7 +108,6 @@ def process_corpus(corpus, args):
             all_lines = list(all_lines)  # not lazy anymore
             shuffle(all_lines)
 
-
         for lines in all_lines:  # keeps it lazy if no shuffle
             for line, output_file in zip(lines, output_files):
                 output_file.write(line)
@@ -116,7 +119,7 @@ def split_corpus(filenames, sizes, args):
     with open_files(filenames) as input_files:
         output_filenames = []
     
-        for size in sizes:  # puts train corpus last
+        for size in sizes:
             if size == 0:
                 output_filenames.append(None)
                 continue
@@ -132,11 +135,8 @@ def split_corpus(filenames, sizes, args):
 
 
 def get_vocab(filename, args):
-    counts = Counter()
     with open(filename) as file_:
-        for line in file_:
-            for word in line.split():
-                counts[word] += 1
+        counts = Counter(word for line in file_ for word in line.split())
     
     words = [(w, c) for w, c in counts.iteritems() if c >= args.min_count]
     
@@ -153,7 +153,7 @@ def move_and_filter(filenames, output_corpus, args, vocabs=None):
 
     if not vocabs:
         for filename, output_filename in zip(filenames, output_filenames):
-            os.rename(filename, output_filename)
+            shutil.move(filename, output_filename)
         return
     
     for filename, output_filename, vocab in zip(filenames, output_filenames,
@@ -189,7 +189,7 @@ if __name__ == '__main__':
                         'codes (when different than file extensions)')
     parser.add_argument('--normalize-punk', help='normalize punctuation',
                         action='store_true')
-    parser.add_argument('--normalize-numbers', help='normalize numbers '
+    parser.add_argument('--normalize-digits', help='normalize digits '
                         '(replace all digits with 0)', action='store_true')
     parser.add_argument('--lowercase', help='put everything to lowercase',
                         action='store_true')
@@ -201,7 +201,7 @@ if __name__ == '__main__':
                         action='store_true')
     parser.add_argument('--min', type=int, default=1,
                         help='min number of tokens per line')
-    parser.add_argument('--max', type=int, default=50,
+    parser.add_argument('--max', type=int, default=0,
                         help='max number of tokens per line (0 for no limit)')
     parser.add_argument('--threads', type=int, default=16,
                         help='number of threads for tokenizer')

@@ -10,9 +10,9 @@ class BilingualModel
 
 private:
     // Configuration of the model (monolingual models have the same configuration)
-    BilingualConfig config;
+    BilingualConfig* const config;
 
-    long long total_word_count; // number of words processed so far
+    long long words_processed; // number of words processed so far
     float alpha;
 
     void trainChunk(const string& src_file,
@@ -43,22 +43,18 @@ public:
     MonolingualModel src_model;
     MonolingualModel trg_model;
 
-    // TODO: ensure that src_model.config and trg_model.config stay in sync with config
-    BilingualModel() : total_word_count(0), src_model(config), trg_model(config) {}
-    BilingualModel(BilingualConfig config) : config(config), total_word_count(0),
-        src_model(config), trg_model(config) {}
+    // prefer this constructor
+    BilingualModel(BilingualConfig* config) : config(config), src_model(config), trg_model(config) {}
 
-    void train(const string& src_file, const string& trg_file);
+    void train(const string& src_file, const string& trg_file, bool initialize = true);
     void load(const string& filename);
     void save(const string& filename) const;
 
-    float similarity(const string& word1, const string& word2, int policy = 0) const; // cosine similarity
-    float distance(const string& word1, const string& word2, int policy = 0) const; // 1 - cosine similarity
-    float similarityNgrams(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two sequences of same size
-    float similaritySentence(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two variable-size sequences
-    //float softWER(const string& hyp, const string& ref, int policy = 0) const; // soft Word Error Rate
+    float similarity(const string& src_word, const string& trg_word, int policy = 0) const; // cosine similarity
+    float distance(const string& src_word, const string& trg_word, int policy = 0) const; // 1 - cosine similarity
+    float similarityNgrams(const string& src_seq, const string& trg_seq, int policy = 0) const; // similarity between two sequences of same size
+    float similaritySentence(const string& src_seq, const string& trg_seq, int policy = 0) const; // similarity between two variable-size sequences
 
-    vector<pair<string, float>> closest(const string& word, int n = 50, int policy = 0) const; // n closest words to given word
-    vector<pair<string, float>> closest(const string& word, const vector<string>& words, int policy = 0) const;
-    vector<pair<string, float>> closest(const vec& v, int n = 50, int policy = 0) const;
+    vector<pair<string, float>> trg_closest(const string& src_word, int n = 10, int policy = 0) const; // n closest words to given word
+    vector<pair<string, float>> src_closest(const string& trg_word, int n = 10, int policy = 0) const;
 };

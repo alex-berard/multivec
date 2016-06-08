@@ -8,17 +8,22 @@ class MonolingualModel
     friend void load(ifstream& infile, MonolingualModel& model);
 
 private:
+    Config* const config;
+
     mat input_weights;
     mat output_weights; // output weights for negative sampling
     mat output_weights_hs; // output weights for hierarchical softmax
     mat sent_weights;
 
-    long long training_words; // total number of words in training file (used to compute word frequencies)
-    long long training_lines;
-    long long words_processed;
+    long long vocab_word_count; // property of vocabulary (sum of all word counts)
 
+    // training file stats (properties of this training instance)
+    long long training_words; // total number of words in training file (used for progress estimation)
+    long long training_lines;
+    // training state
+    long long words_processed;
     float alpha;
-    Config config;
+
     unordered_map<string, HuffmanNode> vocabulary;
     vector<HuffmanNode*> unigram_table;
 
@@ -51,20 +56,17 @@ private:
     vec wordVec(int index, int policy) const;
 
 public:
-    MonolingualModel() : training_words(0), training_lines(0), words_processed(0) {} // model with default configuration
-    MonolingualModel(Config config) : training_words(0), training_lines(0), words_processed(0), config(config) {}
+    MonolingualModel(Config* config) : config(config) {}  // prefer this constructor
 
-    // TODO: put policy in config
     vec wordVec(const string& word, int policy = 0) const; // word embedding
-    vec sentVec(const string& sentence, int policy = 0); // paragraph vector (Le & Mikolov)
-    void sentVec(istream& infile, int policy); // compute paragraph vector for all lines in a stream
+    vec sentVec(const string& sentence); // paragraph vector (Le & Mikolov), TODO: custom alpha and iterations
+    void sentVec(istream& infile); // compute paragraph vector for all lines in a stream
 
-    void train(const string& training_file); // training from scratch (resets vocabulary and weights)
+    void train(const string& training_file, bool initialize = true); // training from scratch (resets vocabulary and weights)
 
     void saveVectorsBin(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec binary format
     void saveVectors(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec text format
     void saveSentVectors(const string &filename) const;
-
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model
 
@@ -76,11 +78,13 @@ public:
     float similaritySentence(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two variable-size sequences
     float softWER(const string& hyp, const string& ref, int policy = 0) const; // soft Word Error Rate
 
-    int getDimension() const { return config.dimension; };
+    int getDimension() const { return config->dimension; };
 
-    vector<pair<string, float>> closest(const string& word, int n = 50, int policy = 0) const; // n closest words to given word
+    vector<pair<string, float>> closest(const string& word, int n = 10, int policy = 0) const; // n closest words to given word
     vector<pair<string, float>> closest(const string& word, const vector<string>& words, int policy = 0) const;
-    vector<pair<string, float>> closest(const vec& v, int n = 50, int policy = 0) const;
+    vector<pair<string, float>> closest(const vec& v, int n = 10, int policy = 0) const;
 
     vector<pair<string, int>> getWords() const; // get words with their counts
+    
+    void analogicalReasoning(const string& filename, int max_voc = 0, int policy = 0) const;
 };

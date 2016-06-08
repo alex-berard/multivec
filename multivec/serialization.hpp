@@ -64,30 +64,30 @@ inline void load(ifstream& infile, vec& v) {
 }
 
 inline void save(ofstream& outfile, const Config& cfg) {
-    save(outfile, cfg.starting_alpha);
+    save(outfile, cfg.learning_rate);
     save(outfile, cfg.dimension);
     save(outfile, cfg.min_count);
-    save(outfile, cfg.max_iterations);
+    save(outfile, cfg.iterations);
     save(outfile, cfg.window_size);
-    save(outfile, cfg.n_threads);
+    save(outfile, cfg.threads);
     save(outfile, cfg.subsampling);
     save(outfile, cfg.hierarchical_softmax);
-    save(outfile, cfg.n_threads);
+    save(outfile, cfg.threads);
     save(outfile, cfg.skip_gram);
     save(outfile, cfg.negative);
     save(outfile, cfg.sent_vector);
 }
 
 inline void load(ifstream& infile, Config& cfg) {
-   load(infile, cfg.starting_alpha);
+   load(infile, cfg.learning_rate);
    load(infile, cfg.dimension);
    load(infile, cfg.min_count);
-   load(infile, cfg.max_iterations);
+   load(infile, cfg.iterations);
    load(infile, cfg.window_size);
-   load(infile, cfg.n_threads);
+   load(infile, cfg.threads);
    load(infile, cfg.subsampling);
    load(infile, cfg.hierarchical_softmax);
-   load(infile, cfg.n_threads);
+   load(infile, cfg.threads);
    load(infile, cfg.skip_gram);
    load(infile, cfg.negative);
    load(infile, cfg.sent_vector);
@@ -120,7 +120,7 @@ inline void load(ifstream& infile, HuffmanNode& node) {
 }
 
 inline void save(ofstream& outfile, const MonolingualModel& model) {
-    save(outfile, model.config);
+    save(outfile, *model.config);
     save(outfile, model.vocabulary.size());
 
     // transform into map to save in lexicographical order (for consistency)
@@ -136,7 +136,7 @@ inline void save(ofstream& outfile, const MonolingualModel& model) {
 }
 
 inline void load(ifstream& infile, MonolingualModel& model) {
-    load(infile, model.config);
+    load(infile, *model.config);
 
     size_t vocabulary_size = 0;
     load(infile, vocabulary_size);
@@ -155,13 +155,13 @@ inline void load(ifstream& infile, MonolingualModel& model) {
 }
 
 inline void save(ofstream& outfile, const BilingualModel& model) {
-    save(outfile, model.config);
+    save(outfile, *model.config);
     save(outfile, model.src_model);
     save(outfile, model.trg_model);
 }
 
 inline void load(ifstream& infile, BilingualModel& model) {
-    load(infile, model.config);
+    load(infile, *model.config);
     load(infile, model.src_model);
     load(infile, model.trg_model);
 }

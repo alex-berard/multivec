@@ -44,7 +44,6 @@ void print_usage() {
 }
 
 int main(int argc, char **argv) {
-    BilingualConfig config;
 
     vector<option> options;
     for (auto it = options_plus.begin(); it != options_plus.end(); ++it) {
@@ -52,13 +51,35 @@ int main(int argc, char **argv) {
         options.push_back(op);
     }
 
+    string load_file;
+
+    // first pass on parameters to find out if a model file is provided
+    while (1) {
+        int option_index = 0;
+        int opt = getopt_long(argc, argv, "hv", options.data(), &option_index);
+        if (opt == -1) break;
+
+        switch (opt) {
+            case 'o': load_file = string(optarg);           break;
+            default:                                        break;
+        }
+    }
+
+    BilingualConfig config;
+    BilingualModel model(&config);
+
+    // model file needs to be loaded before anything else (otherwise it overwrites the parameters)
+    if (!load_file.empty()) {
+        model.load(load_file);
+    }
+
     string train_src_file;
     string train_trg_file;
     string save_file;
-    string load_file;
     string save_src_file;
     string save_trg_file;
 
+    optind = 0;  // necessary to parse arguments twice
     while (1) {
         int option_index = 0;
         int opt = getopt_long(argc, argv, "hv", options.data(), &option_index);
@@ -71,17 +92,17 @@ int main(int argc, char **argv) {
             case 'a': config.dimension = atoi(optarg);      break;
             case 'b': config.min_count = atoi(optarg);      break;
             case 'c': config.window_size = atoi(optarg);    break;
-            case 'd': config.n_threads = atoi(optarg);      break;
-            case 'e': config.max_iterations = atoi(optarg); break;
+            case 'd': config.threads = atoi(optarg);      break;
+            case 'e': config.iterations = atoi(optarg); break;
             case 'f': config.negative = atoi(optarg);       break;
-            case 'g': config.starting_alpha = atof(optarg); break;
+            case 'g': config.learning_rate = atof(optarg); break;
             case 'i': config.beta = atof(optarg);           break;
             case 'j': config.subsampling = atof(optarg);    break;
             case 'k': config.skip_gram = true;              break;
             case 'l': config.hierarchical_softmax = true;   break;
             case 'm': train_src_file = string(optarg);      break;
             case 'n': train_trg_file = string(optarg);      break;
-            case 'o': load_file = string(optarg);           break;
+            case 'o':                                       break;
             case 'p': save_file = string(optarg);           break;
             case 'q': save_src_file = string(optarg);       break;
             case 'r': save_trg_file = string(optarg);       break;
@@ -89,17 +110,16 @@ int main(int argc, char **argv) {
         }
     }
 
-    BilingualModel model(config);
-
-    if (!load_file.empty()) {
-        model.load(load_file); // FIXME: overwrites model.config
-    }
-    else if (!train_trg_file.empty() && !train_trg_file.empty()) {
-        model.train(train_src_file, train_trg_file);
-    }
-    else {
+    if (load_file.empty() && (train_src_file.empty() || train_trg_file.empty())) {
         print_usage();
         return 0;
+    }
+
+    std::cout << "MultiVec-bi" << std::endl;
+    config.print();
+
+    if (!train_src_file.empty() && !train_trg_file.empty()) {
+        model.train(train_src_file, train_trg_file, load_file.empty());
     }
 
     if(!save_file.empty()) {

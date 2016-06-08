@@ -129,34 +129,32 @@ struct HuffmanNode {
 };
 
 struct Config {
-    float starting_alpha;
+    float learning_rate;
     int dimension; // size of the embeddings
-    int min_count; // mininum count of each word in the training file to be included in the vocabulary
-    int max_iterations; // number of training epochs
+    int min_count; // minimum count of each word in the training file to be included in the vocabulary
+    int iterations; // number of training epochs
     int window_size;
-    int n_threads;
+    int threads;
     float subsampling;
     bool verbose; // print additional information
     bool hierarchical_softmax;
     bool skip_gram; // set to true to use skip-gram model instead of CBOW
     int negative; // number of negative samples used for the negative sampling training algorithm
     bool sent_vector; // includes sentence vectors in the training
-    bool freeze; // freezes all parameters (weights and vocabulary) except sentence vectors (used for online paragraph vector)
 
     Config() :
-        starting_alpha(0.05),
+        learning_rate(0.05),
         dimension(100),
         min_count(5),
-        max_iterations(5),
+        iterations(5),
         window_size(5),
-        n_threads(4),
+        threads(4),
         subsampling(1e-03),
         verbose(false), // not serialized
         hierarchical_softmax(false),
         skip_gram(false),
         negative(5),
-        sent_vector(false),
-        freeze(false) // not serialized
+        sent_vector(false)
         {}
 
     virtual void print() const {
@@ -164,15 +162,14 @@ struct Config {
         std::cout << "dimension:   " << dimension << std::endl;
         std::cout << "window size: " << window_size << std::endl;
         std::cout << "min count:   " << min_count << std::endl;
-        std::cout << "alpha:       " << starting_alpha << std::endl;
-        std::cout << "iterations:  " << max_iterations << std::endl;
-        std::cout << "threads:     " << n_threads << std::endl;
+        std::cout << "alpha:       " << learning_rate << std::endl;
+        std::cout << "iterations:  " << iterations << std::endl;
+        std::cout << "threads:     " << threads << std::endl;
         std::cout << "subsampling: " << subsampling << std::endl;
         std::cout << "skip-gram:   " << skip_gram << std::endl;
         std::cout << "HS:          " << hierarchical_softmax << std::endl;
         std::cout << "negative:    " << negative << std::endl;
         std::cout << "sent vector: " << sent_vector << std::endl;
-        std::cout << "freeze:      " << freeze << std::endl;
     }
 };
 
@@ -184,3 +181,4 @@ struct BilingualConfig : Config {
         std::cout << "beta:        " << beta << std::endl;
     }
 };
+
