@@ -12,6 +12,8 @@ import tempfile
 import os
 import logging
 import sys
+import shlex
+import shutil
 
 
 help_msg = """\
@@ -151,7 +153,7 @@ def move_and_filter(filenames, output_corpus, args, vocabs=None):
 
     if not vocabs:
         for filename, output_filename in zip(filenames, output_filenames):
-            os.rename(filename, output_filename)
+            shutil.move(filename, output_filename)
         return
     
     for filename, output_filename, vocab in zip(filenames, output_filenames,
