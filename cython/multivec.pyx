@@ -111,7 +111,7 @@ cdef class MonolingualModel:
     cdef MonolingualModelCpp* model
     cdef int alloc
     
-    def __cinit__(self, **kwargs):
+    def __cinit__(self, name=None, **kwargs):
         # if alloc is False, manual deallocation of config and model
         self.alloc = True
         self.config = new Config()

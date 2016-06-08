@@ -68,6 +68,8 @@ def process_file(corpus, id_, args):
         if args.normalize_punk:
             processes.append([path_to('normalize-punctuation.perl'), '-l',
                               lang])
+            # replace html entities
+            processes.append(shlex.split("perl -MHTML::Entities -pe 'decode_entities($_);'"))
         if args.tokenize:
             processes.append([path_to('tokenizer.perl'), '-l', lang,
                               '-threads', str(args.threads)])
@@ -104,7 +106,6 @@ def process_corpus(corpus, args):
             all_lines = list(all_lines)  # not lazy anymore
             shuffle(all_lines)
 
-
         for lines in all_lines:  # keeps it lazy if no shuffle
             for line, output_file in zip(lines, output_files):
                 output_file.write(line)
@@ -116,7 +117,7 @@ def split_corpus(filenames, sizes, args):
     with open_files(filenames) as input_files:
         output_filenames = []
     
-        for size in sizes:  # puts train corpus last
+        for size in sizes:
             if size == 0:
                 output_filenames.append(None)
                 continue
@@ -132,11 +133,8 @@ def split_corpus(filenames, sizes, args):
 
 
 def get_vocab(filename, args):
-    counts = Counter()
     with open(filename) as file_:
-        for line in file_:
-            for word in line.split():
-                counts[word] += 1
+        counts = Counter(word for line in file_ for word in line.split())
     
     words = [(w, c) for w, c in counts.iteritems() if c >= args.min_count]
     

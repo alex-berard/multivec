@@ -85,4 +85,6 @@ public:
     vector<pair<string, float>> closest(const vec& v, int n = 10, int policy = 0) const;
 
     vector<pair<string, int>> getWords() const; // get words with their counts
+    
+    void analogicalReasoning(const string& filename, int max_voc = 0, int policy = 0) const;
 };

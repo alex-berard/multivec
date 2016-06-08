@@ -735,3 +735,4 @@ vector<pair<string, int>> MonolingualModel::getWords() const {
 
     return res;
 }
+
