@@ -19,7 +19,7 @@ C++ implementation of *word2vec*, *bivec*, and *paragraph vector*.
 ## Dependencies
 * GCC 4.4+
 * CMake 2.6+
-* Python and Numpy headers for the Python wrapper
+* Cython
 
 ## Installation
 
@@ -35,24 +35,6 @@ The `bin` directory should now contain 4 binaries:
 * `multivec-bi` to generate bilingual models;
 * `word2vec` which is a modified version of word2vec that matches our user interface;
 * `compute-accuracy` to evaluate word embeddings on the analogical reasoning task (multithreaded version of word2vec's compute-accuracy program).
-
-### Python wrapper
-
-    cd python-wrapper
-    make
-
-Use from Python (`multivec.so` must be in the `PYTHONPATH`, e.g. working directory):
-
-    python2
-    >>> from multivec import BiModel
-    >>> model.load('models/news-commentary.fr-en.bin')
-    >>> model.trg_model
-    <monomodel.MonoModel object at 0x7fbd5585d138>
-    >>> model.trg_model.word_vec('France')
-    array([ 0.33916989,  1.50113714, -1.37295866, -1.49976909, -1.75945604,
-            0.17705017,  1.73590481,  2.26124287, -1.98765969, -2.01758456,
-           -1.00831568, -0.47787675, -0.19950299, -2.3867569 , -0.01307649,
-           ... ], dtype=float32)
 
 ## Usage examples
 First create two directories `data` and `models` at the root of the project, where you will put the text corpora and trained models.
@@ -81,6 +63,24 @@ To evaluate a trained English model on the analogical reasoning task, first expo
     bin/multivec-mono --load models/news-commentary.en.bin --save-vectors models/vectors.txt
     bin/compute-accuracy models/vectors.txt 0 < word2vec/questions-words.txt
 
+### Python wrapper
+
+    cd cython
+    make
+
+Use from Python (`multivec.so` must be in the `PYTHONPATH`, e.g. working directory):
+
+    python2
+    >>> from multivec import MonolingualModel, BilingualModel
+    >>> model = BilingualModel('models/news-commentary.fr-en.bin')
+    >>> model.trg_model
+    <multivec.MonolingualModel at 0x7fcfe0d59870>
+    >>> model.trg_model.word_vec('France')
+    array([ 0.2600708 ,  0.72489363, ...,  1.00654161,  0.38837495])
+    >>> new_model = BilingualModel(dimension=300, threads=16)
+    >>> new_model.train('data/news-commentary.fr', 'data/news-commentary.en')
+    >>> help(BilingualModel)  # all the help you need
+
 ## TODO
 * paragraph vector: DBOW model (similar to skip-gram)
 * paragraph vector: option to concatenate, sum or average with word vectors on projection layer.
@@ -90,7 +90,6 @@ To evaluate a trained English model on the analogical reasoning task, first expo
 ## Acknowledgements
 
 This toolkit is part of the project KEHATH (https://kehath.imag.fr) funded by the French National Research Agency.
-
 
 ## LREC Paper
 
