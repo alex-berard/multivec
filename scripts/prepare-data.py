@@ -70,8 +70,8 @@ def process_file(corpus, id_, args):
         if args.normalize_punk:
             processes.append([path_to('normalize-punctuation.perl'), '-l',
                               lang])
-            # replace html entities
-            processes.append(shlex.split("perl -MHTML::Entities -pe 'decode_entities($_);'"))
+            # replace html entities FIXME (doesn't seem to work)
+            # processes.append(shlex.split("perl -MHTML::Entities -pe 'decode_entities($_);'"))
         if args.tokenize:
             processes.append([path_to('tokenizer.perl'), '-l', lang,
                               '-threads', str(args.threads)])

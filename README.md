@@ -19,7 +19,7 @@ C++ implementation of *word2vec*, *bivec*, and *paragraph vector*.
 ## Dependencies
 * G++ 4.4+
 * CMake 2.6+
-* Cython
+* Cython and numpy for the python wrapper
 
 ## Installation
 
