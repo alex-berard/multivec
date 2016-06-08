@@ -72,13 +72,13 @@ Use from Python (`multivec.so` must be in the `PYTHONPATH`, e.g. working directo
 
     python2
     >>> from multivec import MonolingualModel, BilingualModel
-    >>> model = BilingualModel('models/news-commentary.fr-en.bin')
+    >>> model = BilingualModel('../models/news-commentary.fr-en.bin')
     >>> model.trg_model
     <multivec.MonolingualModel at 0x7fcfe0d59870>
     >>> model.trg_model.word_vec('France')
     array([ 0.2600708 ,  0.72489363, ...,  1.00654161,  0.38837495])
     >>> new_model = BilingualModel(dimension=300, threads=16)
-    >>> new_model.train('data/news-commentary.fr', 'data/news-commentary.en')
+    >>> new_model.train('../data/news-commentary.fr', '../data/news-commentary.en')
     >>> help(BilingualModel)  # all the help you need
 
 ## TODO
