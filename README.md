@@ -19,7 +19,7 @@ C++ implementation of *word2vec*, *bivec*, and *paragraph vector*.
 ## Dependencies
 * G++ 4.4+
 * CMake 2.6+
-* Cython and numpy for the python wrapper
+* Cython and NumPy for the Python wrapper
 
 ## Installation
 
@@ -46,7 +46,7 @@ The script `scripts/prepare-data.py` can be used to pre-process a corpus (punctu
     tar xzf data/training-parallel-nc-v9.tgz -C data
     scripts/prepare-data.py data/training/news-commentary-v9.fr-en data/news-commentary fr en --tokenize --normalize-punk
 
-To train a monolingual model using text corpus `data/news-commentary.en`:
+To train a monolingual model using text corpus `data/news-commentary.en` (use `-v` option to see the training progress):
 
     bin/multivec-mono --train data/news-commentary.en --save models/news-commentary.en.bin --threads 16
 
@@ -56,19 +56,28 @@ To train a bilingual model using parallel corpus `data/news-commentary.fr` and `
 
 To load a bilingual model and export it to source and target monolingual models:
 
-    bin/multivec-bi --load models/news-commentary.fr-en.bin --save-src models/news-commentary.fr.bin --save-trg models/news-commentary.en.bin
+    bin/multivec-bi --load models/news-commentary.fr-en.bin --save-src models/news-commentary.fr-en.fr.bin --save-trg models/news-commentary.fr-en.en.bin
 
-To evaluate a trained English model on the analogical reasoning task, first export the model to the word2vec format, then use `compute-accuracy`:
+To evaluate a trained English model on the analogical reasoning task, first export it to the word2vec format, then use `compute-accuracy`:
 
     bin/multivec-mono --load models/news-commentary.en.bin --save-vectors models/vectors.txt
     bin/compute-accuracy models/vectors.txt 0 < word2vec/questions-words.txt
+
+With this example, you should obtain results similar to these:
+
+    Vocabulary size: 25298
+    Embeddings size: 100
+    ....
+    Total accuracy: 13.2%
+    Syntactic accuracy: 12.8%, Semantic accuracy: 33.3%
+    Questions seen: 6792/19544, 34.8%
 
 ### Python wrapper
 
     cd cython
     make
 
-Use from Python (`multivec.so` must be in the `PYTHONPATH`, e.g. working directory):
+Use and train models with Python (`multivec.so` must be in the `PYTHONPATH`, e.g. working directory):
 
     python2
     >>> from multivec import MonolingualModel, BilingualModel
