@@ -48,6 +48,7 @@ cdef extern from "monolingual.hpp":
         float distance(const string&, const string&, int) except +
         float similarityNgrams(const string&, const string&, int) except +
         float similaritySentence(const string&, const string&, int) except +
+        float similaritySentenceSyntax(const string&, const string&, const string&, const string&, int) except +
         float softWER(const string&, const string&, int) except +
         vector[pair[string, float]] closest(const Vec&, int, int) except +
         vector[pair[string, float]] closest(const string&, const vector[string]& words, int) except +
@@ -65,6 +66,7 @@ cdef extern from "bilingual.hpp":
         float distance(const string&, const string&, int) except +
         float similarityNgrams(const string&, const string&, int) except +
         float similaritySentence(const string&, const string&, int) except +
+        float similaritySentenceSyntax(const string&, const string&, const string&, const string&, int) except +
         vector[pair[string, float]] trg_closest(const string&, int, int) except +
         vector[pair[string, float]] src_closest(const string&, int, int) except +
         MonolingualModelCpp src_model
@@ -92,7 +94,7 @@ cdef class MonolingualModel:
     threads : number of threads used in training (default: 4)
     subsampling : sub-sampling rate (default: 1e-03)
     verbose : display useful information during training (default: False)
-    hierarchical_softmax : toggle hierarchical softmax training objective (default: False)
+    hierarchical_softmax : toggle the hierarchical softmax training objective (default: False)
     skip_gram : use Skip-Gram model instead of CBOW (default: False)
     negative : number of negative samples per positive sample in negative sampling (set to
         0 to disable negative sampling) (default: 5)
@@ -174,7 +176,8 @@ cdef class MonolingualModel:
         """
         train(name, initialize=True)
         
-        Train model with training file of path `name`.
+        Train model with training file of path `name`. This file must be word-tokenized,
+        with one sentence per line.
         Raise RuntimeError if file is empty or cannot be opened.
 
         Initialize will create a new vocabulary from training file, and initialize the model's
@@ -185,13 +188,49 @@ cdef class MonolingualModel:
         self.model.train(name, initialize)
         
     def load(self, name):
+        """
+        load(name)
+
+        Load model from disk (path `name`). This model must have been saved with `MonolingualModel.save`.
+        This function cannot load files in the word2vec format.
+
+        The entire model, including configuration and vocabulary is loaded, and the existing
+        parameters are overwritten.
+        """
         self.model.load(name)
+
     def save(self, name):
+        """
+        save(name)
+
+        Save entire model to disk (path `name`). This saves the entire model, including configuration and 
+        vocabulary into a binary format, specific to MultiVec. Those models can then be loaded
+        from disk using `MonolingualModel.load`.
+        """
         self.model.save(name)
+
     def save_vectors(self, name, policy=0):
+        """
+        save_vectors(name)
+        
+        Save the word vectors to disk (path `name`) in the word2vec text format.
+        
+        The `policy` parameters
+        decides which weights are used (see `MonolingualModel.word_vec` for details.)
+        """
         self.model.saveVectorsBin(name, policy)
+
     def save_vectors_bin(self, name, policy=0):
+        """
+        save_vectors(name)
+        
+        Save the word vectors to disk (path `name`) in the word2vec binary format.
+        
+        The `policy` parameters
+        decides which weights are used (see `MonolingualModel.word_vec` for details.)
+        """
         self.model.saveVectorsBin(name, policy)
+
     def save_sent_vectors(self, name):
         self.model.saveSentVectors(name)
     
@@ -204,6 +243,8 @@ cdef class MonolingualModel:
         return self.model.similarityNgrams(seq1, seq2, policy)
     def similarity_bag_of_words(self, seq1, seq2, policy=0):
         return self.model.similaritySentence(seq1, seq2, policy)
+    def similarity_syntax(self, seq1, seq2, tags1, tags2, policy=0):
+        return self.model.similaritySentenceSyntax(seq1, seq2, tags1, tags2, policy)
     def soft_word_error_rate(self, seq1, seq2, policy=0):
         return self.model.softWER(seq1, seq2, policy)
     
@@ -337,6 +378,8 @@ cdef class BilingualModel:
         return self.model.similarityNgrams(src_seq, trg_seq, policy)
     def similarity_bag_of_words(self, src_seq, trg_seq, policy=0):
         return self.model.similaritySentence(src_seq, trg_seq, policy)
+    def similarity_syntax(self, src_seq, trg_seq, src_tags, trg_tags, policy=0):
+        return self.model.similaritySentenceSyntax(src_seq, trg_seq, src_tags, trg_tags, policy)
 
     def trg_closest(self, src_word, n=10, policy=0):
         cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word, <int> n, <int> policy)

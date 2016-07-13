@@ -77,6 +77,8 @@ public:
     float similarityNgrams(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two sequences of same size
     float similaritySentence(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two variable-size sequences
     float softWER(const string& hyp, const string& ref, int policy = 0) const; // soft Word Error Rate
+    // syntax-aware similarity between two sequences
+    float similaritySentenceSyntax(const string& seq1, const string& seq2, const string& tags1, const string& tags2, int policy = 0) const;
 
     int getDimension() const { return config->dimension; };
 

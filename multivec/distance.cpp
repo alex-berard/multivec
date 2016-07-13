@@ -322,3 +322,83 @@ float BilingualModel::similaritySentence(const string& src_seq, const string& tr
         return src_vec.dot(trg_vec) / length;
     }
 }
+
+const static std::map<std::string, float> syntax_weights = {
+    { "VERB", 0.75 },
+    { "NOUN", 1.00 },
+    { "PRON", 0.10 },
+    { "ADJ",  0.75 },
+    { "ADV",  0.50 },
+    { "ADP",  0.10 },
+    { "CONJ", 0.10 },
+    { "DET",  0.10 },
+    { "NUM",  0.50 },
+    { "PRT",  0.10 },
+    { "X",    0.50 },
+    { ".",    0.05 }
+};
+
+float MonolingualModel::similaritySentenceSyntax(const string& seq1, const string& seq2, const string& tags1, const string& tags2, int policy) const {
+    auto words1 = split(seq1);
+    auto words2 = split(seq2);
+
+  	auto pos_tags1 = split(tags1);
+    auto pos_tags2 = split(tags2);
+    
+    vec vec1(config->dimension);
+    vec vec2(config->dimension);
+    
+    for (size_t i = 0; i < words1.size() && i < pos_tags1.size(); ++i) {
+        try {
+            vec1 += wordVec(words1[i], policy) * syntax_weights.at(pos_tags1[i]);
+        }
+        catch (runtime_error) {}
+    }
+    
+    for (size_t i = 0; i < words2.size() && i < pos_tags2.size(); ++i) {
+        try {
+            vec2 += wordVec(words2[i], policy) * syntax_weights.at(pos_tags2[i]);
+        }
+        catch (runtime_error) {}
+    }
+    
+    float length = vec1.norm() * vec2.norm();
+    
+    if (length == 0) {
+        return 0.0;
+    } else {
+        return vec1.dot(vec2) / length;
+    }
+}
+
+float BilingualModel::similaritySentenceSyntax(const string& src_seq, const string& trg_seq, const string& src_tags, const string& trg_tags, int policy) const {    
+    auto src_words = split(src_seq);
+    auto trg_words = split(trg_seq);
+    
+	auto src_pos_tags = split(src_tags);
+    auto trg_pos_tags = split(trg_tags);
+    
+    vec src_vec(config->dimension);
+    vec trg_vec(config->dimension);
+    
+    for (size_t i = 0; i < src_words.size() && i < src_pos_tags.size(); ++i) {
+        try {
+            src_vec += src_model.wordVec(src_words[i], policy) * syntax_weights.at(src_pos_tags[i]);
+        }
+        catch (runtime_error) {}
+    }
+    for (size_t i = 0; i < trg_words.size() && i < trg_pos_tags.size(); ++i) {
+        try {
+            trg_vec += trg_model.wordVec(trg_words[i], policy) * syntax_weights.at(trg_pos_tags[i]);
+        }
+        catch (runtime_error) {}
+    }
+    
+    float length = src_vec.norm() * trg_vec.norm();
+    
+    if (length == 0) {
+        return 0.0;
+    } else {
+        return src_vec.dot(trg_vec) / length;
+    }
+}
