@@ -323,6 +323,9 @@ float BilingualModel::similaritySentence(const string& src_seq, const string& tr
     }
 }
 
+/**
+ * POS weights according to Universal Tagset from http://github.com/slavpetrov/universal-pos-tags
+ */
 const static std::map<std::string, float> syntax_weights = {
     { "VERB", 0.75 },
     { "NOUN", 1.00 },
