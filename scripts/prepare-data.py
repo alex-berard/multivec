@@ -215,7 +215,7 @@ if __name__ == '__main__':
 
     if args.lang is None:
         args.lang = args.extensions
-    elif len(args.lang) != args.extensions:
+    elif len(args.lang) != len(args.extensions):
         sys.exit('wrong number of values for parameter --lang')
 
     if args.verbose:
