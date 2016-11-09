@@ -59,4 +59,9 @@ public:
 
     vector<pair<string, float>> trg_closest(const string& src_word, int n = 10, int policy = 0) const; // n closest words to given word
     vector<pair<string, float>> src_closest(const string& trg_word, int n = 10, int policy = 0) const;
+    vector<pair<string, vector<pair<string, float>>>> list_src_closest(int n, int policy) const; // n closest words to all words of the vocabulary
+    vector<pair<string, vector<pair<string, float>>>> list_trg_closest(int n, int policy) const;
+    void save_srcpt(int n, string file);
+    void save_trgpt(int n, string file);
+
 };

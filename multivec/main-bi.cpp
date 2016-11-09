@@ -29,6 +29,8 @@ static vector<option_plus> options_plus = {
     {"save",          required_argument, 0, 'p', "save model"},
     {"save-src",      required_argument, 0, 'q', "save source model"},
     {"save-trg",      required_argument, 0, 'r', "save target model"},
+    {"save-probtable-src",      required_argument, 0, 'spt', "save the source probtable"},
+    {"save-probtable-trg",      required_argument, 0, 'tpt', "save the target probtable"},
     {0, 0, 0, 0, 0}
 };
 
@@ -78,6 +80,8 @@ int main(int argc, char **argv) {
     string save_file;
     string save_src_file;
     string save_trg_file;
+    string save_srcpt_file;
+    string save_trgpt_file;
 
     optind = 0;  // necessary to parse arguments twice
     while (1) {
@@ -106,6 +110,8 @@ int main(int argc, char **argv) {
             case 'p': save_file = string(optarg);           break;
             case 'q': save_src_file = string(optarg);       break;
             case 'r': save_trg_file = string(optarg);       break;
+            case 'spt': save_srcpt_file = string(optarg);       break;
+            case 'tpt': save_trgpt_file = string(optarg);       break;
             default:                                        abort();
         }
     }
@@ -130,6 +136,13 @@ int main(int argc, char **argv) {
     }
     if(!save_trg_file.empty()) {
         model.trg_model.save(save_trg_file);
+    }
+
+    if(!save_srcpt_file.empty()) {
+        model.save_srcpt(save_srcpt_file);
+    }
+    if(!save_trgpt_file.empty()) {
+        model.save_trgpt(save_trgpt_file);
     }
 
     return 0;
