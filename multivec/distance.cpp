@@ -222,10 +222,10 @@ const static std::map<std::string, float> syntax_weights = {
 * @brief Compute a cosine similarity between two variable-size sequences according of part-of-speech and inverse document frequencies of terms in the sequences.
 * @param seq1 First sequence of terms.
 * @param seq2 Second sequence of terms.
-* @param tags1 Part-of-speech tags of terms of the first sequence. The i^th tag in tags1 correspond of the i^th term of seq1. The POS tags need to be normalized under the Universal Tagset.
-* @param tags2 Part-of-speech tags of terms of the second sequence. The i^th tag in tags2 correspond of the i^th term of seq2. The POS tags need to be normalized under the Universal Tagset.
-* @param idf1 Inverse document frequencies (IDF) of terms of the first sequence. The i^th value in idf1 correspond of the i^th term of seq1.
-* @param idf2 Inverse document frequencies (IDF) of terms of the second sequence. The i^th value in idf2 correspond of the i^th term of seq2.
+* @param tags1 Part-of-speech tags of terms of the first sequence. The i^th tag in tags1 corresponds of the i^th term of seq1. The POS tags need to be normalized under the Universal Tagset.
+* @param tags2 Part-of-speech tags of terms of the second sequence. The i^th tag in tags2 corresponds of the i^th term of seq2. The POS tags need to be normalized under the Universal Tagset.
+* @param idf1 Inverse document frequencies (IDF) of terms of the first sequence. The i^th value in idf1 corresponds of the i^th term of seq1.
+* @param idf2 Inverse document frequencies (IDF) of terms of the second sequence. The i^th value in idf2 corresponds of the i^th term of seq2.
 * @param alpha Weighting coefficient for the use of IDF weights against POS weights. 0 to only use POS weights and 1 to only use IDF weights.
 * @param policy Indice for determining the weights to use in the word embeddings.
 * @return Return a float between 0 and 1 representing the similarity between the two sequences.
@@ -408,10 +408,10 @@ float BilingualModel::similaritySentence(const string& src_seq, const string& tr
 * @brief Compute a cosine similarity between two variable-size sequences in two different languages according of part-of-speech and inverse document frequencies of terms in the sequences.
 * @param src_seq First sequence of terms.
 * @param trg_seq Second sequence of terms.
-* @param src_tags Part-of-speech tags of terms of the first sequence. The i^th tag in src_tags correspond of the i^th term of src_seq. The POS tags need to be normalized under the Universal Tagset.
-* @param trg_tags Part-of-speech tags of terms of the second sequence. The i^th tag in trg_tags correspond of the i^th term of trg_seq. The POS tags need to be normalized under the Universal Tagset.
-* @param src_idf Inverse document frequencies (IDF) of terms of the first sequence. The i^th value in src_idf correspond of the i^th term of src_seq.
-* @param trg_idf Inverse document frequencies (IDF) of terms of the second sequence. The i^th value in trg_idf correspond of the i^th term of trg_seq.
+* @param src_tags Part-of-speech tags of terms of the first sequence. The i^th tag in src_tags corresponds of the i^th term of src_seq. The POS tags need to be normalized under the Universal Tagset.
+* @param trg_tags Part-of-speech tags of terms of the second sequence. The i^th tag in trg_tags corresponds of the i^th term of trg_seq. The POS tags need to be normalized under the Universal Tagset.
+* @param src_idf Inverse document frequencies (IDF) of terms of the first sequence. The i^th value in src_idf corresponds of the i^th term of src_seq.
+* @param trg_idf Inverse document frequencies (IDF) of terms of the second sequence. The i^th value in trg_idf corresponds of the i^th term of trg_seq.
 * @param alpha Weighting coefficient for the use of IDF weights against POS weights. 0 to only use POS weights and 1 to only use IDF weights.
 * @param policy Indice for determining the weights to use in the word embeddings.
 * @return Return a float between 0 and 1 representing the similarity between the two sequences.
