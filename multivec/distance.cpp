@@ -183,6 +183,87 @@ float MonolingualModel::similaritySentence(const string& seq1, const string& seq
     }
 }
 
+/**
+ * POS weights according to "A Universal Part-of-Speech Tagset"
+ * by Slav Petrov, Dipanjan Das and Ryan McDonald
+ * for more details, see:
+ * paper: http://arxiv.org/abs/1104.2086
+ * project url: https://github.com/slavpetrov/universal-pos-tags
+ * 
+ * VERB - verbs (all tenses and modes)
+ * NOUN - nouns (common and proper)
+ * PRON - pronouns 
+ * ADJ - adjectives
+ * ADV - adverbs
+ * ADP - adpositions (prepositions and postpositions)
+ * CONJ - conjunctions
+ * DET - determiners
+ * NUM - cardinal numbers
+ * PRT - particles or other function words
+ * X - other: foreign words, typos, abbreviations
+ * . - punctuation
+*/
+const static std::map<std::string, float> syntax_weights = {
+    { "VERB", 0.75 },
+    { "NOUN", 1.00 },
+    { "PRON", 0.10 },
+    { "ADJ",  0.75 },
+    { "ADV",  0.50 },
+    { "ADP",  0.10 },
+    { "CONJ", 0.10 },
+    { "DET",  0.10 },
+    { "NUM",  0.50 },
+    { "PRT",  0.10 },
+    { "X",    0.50 },
+    { ".",    0.05 }
+};
+
+/**
+* @brief Compute a cosine similarity between two variable-size sequences according of part-of-speech and inverse document frequencies of terms in the sequences.
+* @param seq1 First sequence of terms.
+* @param seq2 Second sequence of terms.
+* @param tags1 Part-of-speech tags of terms of the first sequence. The i^th tag in tags1 corresponds of the i^th term of seq1. The POS tags need to be normalized under the Universal Tagset.
+* @param tags2 Part-of-speech tags of terms of the second sequence. The i^th tag in tags2 corresponds of the i^th term of seq2. The POS tags need to be normalized under the Universal Tagset.
+* @param idf1 Inverse document frequencies (IDF) of terms of the first sequence. The i^th value in idf1 corresponds of the i^th term of seq1.
+* @param idf2 Inverse document frequencies (IDF) of terms of the second sequence. The i^th value in idf2 corresponds of the i^th term of seq2.
+* @param alpha Weighting coefficient for the use of IDF weights against POS weights. 0 to only use POS weights and 1 to only use IDF weights.
+* @param policy Indice for determining the weights to use in the word embeddings.
+* @return Return a float between 0 and 1 representing the similarity between the two sequences.
+*/
+float MonolingualModel::similaritySentenceSyntax(const string& seq1, const string& seq2, const string& tags1, const string& tags2, const string& idf1, const string& idf2, float alpha, int policy) const {
+    auto words1 = split(seq1);
+    auto words2 = split(seq2);
+    auto pos_tags1 = split(tags1);
+    auto pos_tags2 = split(tags2);
+    auto idf_weights1 = split(idf1);
+    auto idf_weights2 = split(idf2);
+    
+    vec vec1(config->dimension);
+    vec vec2(config->dimension);
+    
+    for (size_t i = 0; i < words1.size() && i < pos_tags1.size(); ++i) {
+        try {
+            vec1 += wordVec(words1[i], policy) * pow(syntax_weights.at(pos_tags1[i]), 1 - alpha) * pow(std::stof(idf_weights1[i]), alpha);
+        }
+        catch (runtime_error) {}
+    }
+    
+    for (size_t i = 0; i < words2.size() && i < pos_tags2.size(); ++i) {
+        try {
+            vec2 += wordVec(words2[i], policy) * pow(syntax_weights.at(pos_tags2[i]), 1 - alpha) * pow(std::stof(idf_weights2[i]), alpha);
+        }
+        catch (runtime_error) {}
+    }
+    
+    float length = vec1.norm() * vec2.norm();
+    
+    if (length == 0) {
+        return 0.0;
+    } else {
+        return vec1.dot(vec2) / length;
+    }
+}
+
 float MonolingualModel::softWER(const string& hyp, const string& ref, int policy) const {
     auto s1 = split(hyp);
     auto s2 = split(ref);
@@ -324,75 +405,37 @@ float BilingualModel::similaritySentence(const string& src_seq, const string& tr
 }
 
 /**
- * POS weights according to Universal Tagset from http://github.com/slavpetrov/universal-pos-tags
- */
-const static std::map<std::string, float> syntax_weights = {
-    { "VERB", 0.75 },
-    { "NOUN", 1.00 },
-    { "PRON", 0.10 },
-    { "ADJ",  0.75 },
-    { "ADV",  0.50 },
-    { "ADP",  0.10 },
-    { "CONJ", 0.10 },
-    { "DET",  0.10 },
-    { "NUM",  0.50 },
-    { "PRT",  0.10 },
-    { "X",    0.50 },
-    { ".",    0.05 }
-};
-
-float MonolingualModel::similaritySentenceSyntax(const string& seq1, const string& seq2, const string& tags1, const string& tags2, int policy) const {
-    auto words1 = split(seq1);
-    auto words2 = split(seq2);
-
-  	auto pos_tags1 = split(tags1);
-    auto pos_tags2 = split(tags2);
-    
-    vec vec1(config->dimension);
-    vec vec2(config->dimension);
-    
-    for (size_t i = 0; i < words1.size() && i < pos_tags1.size(); ++i) {
-        try {
-            vec1 += wordVec(words1[i], policy) * syntax_weights.at(pos_tags1[i]);
-        }
-        catch (runtime_error) {}
-    }
-    
-    for (size_t i = 0; i < words2.size() && i < pos_tags2.size(); ++i) {
-        try {
-            vec2 += wordVec(words2[i], policy) * syntax_weights.at(pos_tags2[i]);
-        }
-        catch (runtime_error) {}
-    }
-    
-    float length = vec1.norm() * vec2.norm();
-    
-    if (length == 0) {
-        return 0.0;
-    } else {
-        return vec1.dot(vec2) / length;
-    }
-}
-
-float BilingualModel::similaritySentenceSyntax(const string& src_seq, const string& trg_seq, const string& src_tags, const string& trg_tags, int policy) const {    
+* @brief Compute a cosine similarity between two variable-size sequences in two different languages according of part-of-speech and inverse document frequencies of terms in the sequences.
+* @param src_seq First sequence of terms.
+* @param trg_seq Second sequence of terms.
+* @param src_tags Part-of-speech tags of terms of the first sequence. The i^th tag in src_tags corresponds of the i^th term of src_seq. The POS tags need to be normalized under the Universal Tagset.
+* @param trg_tags Part-of-speech tags of terms of the second sequence. The i^th tag in trg_tags corresponds of the i^th term of trg_seq. The POS tags need to be normalized under the Universal Tagset.
+* @param src_idf Inverse document frequencies (IDF) of terms of the first sequence. The i^th value in src_idf corresponds of the i^th term of src_seq.
+* @param trg_idf Inverse document frequencies (IDF) of terms of the second sequence. The i^th value in trg_idf corresponds of the i^th term of trg_seq.
+* @param alpha Weighting coefficient for the use of IDF weights against POS weights. 0 to only use POS weights and 1 to only use IDF weights.
+* @param policy Indice for determining the weights to use in the word embeddings.
+* @return Return a float between 0 and 1 representing the similarity between the two sequences.
+*/
+float BilingualModel::similaritySentenceSyntax(const string& src_seq, const string& trg_seq, const string& src_tags, const string& trg_tags, const string& src_idf, const string& trg_idf, float alpha, int policy) const {    
     auto src_words = split(src_seq);
     auto trg_words = split(trg_seq);
-    
-	auto src_pos_tags = split(src_tags);
+    auto src_pos_tags = split(src_tags);
     auto trg_pos_tags = split(trg_tags);
+    auto src_idf_weights = split(src_idf);
+    auto trg_idf_weights = split(trg_idf);
     
     vec src_vec(config->dimension);
     vec trg_vec(config->dimension);
     
     for (size_t i = 0; i < src_words.size() && i < src_pos_tags.size(); ++i) {
         try {
-            src_vec += src_model.wordVec(src_words[i], policy) * syntax_weights.at(src_pos_tags[i]);
+            src_vec += src_model.wordVec(src_words[i], policy) * pow(syntax_weights.at(src_pos_tags[i]), 1 - alpha) * pow(std::stof(src_idf_weights[i]), alpha);
         }
         catch (runtime_error) {}
     }
     for (size_t i = 0; i < trg_words.size() && i < trg_pos_tags.size(); ++i) {
         try {
-            trg_vec += trg_model.wordVec(trg_words[i], policy) * syntax_weights.at(trg_pos_tags[i]);
+            trg_vec += trg_model.wordVec(trg_words[i], policy) * pow(syntax_weights.at(trg_pos_tags[i]), 1 - alpha) * pow(std::stof(trg_idf_weights[i]), alpha);
         }
         catch (runtime_error) {}
     }
