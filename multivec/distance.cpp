@@ -267,31 +267,6 @@ vector<pair<string, float>> BilingualModel::src_closest(const string& trg_word, 
     return src_model.closest(v, n, policy);
 }
 
-vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_trg_closest(int n, int policy) const {
-    vector<pair<string, float>> res;
-    vector<pair<string, vector<pair<string, float>>>> to_return;
-    auto it = src_model.vocabulary.begin();
-    while  (it != src_model.vocabulary.end()) {
-        vec v = src_model.wordVec(it->second.index, policy);
-        res=trg_model.closest(v, n, policy);        
-        to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
-    }
-    return to_return;
-}
-
-
-vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_src_closest(int n, int policy) const {
-    vector<pair<string, float>> res;
-    vector<pair<string, vector<pair<string, float>>>> to_return;
-    auto it = trg_model.vocabulary.begin();
-    while  (it != trg_model.vocabulary.end()) {
-        vec v = trg_model.wordVec(it->second.index, policy);
-        res=src_model.closest(v, n, policy);        
-        to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
-    }
-    return to_return;
-}
-
 
 float BilingualModel::similarityNgrams(const string& src_seq, const string& trg_seq, int policy) const {
     auto src_words = split(src_seq);
@@ -431,40 +406,73 @@ float BilingualModel::similaritySentenceSyntax(const string& src_seq, const stri
     }
 }
 
-void BilingualModel::save_srcpt(int n, string file) {
-    stringstream ssoutput;
-    ssoutput.str("");
-    auto list_src = list_trg_closest(n,0);
-    auto it_src=list_src.begin();
-    while (it_src!=list_src.end()) {
-        auto list_trg=it_src->second;
-	auto it_trg=list_trg.begin();
-	while (it_trg!=list_trg.end()) {
-	    ssoutput << it_src->first << "\t" << list_trg->first << "\t" << list_trg->second << endl;
-	}
-	ofstream outputfile;
-	outputfile.open(file);
-	outputfile.write(ssoutput.str());
-	outputfile.close();
+vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_trg_closest(int n, int policy) const {
+    vector<pair<string, float>> res;
+    vector<pair<string, vector<pair<string, float>>>> to_return;
+    auto it = src_model.vocabulary.begin();
+    while  (it != src_model.vocabulary.end()) {
+        vec v = src_model.wordVec(it->second.index, policy);
+        res=trg_model.closest(v, n, policy);        
+        to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
     }
+    return to_return;
 }
 
-void BilingualModel::save_trgpt(int n, string file) {
+
+vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_src_closest(int n, int policy) const {
+    vector<pair<string, float>> res;
+    vector<pair<string, vector<pair<string, float>>>> to_return;
+    auto it = trg_model.vocabulary.begin();
+    while  (it != trg_model.vocabulary.end()) {
+        vec v = trg_model.wordVec(it->second.index, policy);
+        res=src_model.closest(v, n, policy);        
+        to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
+    }
+    return to_return;
+}
+
+void BilingualModel::save_srcpt(int n, string file) const {
     stringstream ssoutput;
     ssoutput.str("");
+    ofstream outputfile;
+    outputfile.open(file);
+    std::cerr << "Saving Prob table src->trg" <<endl;
+    vector<pair<string, vector<pair<string, float>>>> list_src = list_trg_closest(n,0);
+    vector<pair<string, vector<pair<string, float>>>>::iterator it_src=list_src.begin();
+    while (it_src!=list_src.end()) {
+        vector<pair<string, float>> list_trg=it_src->second;
+	vector<pair<string, float>>::iterator it_trg=list_trg.begin();
+	int cpt_limit=0;
+	while (it_trg!=list_trg.end() && cpt_limit < n) {
+	    outputfile << it_src->first << "\t" << it_trg->first << "\t" << it_trg->second << endl;
+	    cpt_limit++;
+	}
+// 	ofstream outputfile;
+// 	outputfile.open(file);
+// 	outputfile << ssoutput.str();
+    }
+    outputfile.close();
+}
+
+void BilingualModel::save_trgpt(int n, string file) const  {
+    stringstream ssoutput;
+    ssoutput.str("");
+    ofstream outputfile;
+    outputfile.open(file);
+    std::cerr << "Saving Prob table trg->src" <<endl;
     auto list_trg = list_src_closest(n,0);
     auto it_trg=list_trg.begin();
     while (it_trg!=list_trg.end()) {
         auto list_src=it_trg->second;
 	auto it_src=list_src.begin();
-	while (it_src!=list_src.end()) {
-	    ssoutput << it_trg->first << "\t" << list_src->first << "\t" << list_src->second << endl;
+	int cpt_limit=0;
+	while (it_src!=list_src.end() && cpt_limit < n ) {
+	    outputfile << it_trg->first << "\t" << it_src->first << "\t" << it_src->second << endl;
+	    cpt_limit++;
 	}
-	ofstream outputfile;
-	outputfile.open(file);
-	outputfile.write(ssoutput.str());
-	outputfile.close();
+// 	outputfile << ssoutput.str();
     }
+    outputfile.close();
 }
 
 

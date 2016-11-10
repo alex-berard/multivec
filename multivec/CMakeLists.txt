@@ -7,6 +7,7 @@ set(MULTIVEC_BI
     ${CMAKE_CURRENT_SOURCE_DIR}/serialization.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/bilingual.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/utils.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/distance.cpp    
     ${CMAKE_CURRENT_SOURCE_DIR}/vec.hpp    
     PARENT_SCOPE
 )

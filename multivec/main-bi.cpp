@@ -139,10 +139,10 @@ int main(int argc, char **argv) {
     }
 
     if(!save_srcpt_file.empty()) {
-        model.save_srcpt(save_srcpt_file);
+        model.save_srcpt(int(20),save_srcpt_file);
     }
     if(!save_trgpt_file.empty()) {
-        model.save_trgpt(save_trgpt_file);
+        model.save_trgpt(int(20),save_trgpt_file);
     }
 
     return 0;
