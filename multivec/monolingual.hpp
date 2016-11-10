@@ -76,7 +76,9 @@ public:
     float distance(const string& word1, const string& word2, int policy = 0) const; // 1 - cosine similarity
     float similarityNgrams(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two sequences of same size
     float similaritySentence(const string& seq1, const string& seq2, int policy = 0) const; // similarity between two variable-size sequences
-    float similaritySentenceSyntax(const string& seq1, const string& seq2, const string& tags1, const string& tags2, const string& idf1, const string& idf2, float alpha = 0.0, int policy = 0) const; // similarity between two variable-size sequences according of part-of-speech and inverse document frequencies of terms in the sequences
+    // similarity between two variable-size sequences taking into account part-of-speech tags and inverse document frequencies of terms in the sequences
+    float similaritySentenceSyntax(const string& seq1, const string& seq2, const string& tags1,
+                                   const string& tags2, const string& idf1, const string& idf2, float alpha = 0.0, int policy = 0) const;
     float softWER(const string& hyp, const string& ref, int policy = 0) const; // soft Word Error Rate
 
     vector<pair<string, float>> trg_closest(const string& src_word, int n = 10, int policy = 0) const; // n closest words to given word
