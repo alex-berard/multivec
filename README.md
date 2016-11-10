@@ -26,7 +26,7 @@ C++ implementation of *word2vec*, *bivec*, and *paragraph vector*.
     git clone https://github.com/eske/multivec.git
     mkdir multivec/build
     cd multivec/build
-    cmake ../..
+    cmake ..
     make
     cd ..
 
