@@ -83,8 +83,6 @@ public:
 
     vector<pair<string, float>> trg_closest(const string& src_word, int n = 10, int policy = 0) const; // n closest words to given word
     vector<pair<string, float>> src_closest(const string& trg_word, int n = 10, int policy = 0) const;
-};
-
 
     int getDimension() const { return config->dimension; };
 
