@@ -186,19 +186,19 @@ float MonolingualModel::similaritySentence(const string& seq1, const string& seq
 float MonolingualModel::softWER(const string& hyp, const string& ref, int policy) const {
     auto s1 = split(hyp);
     auto s2 = split(ref);
-	const size_t len1 = s1.size(), len2 = s2.size();
-	vector<vector<float>> d(len1 + 1, vector<float>(len2 + 1));
+    const size_t len1 = s1.size(), len2 = s2.size();
+    vector<vector<float>> d(len1 + 1, vector<float>(len2 + 1));
 
-	d[0][0] = 0;
-	for (size_t i = 1; i <= len1; ++i) d[i][0] = i;
-	for (size_t i = 1; i <= len2; ++i) d[0][i] = i;
+    d[0][0] = 0;
+    for (size_t i = 1; i <= len1; ++i) d[i][0] = i;
+    for (size_t i = 1; i <= len2; ++i) d[0][i] = i;
 
-	for (size_t i = 1; i <= len1; ++i) {
-		for (size_t j = 1; j <= len2; ++j) {
-		    // uses distance between word embeddings as a substitution cost
-		    // FIXME: distances tend to be well below 1, even for very different words.
-		    // This is rather unbalanced with deletion and insertion costs, which remain at 1.
-		    // Also, distance can (but will rarely) be greater than 1.
+    for (size_t i = 1; i <= len1; ++i) {
+        for (size_t j = 1; j <= len2; ++j) {
+            // uses distance between word embeddings as a substitution cost
+            // FIXME: distances tend to be well below 1, even for very different words.
+            // This is rather unbalanced with deletion and insertion costs, which remain at 1.
+            // Also, distance can (but will rarely) be greater than 1.
             float sub_cost = distance(s1[i - 1], s2[j - 1], policy);
             
             d[i][j] = min({ d[i - 1][j] + 1,  // deletion
@@ -207,7 +207,7 @@ float MonolingualModel::softWER(const string& hyp, const string& ref, int policy
         }
     }
     
-	return d[len1][len2] / len2;
+    return d[len1][len2] / len2;
 }
 
 
@@ -345,7 +345,7 @@ float MonolingualModel::similaritySentenceSyntax(const string& seq1, const strin
     auto words1 = split(seq1);
     auto words2 = split(seq2);
 
-  	auto pos_tags1 = split(tags1);
+      auto pos_tags1 = split(tags1);
     auto pos_tags2 = split(tags2);
     
     vec vec1(config->dimension);
@@ -378,7 +378,7 @@ float BilingualModel::similaritySentenceSyntax(const string& src_seq, const stri
     auto src_words = split(src_seq);
     auto trg_words = split(trg_seq);
     
-	auto src_pos_tags = split(src_tags);
+    auto src_pos_tags = split(src_tags);
     auto trg_pos_tags = split(trg_tags);
     
     vec src_vec(config->dimension);
@@ -410,10 +410,16 @@ vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_trg_close
     vector<pair<string, float>> res;
     vector<pair<string, vector<pair<string, float>>>> to_return;
     auto it = src_model.vocabulary.begin();
+	int lc=0;
     while  (it != src_model.vocabulary.end()) {
+		// cerr << it->first << endl;
         vec v = src_model.wordVec(it->second.index, policy);
         res=trg_model.closest(v, n, policy);        
         to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
+		it++;
+	    lc++;
+        if (lc % 10 == 0) { cerr << '.'; }
+        if (lc % 1000 == 0) { cerr << " [" << lc << "]\n" << flush; }
     }
     return to_return;
 }
@@ -423,54 +429,58 @@ vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_src_close
     vector<pair<string, float>> res;
     vector<pair<string, vector<pair<string, float>>>> to_return;
     auto it = trg_model.vocabulary.begin();
+	int lc=0;
     while  (it != trg_model.vocabulary.end()) {
+//		cerr << it->first << endl;
         vec v = trg_model.wordVec(it->second.index, policy);
         res=src_model.closest(v, n, policy);        
         to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
+		it++;
+	    lc++;
+        if (lc % 10 == 0) { cerr << '.';  }
+        if (lc % 1000 == 0) { cerr << " [" << lc << "]\n" << flush; }
     }
     return to_return;
 }
 
 void BilingualModel::save_srcpt(int n, string file) const {
     stringstream ssoutput;
-    ssoutput.str("");
     ofstream outputfile;
-    outputfile.open(file);
     std::cerr << "Saving Prob table src->trg" <<endl;
-    vector<pair<string, vector<pair<string, float>>>> list_src = list_trg_closest(n,0);
-    vector<pair<string, vector<pair<string, float>>>>::iterator it_src=list_src.begin();
+    auto list_src = list_trg_closest(n,0);
+    outputfile.open(file);
+    auto it_src=list_src.begin();
     while (it_src!=list_src.end()) {
-        vector<pair<string, float>> list_trg=it_src->second;
-	vector<pair<string, float>>::iterator it_trg=list_trg.begin();
-	int cpt_limit=0;
-	while (it_trg!=list_trg.end() && cpt_limit < n) {
-	    outputfile << it_src->first << "\t" << it_trg->first << "\t" << it_trg->second << endl;
-	    cpt_limit++;
-	}
-// 	ofstream outputfile;
-// 	outputfile.open(file);
-// 	outputfile << ssoutput.str();
+        auto list_trg=it_src->second;
+        auto it_trg=list_trg.begin();
+        while (it_trg!=list_trg.end()) {
+            outputfile << it_src->first << "\t" << it_trg->first << "\t" << log(it_trg->second) << endl;
+			it_trg++;
+        }
+		it_src++;
+//     ofstream outputfile;
+//     outputfile.open(file);
+//     outputfile << ssoutput.str();
     }
     outputfile.close();
 }
 
 void BilingualModel::save_trgpt(int n, string file) const  {
     stringstream ssoutput;
-    ssoutput.str("");
     ofstream outputfile;
-    outputfile.open(file);
     std::cerr << "Saving Prob table trg->src" <<endl;
     auto list_trg = list_src_closest(n,0);
+    outputfile.open(file);
     auto it_trg=list_trg.begin();
     while (it_trg!=list_trg.end()) {
         auto list_src=it_trg->second;
-	auto it_src=list_src.begin();
-	int cpt_limit=0;
-	while (it_src!=list_src.end() && cpt_limit < n ) {
-	    outputfile << it_trg->first << "\t" << it_src->first << "\t" << it_src->second << endl;
-	    cpt_limit++;
-	}
-// 	outputfile << ssoutput.str();
+        auto it_src=list_src.begin();
+        while (it_src!=list_src.end()) {
+            outputfile << it_trg->first << "\t" << it_src->first << "\t" << log(it_src->second) << endl;
+			it_src++;
+        }
+		it_trg++;
+//     outputfile << ssoutput.str();
     }
     outputfile.close();
 }
