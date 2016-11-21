@@ -35,7 +35,7 @@ cdef extern from "utils.hpp":
 
 cdef extern from "monolingual.hpp":
     cdef cppclass MonolingualModelCpp "MonolingualModel":
-        MonolingualModelCpp(Config* config) except +
+        MonolingualModelCpp(Config*) except +
         Vec wordVec(const string&, int) except +
         Vec sentVec(const string&) except +
         void train(const string&, bool) except +
@@ -48,10 +48,11 @@ cdef extern from "monolingual.hpp":
         float distance(const string&, const string&, int) except +
         float similarityNgrams(const string&, const string&, int) except +
         float similaritySentence(const string&, const string&, int) except +
-        float similaritySentenceSyntax(const string&, const string&, const string&, const string&, int) except +
+        float similaritySentenceSyntax(const string&, const string&, const string&, const string&,
+                                       const vector[float]&, const vector[float]&, float, int) except +
         float softWER(const string&, const string&, int) except +
         vector[pair[string, float]] closest(const Vec&, int, int) except +
-        vector[pair[string, float]] closest(const string&, const vector[string]& words, int) except +
+        vector[pair[string, float]] closest(const string&, const vector[string]&, int) except +
         vector[pair[string, float]] closest(const string&, int, int) except +
         vector[pair[string, int]] getWords() except +
         Config* config
@@ -59,14 +60,15 @@ cdef extern from "monolingual.hpp":
 
 cdef extern from "bilingual.hpp":
     cdef cppclass BilingualModelCpp "BilingualModel":
-        BilingualModelCpp(BilingualConfig* config) except +
+        BilingualModelCpp(BilingualConfig*) except +
         void train(const string&, const string&, bool) except +
         void load(const string&) except +
         float similarity(const string&, const string&, int) except +
         float distance(const string&, const string&, int) except +
         float similarityNgrams(const string&, const string&, int) except +
         float similaritySentence(const string&, const string&, int) except +
-        float similaritySentenceSyntax(const string&, const string&, const string&, const string&, int) except +
+        float similaritySentenceSyntax(const string&, const string&, const string&, const string&,
+                                       const vector[float]&, const vector[float]&, float, int) except +
         vector[pair[string, float]] trg_closest(const string&, int, int) except +
         vector[pair[string, float]] src_closest(const string&, int, int) except +
         MonolingualModelCpp src_model
@@ -243,8 +245,8 @@ cdef class MonolingualModel:
         return self.model.similarityNgrams(seq1, seq2, policy)
     def similarity_bag_of_words(self, seq1, seq2, policy=0):
         return self.model.similaritySentence(seq1, seq2, policy)
-    def similarity_syntax(self, seq1, seq2, tags1, tags2, policy=0):
-        return self.model.similaritySentenceSyntax(seq1, seq2, tags1, tags2, policy)
+    def similarity_syntax(self, seq1, seq2, tags1, tags2, idf1, idf2, alpha=0.0, policy=0):
+        return self.model.similaritySentenceSyntax(seq1, seq2, tags1, tags2, idf1, idf2, alpha, policy)
     def soft_word_error_rate(self, seq1, seq2, policy=0):
         return self.model.softWER(seq1, seq2, policy)
     
@@ -378,8 +380,8 @@ cdef class BilingualModel:
         return self.model.similarityNgrams(src_seq, trg_seq, policy)
     def similarity_bag_of_words(self, src_seq, trg_seq, policy=0):
         return self.model.similaritySentence(src_seq, trg_seq, policy)
-    def similarity_syntax(self, src_seq, trg_seq, src_tags, trg_tags, policy=0):
-        return self.model.similaritySentenceSyntax(src_seq, trg_seq, src_tags, trg_tags, policy)
+    def similarity_syntax(self, src_seq, trg_seq, src_tags, trg_tags, src_idf, trg_idf, alpha=0.0, policy=0):
+        return self.model.similaritySentenceSyntax(src_seq, trg_seq, src_tags, trg_tags, src_idf, trg_idf, alpha, policy)
 
     def trg_closest(self, src_word, n=10, policy=0):
         cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word, <int> n, <int> policy)

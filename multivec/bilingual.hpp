@@ -56,7 +56,7 @@ public:
     float similaritySentence(const string& src_seq, const string& trg_seq, int policy = 0) const; // similarity between two variable-size sequences
     // similarity between two variable-size sequences taking into account part-of-speech tags and inverse document frequencies of terms in the sequences
     float similaritySentenceSyntax(const string& src_seq, const string& trg_seq, const string& src_tags, const string& trg_tags,
-                                   const string& src_idf, const string& trg_idf, float alpha = 0.0, int policy = 0) const;
+                                   const vector<float>& src_idf, const vector<float>& trg_idf, float alpha = 0.0, int policy = 0) const;
     
     vector<pair<string, float>> trg_closest(const string& src_word, int n = 10, int policy = 0) const; // n closest words to given word
     vector<pair<string, float>> src_closest(const string& trg_word, int n = 10, int policy = 0) const;

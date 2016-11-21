@@ -230,27 +230,26 @@ const static std::map<std::string, float> syntax_weights = {
 * @param policy Indice for determining the weights to use in the word embeddings.
 * @return Return a float between 0 and 1 representing the similarity between the two sequences.
 */
-float MonolingualModel::similaritySentenceSyntax(const string& seq1, const string& seq2, const string& tags1, const string& tags2, const string& idf1, const string& idf2, float alpha, int policy) const {
+float MonolingualModel::similaritySentenceSyntax(const string& seq1, const string& seq2, const string& tags1, const string& tags2,
+                                                 const vector<float>& idf1, const vector<float>& idf2, float alpha, int policy) const {
     auto words1 = split(seq1);
     auto words2 = split(seq2);
     auto pos_tags1 = split(tags1);
     auto pos_tags2 = split(tags2);
-    auto idf_weights1 = split(idf1);
-    auto idf_weights2 = split(idf2);
     
     vec vec1(config->dimension);
     vec vec2(config->dimension);
     
-    for (size_t i = 0; i < words1.size() && i < pos_tags1.size(); ++i) {
+    for (size_t i = 0; i < words1.size() && i < pos_tags1.size() && i < idf1.size(); ++i) {
         try {
-            vec1 += wordVec(words1[i], policy) * pow(syntax_weights.at(pos_tags1[i]), 1 - alpha) * pow(std::stof(idf_weights1[i]), alpha);
+            vec1 += wordVec(words1[i], policy) * pow(syntax_weights.at(pos_tags1[i]), 1 - alpha) * pow(idf1[i], alpha);
         }
         catch (runtime_error) {}
     }
     
-    for (size_t i = 0; i < words2.size() && i < pos_tags2.size(); ++i) {
+    for (size_t i = 0; i < words2.size() && i < pos_tags2.size() && i < idf2.size(); ++i) {
         try {
-            vec2 += wordVec(words2[i], policy) * pow(syntax_weights.at(pos_tags2[i]), 1 - alpha) * pow(std::stof(idf_weights2[i]), alpha);
+            vec2 += wordVec(words2[i], policy) * pow(syntax_weights.at(pos_tags2[i]), 1 - alpha) * pow(idf2[i], alpha);
         }
         catch (runtime_error) {}
     }
@@ -416,26 +415,25 @@ float BilingualModel::similaritySentence(const string& src_seq, const string& tr
 * @param policy Indice for determining the weights to use in the word embeddings.
 * @return Return a float between 0 and 1 representing the similarity between the two sequences.
 */
-float BilingualModel::similaritySentenceSyntax(const string& src_seq, const string& trg_seq, const string& src_tags, const string& trg_tags, const string& src_idf, const string& trg_idf, float alpha, int policy) const {    
+float BilingualModel::similaritySentenceSyntax(const string& src_seq, const string& trg_seq, const string& src_tags, const string& trg_tags,
+                                               const vector<float>& src_idf, const vector<float>& trg_idf, float alpha, int policy) const {    
     auto src_words = split(src_seq);
     auto trg_words = split(trg_seq);
     auto src_pos_tags = split(src_tags);
     auto trg_pos_tags = split(trg_tags);
-    auto src_idf_weights = split(src_idf);
-    auto trg_idf_weights = split(trg_idf);
     
     vec src_vec(config->dimension);
     vec trg_vec(config->dimension);
     
-    for (size_t i = 0; i < src_words.size() && i < src_pos_tags.size(); ++i) {
+    for (size_t i = 0; i < src_words.size() && i < src_pos_tags.size() && i < src_idf.size(); ++i) {
         try {
-            src_vec += src_model.wordVec(src_words[i], policy) * pow(syntax_weights.at(src_pos_tags[i]), 1 - alpha) * pow(std::stof(src_idf_weights[i]), alpha);
+            src_vec += src_model.wordVec(src_words[i], policy) * pow(syntax_weights.at(src_pos_tags[i]), 1 - alpha) * pow(src_idf[i], alpha);
         }
         catch (runtime_error) {}
     }
-    for (size_t i = 0; i < trg_words.size() && i < trg_pos_tags.size(); ++i) {
+    for (size_t i = 0; i < trg_words.size() && i < trg_pos_tags.size() && i < trg_idf.size(); ++i) {
         try {
-            trg_vec += trg_model.wordVec(trg_words[i], policy) * pow(syntax_weights.at(trg_pos_tags[i]), 1 - alpha) * pow(std::stof(trg_idf_weights[i]), alpha);
+            trg_vec += trg_model.wordVec(trg_words[i], policy) * pow(syntax_weights.at(trg_pos_tags[i]), 1 - alpha) * pow(trg_idf[i], alpha);
         }
         catch (runtime_error) {}
     }
