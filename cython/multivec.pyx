@@ -63,6 +63,7 @@ cdef extern from "bilingual.hpp":
         BilingualModelCpp(BilingualConfig*) except +
         void train(const string&, const string&, bool) except +
         void load(const string&) except +
+        void save(const string&) except +
         float similarity(const string&, const string&, int) except +
         float distance(const string&, const string&, int) except +
         float similarityNgrams(const string&, const string&, int) except +
@@ -367,6 +368,9 @@ cdef class BilingualModel:
 
     def train(self, src_name, trg_name, initialize=True):
         self.model.train(src_name, trg_name, initialize)
+    
+    def save(self, name):
+        self.model.save(name)
     
     def load(self, name):
         self.model.load(name)
