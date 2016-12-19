@@ -407,38 +407,41 @@ float BilingualModel::similaritySentenceSyntax(const string& src_seq, const stri
 }
 
 vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_trg_closest(int n, int policy) const {
+    // TODO : this should be multithreaded !!!!
     vector<pair<string, float>> res;
     vector<pair<string, vector<pair<string, float>>>> to_return;
     auto it = src_model.vocabulary.begin();
-	int lc=0;
+    int lc=0;
     while  (it != src_model.vocabulary.end()) {
 		// cerr << it->first << endl;
         vec v = src_model.wordVec(it->second.index, policy);
         res=trg_model.closest(v, n, policy);        
         to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
-		it++;
-	    lc++;
+        it++;
+	lc++;
         if (lc % 10 == 0) { cerr << '.'; }
-        if (lc % 1000 == 0) { cerr << " [" << lc << "]\n" << flush; }
+        if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
     }
     return to_return;
 }
 
 
 vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_src_closest(int n, int policy) const {
+    // TODO : this should be multithreaded !!!!
     vector<pair<string, float>> res;
     vector<pair<string, vector<pair<string, float>>>> to_return;
+    int l_threads = config->threads;
     auto it = trg_model.vocabulary.begin();
-	int lc=0;
+    int lc=0;
     while  (it != trg_model.vocabulary.end()) {
 //		cerr << it->first << endl;
         vec v = trg_model.wordVec(it->second.index, policy);
         res=src_model.closest(v, n, policy);        
         to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
-		it++;
-	    lc++;
+        it++;
+	lc++;
         if (lc % 10 == 0) { cerr << '.';  }
-        if (lc % 1000 == 0) { cerr << " [" << lc << "]\n" << flush; }
+        if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
     }
     return to_return;
 }
