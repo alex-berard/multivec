@@ -29,8 +29,9 @@ static vector<option_plus> options_plus = {
     {"save",          required_argument, 0, 'p', "save model"},
     {"save-src",      required_argument, 0, 'q', "save source model"},
     {"save-trg",      required_argument, 0, 'r', "save target model"},
-    {"save-probtable-src",      required_argument, 0, 'spt', "save the source probtable"},
-    {"save-probtable-trg",      required_argument, 0, 'tpt', "save the target probtable"},
+    {"save-probtable-src",      required_argument, 0, 's', "save the source probtable"},
+    {"save-probtable-trg",      required_argument, 0, 't', "save the target probtable"},
+    {"probtable-nbest-size",      required_argument, 0, 'u', "n-best size of the probtable (src and/or trg)"},
     {0, 0, 0, 0, 0}
 };
 
@@ -82,6 +83,7 @@ int main(int argc, char **argv) {
     string save_trg_file;
     string save_srcpt_file;
     string save_trgpt_file;
+    int size_pt = 10;
 
     optind = 0;  // necessary to parse arguments twice
     while (1) {
@@ -110,8 +112,9 @@ int main(int argc, char **argv) {
             case 'p': save_file = string(optarg);           break;
             case 'q': save_src_file = string(optarg);       break;
             case 'r': save_trg_file = string(optarg);       break;
-            case 'spt': save_srcpt_file = string(optarg);       break;
-            case 'tpt': save_trgpt_file = string(optarg);       break;
+            case 's': save_srcpt_file = string(optarg);       break;
+            case 't': save_trgpt_file = string(optarg);       break;
+            case 'u': size_pt = atoi(optarg);       break;
             default:                                        abort();
         }
     }
@@ -139,10 +142,10 @@ int main(int argc, char **argv) {
     }
 
     if(!save_srcpt_file.empty()) {
-        model.save_srcpt(int(20),save_srcpt_file);
+        model.save_srcpt(size_pt,save_srcpt_file);
     }
     if(!save_trgpt_file.empty()) {
-        model.save_trgpt(int(20),save_trgpt_file);
+        model.save_trgpt(size_pt,save_trgpt_file);
     }
 
     return 0;
