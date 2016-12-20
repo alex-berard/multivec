@@ -431,7 +431,7 @@ vector<vector<pair<string,vec>>> chunk_vectors(unordered_map<string, HuffmanNode
     int l_size_chunk=(int)l_vocabulary.size() / nbr_chunks;
     int l_size_rest=(int)l_vocabulary.size() % nbr_chunks;
     if (l_size_rest > 0) l_size_chunk++;
-    int l_inc;
+    int l_inc=0;
     vector<vector<pair<string,vec>>> to_return;
     vector<pair<string,vec>> to_process;
     auto it = l_vocabulary.begin();
@@ -503,6 +503,7 @@ vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_src_close
     // TODO : this should be multithreaded !!!!
     int l_threads = config->threads;
     vector<vector<pair<string,vec>>> to_process = chunk_vectors(trg_model.vocabulary,l_threads);
+    cerr << "Size " << (int)to_process.size() << " chunks of "<< (int)to_process.at(0).size()<< " words"<< endl;
     vector<pair<string, float>> res;
     vector<pair<string, vector<pair<string, float>>>> to_return;
     vector<vector<pair<string, vector<pair<string, float>>>>> tab_res(l_threads);
