@@ -413,12 +413,12 @@ vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_trg_close
     auto it = src_model.vocabulary.begin();
     int lc=0;
     while  (it != src_model.vocabulary.end()) {
-		// cerr << it->first << endl;
+                // cerr << it->first << endl;
         vec v = src_model.wordVec(it->second.index, policy);
         res=trg_model.closest(v, n, policy);        
         to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
         it++;
-	lc++;
+        lc++;
         if (lc % 10 == 0) { cerr << '.'; }
         if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
     }
@@ -426,22 +426,119 @@ vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_trg_close
 }
 
 
-vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_src_closest(int n, int policy) const {
-    // TODO : this should be multithreaded !!!!
-    vector<pair<string, float>> res;
-    vector<pair<string, vector<pair<string, float>>>> to_return;
-    int l_threads = config->threads;
-    auto it = trg_model.vocabulary.begin();
+vector<vector<pair<string,vec>>> chunk_vectors(unordered_map<string, HuffmanNode> l_vocabulary, int nbr_chunks)
+{
+    int l_size_chunk=(int)l_vocabulary.size() / nbr_chunks;
+    int l_size_rest=(int)l_vocabulary.size() % nbr_chunks;
+    if (l_size_rest > 0) l_size_chunk++;
+    int l_inc;
+    vector<vector<pair<string,vec>>> to_return;
+    vector<pair<string,vec>> to_process;
+    auto it = l_vocabulary.begin();
+    while  (it != l_vocabulary.end())
+    {
+        if (l_inc < l_size_chunk)
+        {
+            to_process.push_back(pair<string,vec>(it->first,it->second.index));
+            l_inc++;
+            it++;
+        }
+        else
+        {
+            l_inc=0;
+            to_return.push_back(to_process);
+            to_process.clear();
+        }
+    }
+    if (not to_process.empty())
+    {
+        to_return.push_back(to_process);
+    }
+    return to_return;
+}
+
+void MonolingualModel::closest_chunk(const vector<pair<string,vec>>& v, int n, int policy, vector<pair<string,vector<pair<string, float>>>>& ret) {
+    auto it_chunk = v.begin();
     int lc=0;
-    while  (it != trg_model.vocabulary.end()) {
-//		cerr << it->first << endl;
-        vec v = trg_model.wordVec(it->second.index, policy);
-        res=src_model.closest(v, n, policy);        
-        to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
-        it++;
-	lc++;
+    while (it_chunk != v.end())
+    {
+        vec l_v=it_chunk->second;
+        vector<pair<string, float>> res = closest(l_v,n,policy);
+        pair<string,vector<pair<string, float>>> p_ret(it_chunk->first,res);
+        ret.push_back(p_ret);
+        it_chunk++;
+        lc++;
         if (lc % 10 == 0) { cerr << '.';  }
         if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
+    }
+}
+
+
+
+// vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_src_closest(int n, int policy) const {
+//     // TODO : this should be multithreaded !!!!
+//     vector<pair<string, float>> res;
+//     vector<pair<string, vector<pair<string, float>>>> to_return;
+//     int l_threads = config->threads;
+//     vector<pair<string, vector<pair<string, float>>>> tab_res(l_threads);
+//     
+//     auto it = trg_model.vocabulary.begin();
+//     int lc=0;
+//     int l_curr_thread=0;
+//     while  (it != trg_model.vocabulary.end()) {
+// //                cerr << it->first << endl;
+//         vec v = trg_model.wordVec(it->second.index, policy);
+//         res=src_model.closest(v, n, policy);        
+//         to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
+//         it++;
+//         lc++;
+//         if (lc % 10 == 0) { cerr << '.';  }
+//         if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
+//     }
+//     return to_return;
+// }
+
+
+vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_src_closest(int n, int policy) const {
+    // TODO : this should be multithreaded !!!!
+    int l_threads = config->threads;
+    vector<vector<pair<string,vec>>> to_process = chunk_vectors(trg_model.vocabulary,l_threads);
+    vector<pair<string, float>> res;
+    vector<pair<string, vector<pair<string, float>>>> to_return;
+    vector<vector<pair<string, vector<pair<string, float>>>>> tab_res(l_threads);
+    if (l_threads == 1)
+    {
+        auto it = trg_model.vocabulary.begin();
+        int lc=0;
+        int l_curr_thread=0;
+        while  (it != trg_model.vocabulary.end()) {
+    //                cerr << it->first << endl;
+            vec v = trg_model.wordVec(it->second.index, policy);
+            res=src_model.closest(v, n, policy);        
+            to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
+            it++;
+            lc++;
+            if (lc % 10 == 0) { cerr << '.';  }
+            if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
+        }
+    }
+    else
+    {
+        vector<thread> threads;
+        for (int i = 0; i < config->threads; ++i) {
+            threads.push_back(thread(&MonolingualModel::closest_chunk, this->trg_model, 
+                                      std::ref(to_process.at(i)), n, policy,  std::ref(tab_res.at(i))));
+        }
+
+        for (auto it = threads.begin(); it != threads.end(); ++it) {
+            it->join();
+        }   
+        
+        auto res_it=tab_res.begin();
+        while (res_it != tab_res.end())
+        {
+            to_return.insert(to_return.end(),(*res_it).begin(),(*res_it).end());
+        }
     }
     return to_return;
 }
@@ -458,9 +555,9 @@ void BilingualModel::save_srcpt(int n, string file) const {
         auto it_trg=list_trg.begin();
         while (it_trg!=list_trg.end()) {
             outputfile << it_src->first << "\t" << it_trg->first << "\t" << log(it_trg->second) << endl;
-			it_trg++;
+                        it_trg++;
         }
-		it_src++;
+                it_src++;
 //     ofstream outputfile;
 //     outputfile.open(file);
 //     outputfile << ssoutput.str();
@@ -480,9 +577,9 @@ void BilingualModel::save_trgpt(int n, string file) const  {
         auto it_src=list_src.begin();
         while (it_src!=list_src.end()) {
             outputfile << it_trg->first << "\t" << it_src->first << "\t" << log(it_src->second) << endl;
-			it_src++;
+                        it_src++;
         }
-		it_trg++;
+                it_trg++;
 //     outputfile << ssoutput.str();
     }
     outputfile.close();
