@@ -89,5 +89,5 @@ public:
     vector<pair<string, int>> getWords() const; // get words with their counts
     
     void analogicalReasoning(const string& filename, int max_voc = 0, int policy = 0) const;
-    void closest_chunk(const vector<pair<string,vec>>& v, int n, int policy, vector<pair<string,vector<pair<string, float>>>>& ret);
+    void closest_chunk(vector<pair<string,vec>> v, int n, int policy, vector<pair<string,vector<pair<string, float>>>>& ret, int thread_nbr);
 };

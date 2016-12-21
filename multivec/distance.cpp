@@ -406,24 +406,27 @@ float BilingualModel::similaritySentenceSyntax(const string& src_seq, const stri
     }
 }
 
-vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_trg_closest(int n, int policy) const {
-    // TODO : this should be multithreaded !!!!
-    vector<pair<string, float>> res;
-    vector<pair<string, vector<pair<string, float>>>> to_return;
-    auto it = src_model.vocabulary.begin();
-    int lc=0;
-    while  (it != src_model.vocabulary.end()) {
-                // cerr << it->first << endl;
-        vec v = src_model.wordVec(it->second.index, policy);
-        res=trg_model.closest(v, n, policy);        
-        to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
-        it++;
-        lc++;
-        if (lc % 10 == 0) { cerr << '.'; }
-        if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
-    }
-    return to_return;
-}
+// vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_trg_closest(int n, int policy) const {
+    // // TODO : this should be multithreaded !!!!
+    // vector<pair<string, float>> res;
+    // vector<pair<string, vector<pair<string, float>>>> to_return;
+    // auto it = src_model.vocabulary.begin();
+    // int lc=0;
+    // int inc_vocab=0;
+    // while  (it != src_model.vocabulary.end()) {
+    // // for (inc_vocab=0; inc_vocab < (int)src_model.vocabulary.size(); inc_vocab++)
+    // // {
+                // // cerr << it->first << endl;
+        // vec v = src_model.wordVec(it->second.index, policy);
+        // res=trg_model.closest(v, n, policy);
+        // to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
+        // it++;
+        // lc++;
+        // if (lc % 10 == 0) { cerr << '.'; }
+        // if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
+    // }
+    // return to_return;
+// }
 
 
 vector<vector<pair<string,vec>>> chunk_vectors(unordered_map<string, HuffmanNode> l_vocabulary, int nbr_chunks)
@@ -435,16 +438,19 @@ vector<vector<pair<string,vec>>> chunk_vectors(unordered_map<string, HuffmanNode
     vector<vector<pair<string,vec>>> to_return;
     vector<pair<string,vec>> to_process;
     auto it = l_vocabulary.begin();
-    while  (it != l_vocabulary.end())
+    int inc_vocab=0;
+    for (it = l_vocabulary.begin(); it != l_vocabulary.end(); it++)
     {
-        if (l_inc < l_size_chunk)
+        // auto it = l_vocabulary.at(inc_vocab);
+        if (l_inc < l_size_chunk-1)
         {
-            to_process.push_back(pair<string,vec>(it->first,it->second.index));
+            to_process.push_back(pair<string,vec>((*it).first,(*it).second.index));
             l_inc++;
-            it++;
+            // it++;
         }
         else
         {
+            to_process.push_back(pair<string,vec>((*it).first,(*it).second.index));
             l_inc=0;
             to_return.push_back(to_process);
             to_process.clear();
@@ -457,20 +463,65 @@ vector<vector<pair<string,vec>>> chunk_vectors(unordered_map<string, HuffmanNode
     return to_return;
 }
 
-void MonolingualModel::closest_chunk(const vector<pair<string,vec>>& v, int n, int policy, vector<pair<string,vector<pair<string, float>>>>& ret) {
-    auto it_chunk = v.begin();
+void BilingualModel::closest_chunk(int n, int policy, vector<pair<string,vector<pair<string, float>>>>& ret, int thread_nbr, int nbr_chunks, int direction) const{
+    // auto it_chunk = v.begin();
+    // cerr <<"Thread "<< thread_nbr << " taille "<<  v.size()<< " taille "<<  ret.size()<< endl;
     int lc=0;
-    while (it_chunk != v.end())
+    auto l_vocabulary=trg_model.vocabulary;
+    if (direction == 1) l_vocabulary=src_model.vocabulary;
+    int l_size_chunk=(int)l_vocabulary.size() / nbr_chunks;
+    int l_size_rest=(int)l_vocabulary.size() % nbr_chunks;
+    if (l_size_rest > 0) l_size_chunk++;
+    int inc_chunk=0;
+    auto it = l_vocabulary.begin();
+    int l_inc=0;
+    if (thread_nbr!=0)
     {
-        vec l_v=it_chunk->second;
-        vector<pair<string, float>> res = closest(l_v,n,policy);
-        pair<string,vector<pair<string, float>>> p_ret(it_chunk->first,res);
-        ret.push_back(p_ret);
-        it_chunk++;
-        lc++;
-        if (lc % 10 == 0) { cerr << '.';  }
-        if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
+        while (it != l_vocabulary.end())
+        {
+            if (l_inc == thread_nbr) break;
+            lc++;
+            it++;
+            if (lc % l_size_chunk == 0) l_inc++;
+        }
     }
+    cerr <<"Thread "<< thread_nbr << " lc "<<  lc << " inc "<<  l_inc << endl;
+    lc=0;
+    while (it != l_vocabulary.end() && lc < l_size_chunk)
+    {
+        if (direction == 1)
+        {
+            vec v = src_model.wordVec(it->second.index, policy);
+            vector<pair<string, float>> res=trg_model.closest(v, n, policy);
+            ret.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
+        }
+        else
+        {
+            vec v = trg_model.wordVec(it->second.index, policy);
+            vector<pair<string, float>> res=src_model.closest(v, n, policy);
+            ret.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
+        }
+        lc++;
+        it++;
+        if (lc % 10 == 0) { cerr << '.'; }
+        if (lc % 1000 == 0) { cerr << " [" << lc << "]\n" << flush; }
+    }
+    // ret=
+    // while (it_chunk != v.end())
+    // for (inc_chunk=0; inc_chunk<(int)v.size(); inc_chunk++)
+    // {
+        // auto it_chunk=v.at(inc_chunk);
+        // vec l_v=it_chunk.second;
+        // vector<pair<string, float>> res = closest(l_v, n, policy);
+        // pair<string,vector<pair<string, float>>> p_ret(it_chunk.first, res);
+        // ret.push_back(p_ret);
+        // cerr <<"Thread "<< thread_nbr << "\t"<< lc <<endl;
+        // // cerr << it_chunk->first << endl;
+        // // it_chunk++;
+        // lc++;
+        // if (lc % 10 == 0) { cerr << '.';  }
+        // if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
+    // }
 }
 
 
@@ -502,45 +553,91 @@ void MonolingualModel::closest_chunk(const vector<pair<string,vec>>& v, int n, i
 vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_src_closest(int n, int policy) const {
     // TODO : this should be multithreaded !!!!
     int l_threads = config->threads;
-    vector<vector<pair<string,vec>>> to_process = chunk_vectors(trg_model.vocabulary,l_threads);
-    cerr << "Size " << (int)to_process.size() << " chunks of "<< (int)to_process.at(0).size()<< " words"<< endl;
+    // vector<vector<pair<string,vec>>> to_process = chunk_vectors(trg_model.vocabulary,l_threads);
+    // cerr << "Size " << (int)to_process.size() << " chunks of "<< (int)to_process.at(0).size()<< " words"<< endl;
     vector<pair<string, float>> res;
     vector<pair<string, vector<pair<string, float>>>> to_return;
     vector<vector<pair<string, vector<pair<string, float>>>>> tab_res(l_threads);
-    if (l_threads == 1)
-    {
-        auto it = trg_model.vocabulary.begin();
-        int lc=0;
-        int l_curr_thread=0;
-        while  (it != trg_model.vocabulary.end()) {
-    //                cerr << it->first << endl;
-            vec v = trg_model.wordVec(it->second.index, policy);
-            res=src_model.closest(v, n, policy);        
-            to_return.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
-            it++;
-            lc++;
-            if (lc % 10 == 0) { cerr << '.';  }
-            if (lc % 100 == 0) { cerr << " [" << lc << "]\n" << flush; }
-        }
+    vector<thread> threads;
+    // cerr << "processing threads" <<endl;
+    for (int i = 0; i < l_threads; ++i) {
+        threads.push_back(thread(&BilingualModel::closest_chunk, this, 
+                                  n, policy,  std::ref(tab_res.at(i)), i, l_threads, 0));
     }
-    else
-    {
-        vector<thread> threads;
-        for (int i = 0; i < config->threads; ++i) {
-            threads.push_back(thread(&MonolingualModel::closest_chunk, this->trg_model, 
-                                      std::ref(to_process.at(i)), n, policy,  std::ref(tab_res.at(i))));
-        }
 
-        for (auto it = threads.begin(); it != threads.end(); ++it) {
-            it->join();
-        }   
-        
-        auto res_it=tab_res.begin();
-        while (res_it != tab_res.end())
-        {
-            to_return.insert(to_return.end(),(*res_it).begin(),(*res_it).end());
-        }
+    for (auto it = threads.begin(); it != threads.end(); ++it) {
+        it->join();
+    }   
+    
+    auto res_it=tab_res.begin();
+    // cerr << "Debut concat" << endl;
+    while (res_it != tab_res.end())
+    {
+        to_return.insert(to_return.end(),(*res_it).begin(),(*res_it).end());
+        res_it++;
     }
+    // cerr << "Fin concat" << endl;
+    return to_return;
+}
+
+vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_trg_closest(int n, int policy) const {
+    // TODO : this should be multithreaded !!!!
+    int l_threads = config->threads;
+    // vector<vector<pair<string,vec>>> to_process = chunk_vectors(src_model.vocabulary,l_threads);
+    // cerr << "Size " << (int)to_process.size() << " chunks of "<< (int)to_process.at(0).size()<< " words"<< endl;
+    vector<pair<string, float>> res;
+    vector<pair<string, vector<pair<string, float>>>> to_return;
+    vector<vector<pair<string, vector<pair<string, float>>>>> tab_res(l_threads);
+    vector<thread> threads;
+    // cerr << "processing threads" <<endl;
+    for (int i = 0; i < l_threads; ++i) {
+        threads.push_back(thread(&BilingualModel::closest_chunk, this, 
+                                  n, policy,  std::ref(tab_res.at(i)), i, l_threads, 1));
+    }
+
+    for (auto it = threads.begin(); it != threads.end(); ++it) {
+        it->join();
+    }   
+    
+    auto res_it=tab_res.begin();
+    // cerr << "Debut concat" << endl;
+    while (res_it != tab_res.end())
+    {
+        to_return.insert(to_return.end(),(*res_it).begin(),(*res_it).end());
+        res_it++;
+    }
+    // cerr << "Fin concat" << endl;
+    return to_return;
+}
+
+// n closest words to all words of the vocabulary; direction: 0 from the source, 1 from the target vocabulary
+vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_closest(int n, int policy, int direction) const {
+    // TODO : this should be multithreaded !!!!
+    int l_threads = config->threads;
+    // vector<vector<pair<string,vec>>> to_process = chunk_vectors(trg_model.vocabulary,l_threads);
+    // cerr << "Size " << (int)to_process.size() << " chunks of "<< (int)to_process.at(0).size()<< " words"<< endl;
+    vector<pair<string, float>> res;
+    vector<pair<string, vector<pair<string, float>>>> to_return;
+    vector<vector<pair<string, vector<pair<string, float>>>>> tab_res(l_threads);
+    vector<thread> threads;
+    // cerr << "processing threads" <<endl;
+    for (int i = 0; i < l_threads; ++i) {
+        threads.push_back(thread(&BilingualModel::closest_chunk, this, 
+                                  n, policy,  std::ref(tab_res.at(i)), i, l_threads, direction));
+    }
+
+    for (auto it = threads.begin(); it != threads.end(); ++it) {
+        it->join();
+    }   
+    
+    auto res_it=tab_res.begin();
+    // cerr << "Debut concat" << endl;
+    while (res_it != tab_res.end())
+    {
+        to_return.insert(to_return.end(),(*res_it).begin(),(*res_it).end());
+        res_it++;
+    }
+    // cerr << "Fin concat" << endl;
     return to_return;
 }
 
@@ -548,7 +645,8 @@ void BilingualModel::save_srcpt(int n, string file) const {
     stringstream ssoutput;
     ofstream outputfile;
     std::cerr << "Saving Prob table src->trg" <<endl;
-    auto list_src = list_trg_closest(n,0);
+    // auto list_src = list_trg_closest(n,0);
+    auto list_src = list_closest(n,0,1);
     outputfile.open(file);
     auto it_src=list_src.begin();
     while (it_src!=list_src.end()) {
@@ -570,7 +668,8 @@ void BilingualModel::save_trgpt(int n, string file) const  {
     stringstream ssoutput;
     ofstream outputfile;
     std::cerr << "Saving Prob table trg->src" <<endl;
-    auto list_trg = list_src_closest(n,0);
+    // auto list_trg = list_src_closest(n,0);
+    auto list_trg = list_closest(n,0,0);
     outputfile.open(file);
     auto it_trg=list_trg.begin();
     while (it_trg!=list_trg.end()) {
