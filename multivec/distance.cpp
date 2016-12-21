@@ -492,13 +492,33 @@ void BilingualModel::closest_chunk(int n, int policy, vector<pair<string,vector<
         if (direction == 1)
         {
             vec v = src_model.wordVec(it->second.index, policy);
-            vector<pair<string, float>> res=trg_model.closest(v, n, policy);
+            vector<pair<string, float>> res=trg_model.closest(v, n+100, policy);
+            auto l_it=res.begin();
+            while (l_it!=res.end())
+            {
+                vec v2=trg_model.wordVec((trg_model.vocabulary.find(l_it->first))->second.index, policy);
+                float sim=cosineSimilarity(v,v2);
+                l_it->second=(l_it->second+sim)/2;
+                l_it++;
+            }
+            std::partial_sort(res.begin(), res.begin() + n, res.end(), comp);
+            if (res.size() > n) res.resize(n);
             ret.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
         }
         else
         {
             vec v = trg_model.wordVec(it->second.index, policy);
-            vector<pair<string, float>> res=src_model.closest(v, n, policy);
+            vector<pair<string, float>> res=src_model.closest(v, n+100, policy);
+            auto l_it=res.begin();
+            while (l_it!=res.end())
+            {
+                vec v2=src_model.wordVec((src_model.vocabulary.find(l_it->first))->second.index, policy);
+                float sim=cosineSimilarity(v,v2);
+                l_it->second=(l_it->second+sim)/2;
+                l_it++;
+            }
+            std::partial_sort(res.begin(), res.begin() + n, res.end(), comp);
+            if (res.size() > n) res.resize(n);
             ret.push_back(pair<string, vector<pair<string, float>>>(it->first,res));
         }
         lc++;
@@ -612,15 +632,11 @@ vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_trg_close
 
 // n closest words to all words of the vocabulary; direction: 0 from the source, 1 from the target vocabulary
 vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_closest(int n, int policy, int direction) const {
-    // TODO : this should be multithreaded !!!!
     int l_threads = config->threads;
-    // vector<vector<pair<string,vec>>> to_process = chunk_vectors(trg_model.vocabulary,l_threads);
-    // cerr << "Size " << (int)to_process.size() << " chunks of "<< (int)to_process.at(0).size()<< " words"<< endl;
     vector<pair<string, float>> res;
     vector<pair<string, vector<pair<string, float>>>> to_return;
     vector<vector<pair<string, vector<pair<string, float>>>>> tab_res(l_threads);
     vector<thread> threads;
-    // cerr << "processing threads" <<endl;
     for (int i = 0; i < l_threads; ++i) {
         threads.push_back(thread(&BilingualModel::closest_chunk, this, 
                                   n, policy,  std::ref(tab_res.at(i)), i, l_threads, direction));
@@ -631,13 +647,11 @@ vector<pair<string, vector<pair<string, float>>>> BilingualModel::list_closest(i
     }   
     
     auto res_it=tab_res.begin();
-    // cerr << "Debut concat" << endl;
     while (res_it != tab_res.end())
     {
         to_return.insert(to_return.end(),(*res_it).begin(),(*res_it).end());
         res_it++;
     }
-    // cerr << "Fin concat" << endl;
     return to_return;
 }
 

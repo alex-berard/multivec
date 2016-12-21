@@ -31,7 +31,7 @@ static vector<option_plus> options_plus = {
     {"save-trg",      required_argument, 0, 'r', "save target model"},
     {"save-probtable-src",      required_argument, 0, 's', "save the source probtable"},
     {"save-probtable-trg",      required_argument, 0, 't', "save the target probtable"},
-    {"probtable-nbest-size",      required_argument, 0, 'u', "n-best size of the probtable (src and/or trg)"},
+    {"probtable-nbest-size",      required_argument, 0, 'u', "n-best size of the probtable (src and/or trg and/or bi)"},
     {0, 0, 0, 0, 0}
 };
 
@@ -147,6 +147,5 @@ int main(int argc, char **argv) {
     if(!save_trgpt_file.empty()) {
         model.save_trgpt(size_pt,save_trgpt_file);
     }
-
     return 0;
 }
