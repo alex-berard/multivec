@@ -4,4 +4,4 @@
 filename=`mktemp`
 echo "Output file: $filename"
 bin/word2vec --save-vectors $filename $@
-bin/compute-accuracy $filename word2vec/questions-words.txt | tail -n5
+bin/compute-accuracy $filename word2vec/questions-words.txt | tail -n4

@@ -185,8 +185,9 @@ void computeAccuracy(istream& infile, map<string, vec>& embeddings, bool verbose
     cout << "Total accuracy:     " << setprecision(3) << 100.0 * correct / total << "% (" << correct << "/" << total << ")" << endl;
     cout << "Syntactic accuracy: " << setprecision(3) << gram_acc << "% (" << gram_correct << "/" << gram_total << ")" << endl;
     cout << "Semantic accuracy:  " << setprecision(3) << sem_acc << "% (" << sem_correct << "/" << sem_total << ")" << endl;
-    cout << "Balanced score: " << setprecision(3) << score << "% (Syntactic: " << gram_score << "%, Semantic: " << sem_score << "%)" << endl;
-    cout << "Questions seen: " << total << "/" << questions << ", " << setprecision(3) << 100.0 * total / questions << "%" << endl;
+    cout << "Balanced score:     " << setprecision(3) << score << "% (Syntactic: " << gram_score << "%, Semantic: " << sem_score << "%)" << endl;
+    if (verbose)
+        cout << "Questions seen:     " << total << "/" << questions << ", " << setprecision(3) << 100.0 * total / questions << "%" << endl;
 }
 
 map<string, vec> read_embeddings(istream& model_file, int voc_size) {
@@ -230,7 +231,7 @@ map<string, vec> read_embeddings(istream& model_file, int voc_size) {
 }
 
 int main(int argc, char **argv) {
-    bool cos_mul = false, cased = false, error = false;
+    bool cos_mul = false, cased = false, error = false, verbose = false;
     int voc_size = 0;
     
     for (int i = 3; i < argc; i++) {
@@ -241,6 +242,8 @@ int main(int argc, char **argv) {
         } else if (string(argv[i]) == string("--voc-size") and argc > i + 1) {
             voc_size = atoi(argv[i + 1]);
             i++;
+        } else if (string(argv[i]) == string("-v")) {
+            verbose = true;
         } else {
             error = true;
         }
@@ -256,6 +259,6 @@ int main(int argc, char **argv) {
     model_file.close();
     
     ifstream question_file(argv[2]);
-    computeAccuracy(question_file, embeddings, voc_size, cos_mul, cased);
+    computeAccuracy(question_file, embeddings, verbose, cos_mul, cased);
     question_file.close();
 }
