@@ -4,7 +4,7 @@ import sys
 import numpy as np
 
 if __name__ == '__main__':
-    vectors_filename, corpus = sys.argv[1:]
+    vectors_filename, file:///home/aberard/Documents/multivec/scripts/model-intersection.py = sys.argv[1:]
     vectors = dict()
 
     with open(vectors_filename) as f:

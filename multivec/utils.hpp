@@ -13,6 +13,8 @@
 #include <iomanip> // setprecision, setw, left
 #include <chrono>
 #include <iterator>
+#include <random>
+#include <climits>
 #include "vec.hpp"
 
 using namespace std;
@@ -20,12 +22,23 @@ using namespace std::chrono;
 
 const float MAX_EXP = 6;
 const int UNIGRAM_TABLE_SIZE = 1e8; // size of the frequency table
+const int EXP_TABLE_SIZE = 1000;
 
 typedef Vec vec;
 typedef vector<vec> mat;
 
+#ifdef EXP_TABLE
+struct Foo {
+    static const vector<float> exp_table;
+};
+#endif
+
 inline float sigmoid(float x) {
+#ifdef EXP_TABLE
+    return Foo::exp_table[(int)((x + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))];
+#else
     return 1 / (1 + exp(-x));
+#endif
 }
 
 inline float cosineSimilarity(const vec &v1, const vec &v2) {
@@ -74,14 +87,31 @@ namespace multivec {
      *
      * @return next random number
      */
-    inline unsigned long long rand() {
-        static unsigned long long next_random(time(NULL)); // in C++11 the thread_local keyword would solve the thread safety problem.
+    inline unsigned long long rand(unsigned long long max) {
+    #if STD_RAND
+        return std::rand() % max;
+    #elif CUSTOM_RAND
+        thread_local unsigned long long next_random(time(NULL));
         next_random = next_random * static_cast<unsigned long long>(25214903917) + 11; // unsafe, but we don't care
-        return next_random >> 16; // with this generator, the most significant bits are bits 47...16
+        return (next_random >> 16) % max; // with this generator, the most significant bits are bits 47...16
+    #else
+        thread_local std::mt19937 gen(std::random_device{}());
+        std::uniform_int_distribution<unsigned long long> dis(0, max - 1);
+        return dis(gen);
+    #endif
     }
 
     inline float randf() {
-        return  (multivec::rand() & 0xFFFF) / 65536.0f;
+    #if STD_RAND
+        return std::rand() / (static_cast<float>(RAND_MAX) + 1.0);
+    #elif CUSTOM_RAND
+        return (multivec::rand(ULLONG_MAX) & 0xFFFF) / 65536.0f;
+    #else
+        thread_local std::random_device rd;
+        thread_local std::mt19937 gen(rd());
+        std::uniform_real_distribution<float> dis(0, 1.0);
+        return dis(gen);
+    #endif
     }
 }
 
@@ -141,6 +171,7 @@ struct Config {
     bool skip_gram; // set to true to use skip-gram model instead of CBOW
     int negative; // number of negative samples used for the negative sampling training algorithm
     bool sent_vector; // includes sentence vectors in the training
+    bool no_average; // no context averaging in CBOW
 
     Config() :
         learning_rate(0.05),
@@ -154,7 +185,8 @@ struct Config {
         hierarchical_softmax(false),
         skip_gram(false),
         negative(5),
-        sent_vector(false)
+        sent_vector(false),
+        no_average(false)
         {}
 
     virtual void print() const {
@@ -170,6 +202,7 @@ struct Config {
         std::cout << "HS:          " << hierarchical_softmax << std::endl;
         std::cout << "negative:    " << negative << std::endl;
         std::cout << "sent vector: " << sent_vector << std::endl;
+        std::cout << "no average:  " << no_average << std::endl;
     }
 };
 
@@ -181,4 +214,3 @@ struct BilingualConfig : Config {
         std::cout << "beta:        " << beta << std::endl;
     }
 };
-

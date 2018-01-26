@@ -16,6 +16,7 @@ if __name__ == '__main__':
     parser.add_argument('filename', help='input file')
     parser.add_argument('output', help='output file')
     parser.add_argument('convert_to', choices=['bin', 'txt'])
+    parser.add_argument('--no-eol', action='store_true')
     
     args = parser.parse_args()
     
@@ -28,7 +29,8 @@ if __name__ == '__main__':
             for _ in range(vocab_size):
                 w = ''.join(takewhile(lambda x: x != ' ', (reader.read(1) for _ in count())))
                 s = reader.read(4 * dimension)
-                reader.read(1)  # end of line character
+                if not args.no_eol:
+                    reader.read(1)
                 arr = np.fromstring(s, dtype=np.float32)
                 embeddings.append((w, arr))
             assert not reader.peek(1)

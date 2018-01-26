@@ -31,6 +31,8 @@ static vector<option_plus> options_plus = {
     {"save-sent-vectors", required_argument, 0, 'r', "save sentence vectors"},
     {"save-vectors-bin",  required_argument, 0, 's', "save word vectors in binary format"},
     {"train-online",      required_argument, 0, 't', "use existing model to train online sentence vectors"},
+    {"no-average",        no_argument,       0, 'u', "no context averaging in CBOW"},
+    {"norm",              no_argument,       0, 'w', "normalize the vectors before saving them"},
     {0, 0, 0, 0, 0}
 };
 
@@ -75,6 +77,7 @@ int main(int argc, char **argv) {
     }
 
     int saving_policy = 0;
+    bool norm = false;
     string train_file;
     string save_file;
     string save_vectors;
@@ -83,6 +86,7 @@ int main(int argc, char **argv) {
     string online_train_file;
 
     optind = 0;  // necessary to parse arguments twice
+    opterr = 0;  // don't print errors twice
     while (1) {
         int option_index = 0;
         int opt = getopt_long(argc, argv, "hv", options.data(), &option_index);
@@ -111,6 +115,8 @@ int main(int argc, char **argv) {
             case 'r': save_sent_vectors = string(optarg);   break;
             case 's': save_vectors_bin = string(optarg);    break;
             case 't': online_train_file = string(optarg);   break;
+            case 'u': config.no_average = true;             break;
+            case 'w': norm = true;                          break;
             default:                                        abort();
         }
     }
@@ -137,13 +143,13 @@ int main(int argc, char **argv) {
         model.save(save_file);
     }
     if (!save_vectors.empty()) {
-        model.saveVectors(save_vectors, saving_policy);
+        model.saveVectors(save_vectors, saving_policy, norm);
     }
     if (!save_vectors_bin.empty()) {
-        model.saveVectorsBin(save_vectors_bin, saving_policy);
+        model.saveVectorsBin(save_vectors_bin, saving_policy, norm);
     }
     if (!save_sent_vectors.empty() && config.sent_vector) {
-        model.saveSentVectors(save_sent_vectors);
+        model.saveSentVectors(save_sent_vectors, norm);
     }
 
     return 0;

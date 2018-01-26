@@ -1,5 +1,7 @@
 #pragma once
 #include "utils.hpp"
+#include <mutex>
+#include <atomic>
 
 class MonolingualModel
 {
@@ -8,6 +10,11 @@ class MonolingualModel
     friend void load(ifstream& infile, MonolingualModel& model);
 
 private:
+    std::mutex input_weights_mutex;
+    std::mutex output_weights_mutex;
+    std::mutex output_weights_hs_mutex;
+    std::mutex sent_weights_mutex;
+    
     Config* const config;
 
     mat input_weights;
@@ -21,9 +28,13 @@ private:
     long long training_words; // total number of words in training file (used for progress estimation)
     long long training_lines;
     // training state
+#ifdef SYNC_SGD
+    std::atomic<long long> words_processed;
+    std::atomic<float> alpha;
+#else
     long long words_processed;
     float alpha;
-
+#endif
     unordered_map<string, HuffmanNode> vocabulary;
     vector<HuffmanNode*> unigram_table;
 
@@ -36,6 +47,7 @@ private:
     HuffmanNode* getRandomHuffmanNode(); // uses the unigram frequency table to sample a random node
 
     vector<HuffmanNode> getNodes(const string& sentence) const;
+    vector<HuffmanNode> getSortedVocab() const;
     void subsample(vector<HuffmanNode>& node) const;
 
     void readVocab(const string& training_file);
@@ -64,9 +76,9 @@ public:
 
     void train(const string& training_file, bool initialize = true); // training from scratch (resets vocabulary and weights)
 
-    void saveVectorsBin(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec binary format
-    void saveVectors(const string &filename, int policy = 0) const; // saves word embeddings in the word2vec text format
-    void saveSentVectors(const string &filename) const;
+    void saveVectorsBin(const string &filename, int policy = 0, bool norm = false) const; // saves word embeddings in the word2vec binary format
+    void saveVectors(const string &filename, int policy = 0, bool norm = false) const; // saves word embeddings in the word2vec text format
+    void saveSentVectors(const string &filename, bool norm = false) const;
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model
 

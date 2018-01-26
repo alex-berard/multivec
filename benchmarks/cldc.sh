@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-corpus=data/europarl/europarl.cldc
+corpus=data/europarl.cldc
 output_dir=benchmarks/CLDC/output
 threads=16
 
@@ -9,8 +9,6 @@ if [ $# -lt 1 ]
 fi
 
 rcv_dir=$1
-
-./benchmarks/download-europarl.sh
 
 mkdir -p $output_dir
 
@@ -28,7 +26,7 @@ do
 ./benchmarks/CLDC/evaluate-model.sh $output_dir/model.128.en-de.bin $rcv_dir >> $output_dir/model.128.en-de.out
 done
 
-./benchmarks/parse-output.py < $output_dir/model.40.en-de.out > $output_dir/model.40.en-de.out
-./benchmarks/parse-output.py < $output_dir/model.128.en-de.out > $output_dir/model.128.en-de.out
+#./benchmarks/parse-output.py < $output_dir/model.40.en-de.out > $output_dir/model.40.en-de.out
+#./benchmarks/parse-output.py < $output_dir/model.128.en-de.out > $output_dir/model.128.en-de.out
 
 # TODO: call bivec

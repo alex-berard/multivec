@@ -443,12 +443,12 @@ void *TrainModelThread(void *id) {
           if (c >= sentence_length) continue;
           last_word = sen[c];
           if (last_word == -1) continue;
-          for (c = 0; c < layer1_size; c++) syn0[c + last_word * layer1_size] += neu1e[c];
+          for (c = 0; c < layer1_size; c++) syn0[c + last_word * layer1_size] += neu1e[c] / cw;
         }
         if (sentence_vectors) {
           last_word = sen[0];
           if (last_word == -1) continue;
-          for (c = 0; c < layer1_size; c++) syn0[c + last_word * layer1_size] += neu1e[c];
+          for (c = 0; c < layer1_size; c++) syn0[c + last_word * layer1_size] += neu1e[c] / cw;
         }
       }
     } else {  //train skip-gram

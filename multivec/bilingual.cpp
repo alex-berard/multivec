@@ -55,14 +55,10 @@ void BilingualModel::trainChunk(const string& src_file,
     ifstream src_infile(src_file);
     ifstream trg_infile(trg_file);
 
-    try {
-        check_is_open(src_infile, src_file);
-        check_is_open(trg_infile, trg_file);
-        check_is_non_empty(src_infile, src_file);
-        check_is_non_empty(trg_infile, trg_file);
-    } catch (...) {
-        throw;
-    }
+    check_is_open(src_infile, src_file);
+    check_is_open(trg_infile, trg_file);
+    check_is_non_empty(src_infile, src_file);
+    check_is_non_empty(trg_infile, trg_file);
     
     float starting_alpha = config->learning_rate;
     int max_iterations = config->iterations;
@@ -205,7 +201,7 @@ void BilingualModel::trainWordCBOW(MonolingualModel& src_model, MonolingualModel
     vec hidden(dimension, 0);
     HuffmanNode cur_node = src_nodes[src_pos];
 
-    int this_window_size = 1 + multivec::rand() % config->window_size;
+    int this_window_size = 1 + multivec::rand(config->window_size);
     int count = 0;
 
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
@@ -237,7 +233,7 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
                                        int src_pos, int trg_pos, float alpha) {
     HuffmanNode input_word = src_nodes[src_pos];
 
-    int this_window_size = 1 + multivec::rand() % config->window_size;
+    int this_window_size = 1 + multivec::rand(config->window_size);
 
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= trg_nodes.size() || pos == trg_pos) continue;
@@ -260,12 +256,7 @@ void BilingualModel::load(const string& filename) {
         std::cout << "Loading model" << std::endl;
 
     ifstream infile(filename);
-
-    try {
-        check_is_open(infile, filename);
-    } catch (...) {
-        throw;
-    }
+    check_is_open(infile, filename);
 
     ::load(infile, *this);
     src_model.initUnigramTable();
@@ -277,12 +268,7 @@ void BilingualModel::save(const string& filename) const {
         std::cout << "Saving model" << std::endl;
 
     ofstream outfile(filename);
-
-    try {
-        check_is_open(outfile, filename);
-    } catch (...) {
-        throw;
-    }
+    check_is_open(outfile, filename);
 
     ::save(outfile, *this);
 }

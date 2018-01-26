@@ -25,6 +25,125 @@
  * TODO: integrate with BLAS
  */
 
+#ifdef VANILLA_VEC
+
+class Vec {
+    typedef std::vector<float> container_type;
+    typedef typename container_type::size_type size_type;
+    typedef typename container_type::value_type value_type;
+    typedef typename container_type::reference reference;
+    container_type _data;
+public:
+    reference operator[](size_type i) { return _data[i]; }
+    value_type operator[](size_type i) const { return _data[i]; }
+    size_type size() const { return _data.size(); }
+
+    Vec() {}
+    Vec(size_type n) : _data(n) {}
+    Vec(size_type n, float val) : _data(n, val) {}
+    Vec(Vec::container_type v) : _data(v) {}
+
+    friend std::ostream& operator<<(std::ostream &o, Vec const& self) {
+        std::ostringstream ss;
+        if (!self._data.empty()) {
+            std::copy(self._data.begin(), self._data.end() - 1, std::ostream_iterator<int>(ss, ","));
+            ss << self._data.back();
+        }
+        return o << "[" << ss.str() << "]";
+    }
+    
+    Vec(Vec const& v) {
+        _data.resize(v.size());
+        for (size_type i = 0; i != v.size(); ++i) {
+            _data[i] = v[i];
+        }
+    }
+
+    void operator=(Vec const& v) {
+        _data.resize(v.size());
+        for (size_type i = 0; i != v.size(); ++i) {
+            _data[i] = v[i];
+        }
+    }
+
+    float dot(Vec const& v) const {
+        float x = 0;
+        for (size_type i = 0; i != v.size(); ++i) {
+            x += _data[i] * v[i];
+        }
+        return x;
+    }
+
+    Vec operator+(Vec const& right) const {
+        Vec v = *this;
+        for (size_type i = 0; i != v.size(); ++i) {
+            v[i] += right[i];
+        }
+        return v;
+    }
+    
+    Vec operator-(Vec const& right) const {
+        Vec v = *this;
+        for (size_type i = 0; i != v.size(); ++i) {
+            v[i] -= right[i];
+        }
+        return v;
+    }
+    
+    Vec operator*(float right) const {
+        Vec v(*this);
+        for (int i = 0; i != v.size(); ++i) {
+            v[i] *= right;
+        }
+        return v;
+    }
+    
+    void operator+=(Vec const& right) {
+        for (size_type i = 0; i != size(); ++i) {
+            _data[i] += right[i];
+        }
+    }
+
+    void operator-=(Vec const& right) {
+        for (size_type i = 0; i != size(); ++i) {
+            _data[i] -= right[i];
+        }
+    }
+
+    void operator*=(float right) {
+        for (size_type i = 0; i != size(); ++i) {
+            _data[i] *= right;
+        }
+    }
+
+    void operator/=(float right) {
+        for (size_type i = 0; i != size(); ++i) {
+            _data[i] /= right;
+        }
+    }
+    
+    float norm() const {
+        float res = 0;
+        for (size_type i = 0; i != size(); ++i) {
+            res += pow(_data[i], 2);
+        }
+        return sqrt(res);
+    }
+    
+    const value_type* data() const { return _data.data(); }
+    value_type* data() { return _data.data(); }
+};
+
+inline Vec operator*(float left, const Vec& right) {
+    return right * left;
+}
+
+inline Vec operator/(const Vec& left, float right) {
+    return left * (1 / right);
+}
+
+#else
+
 template <typename E>
 class VecExpression {
 public:
@@ -203,3 +322,5 @@ VecScaled<E> const
 operator/(VecExpression<E> const& v, float alpha) {
     return VecScaled<E>(1 / alpha, v);
 }
+
+#endif
