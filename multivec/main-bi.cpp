@@ -29,6 +29,8 @@ static vector<option_plus> options_plus = {
     {"save",          required_argument, 0, 'p', "save model"},
     {"save-src",      required_argument, 0, 'q', "save source model"},
     {"save-trg",      required_argument, 0, 'r', "save target model"},
+    {"load-src",      required_argument, 0, 's', "load source model"},
+    {"load-trg",      required_argument, 0, 't', "load target model"},
     {0, 0, 0, 0, 0}
 };
 
@@ -132,5 +134,12 @@ int main(int argc, char **argv) {
         model.trg_model.save(save_trg_file);
     }
 
+    /*
+    for (int i = 0; i < 10; i++) {
+        std::cout << "Building dict" << std::endl;
+        vector<pair<string, string>> dict = model.dictionaryInduction(10000, 10000, 0);
+        model.learnMapping(dict);
+    }
+    */
     return 0;
 }

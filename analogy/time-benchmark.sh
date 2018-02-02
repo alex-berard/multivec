@@ -11,7 +11,7 @@ dim=100
 sg=
 cos_mul=
 
-runs=3
+runs=10
 
 for bin in bin/word2vec bin/multivec-mono-v{0,1,2,3,4,5,6}
 do

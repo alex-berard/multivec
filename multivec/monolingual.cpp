@@ -622,6 +622,9 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
     int count = 0;
 
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
+#ifdef SYNC_SGD
+        std::lock_guard<std::mutex> guard(input_weights_mutex);
+#endif
         if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
         hidden += input_weights[nodes[pos].index];
         ++count;
@@ -650,19 +653,14 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
     
     // update input weights
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
-        if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
-        {
 #ifdef SYNC_SGD
-            std::lock_guard<std::mutex> guard(input_weights_mutex);
+        std::lock_guard<std::mutex> guard(input_weights_mutex);
 #endif
-            input_weights[nodes[pos].index] += error / count;
-        }
+        if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
+        input_weights[nodes[pos].index] += error / count;
     }
 
     if (config->sent_vector) {
-#ifdef SYNC_SGD
-        std::lock_guard<std::mutex> guard(sent_weights_mutex);
-#endif
         sent_weights[sent_id] += error / count;
     }
 }
@@ -687,9 +685,6 @@ void MonolingualModel::trainWordSkipGram(const vector<HuffmanNode>& nodes, int w
             error += negSamplingUpdate(output_word, input_weights[input_word.index], alpha);
         }
 
-#ifdef SYNC_SGD
-        std::lock_guard<std::mutex> guard(input_weights_mutex);
-#endif
         input_weights[input_word.index] += error;
     }
 }
@@ -711,7 +706,13 @@ vec MonolingualModel::negSamplingUpdate(const HuffmanNode& node, const vec& hidd
             label = 0;
         }
 
-        float x = hidden.dot(output_weights[target->index]);
+        float x;
+        {
+#ifdef SYNC_SGD
+        std::lock_guard<std::mutex> guard(output_weights_mutex);
+#endif
+        x = hidden.dot(output_weights[target->index]);
+        }
 
         float pred;
         if (x >= MAX_EXP) {
@@ -723,7 +724,12 @@ vec MonolingualModel::negSamplingUpdate(const HuffmanNode& node, const vec& hidd
         }
         float error = alpha * (label - pred);
 
+        {
+#ifdef SYNC_SGD
+        std::lock_guard<std::mutex> guard(output_weights_mutex);
+#endif
         temp += error * output_weights[target->index];
+        }
 
         if (update) {
 #ifdef SYNC_SGD
@@ -755,9 +761,6 @@ vec MonolingualModel::hierarchicalUpdate(const HuffmanNode& node, const vec& hid
         temp += error * output_weights_hs[parent_index];
 
         if (update) {
-#ifdef SYNC_SGD
-            std::lock_guard<std::mutex> guard(output_weights_hs_mutex);
-#endif
             output_weights_hs[parent_index] += error * hidden;
         }
     }

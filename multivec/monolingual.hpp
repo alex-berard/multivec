@@ -10,10 +10,10 @@ class MonolingualModel
     friend void load(ifstream& infile, MonolingualModel& model);
 
 private:
+#ifdef SYNC_SGD
     std::mutex input_weights_mutex;
     std::mutex output_weights_mutex;
-    std::mutex output_weights_hs_mutex;
-    std::mutex sent_weights_mutex;
+#endif
     
     Config* const config;
 

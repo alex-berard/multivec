@@ -446,3 +446,166 @@ float BilingualModel::similaritySentenceSyntax(const string& src_seq, const stri
         return src_vec.dot(trg_vec) / length;
     }
 }
+
+vector<pair<string, string>> BilingualModel::dictionaryInduction(int src_count, int trg_count, int policy) const {
+    vector<string> src_vocab;
+    vector<string> trg_vocab;
+    
+    auto vocab = src_model.getSortedVocab();
+    for (auto it = vocab.begin(); it != vocab.end() and (src_count == 0 or src_vocab.size() < src_count); ++it) {
+        src_vocab.push_back(it->word);
+    }
+    
+    vocab = trg_model.getSortedVocab();
+    for (auto it = vocab.begin(); it != vocab.end() and (trg_count == 0 or trg_vocab.size() < trg_count); ++it) {
+        trg_vocab.push_back(it->word);
+    }
+    
+    return dictionaryInduction(src_vocab, trg_vocab, policy);
+}
+
+void dictionaryInduction(const vector<pair<string, vec>>& src_words,
+                         const vector<pair<string, vec>>& trg_words,
+                         vector<pair<string, string>>& dictionary) {
+    for (auto it = src_words.begin(); it != src_words.end(); ++it) {
+        auto src_vec = it->second;
+        
+        float similarity = 0;
+        auto trg_index = trg_words.end();
+        
+        for (auto trg_it = trg_words.begin(); trg_it != trg_words.end(); ++trg_it) {
+            float sim = src_vec.dot(trg_it->second);
+            if (trg_index == trg_words.end() or sim > similarity) {
+                trg_index = trg_it;
+                similarity = sim;
+            }
+        }
+        
+        if (trg_index != trg_words.end()) {
+            dictionary.push_back({it->first, trg_index->first});
+        }
+    }
+}
+
+vector<pair<string, string>> BilingualModel::dictionaryInduction(const vector<string>& src_vocab,
+                                                                 const vector<string>& trg_vocab,
+                                                                 int policy) const {
+    vector<pair<string, string>> dictionary;
+    vector<pair<string, vec>> src_words;
+    vector<pair<string, vec>> trg_words;
+    
+    for (auto it = src_vocab.begin(); it != src_vocab.end(); ++it) {
+        auto node = src_model.vocabulary.find(*it);
+        if (node != src_model.vocabulary.end()) {
+            auto vec = src_model.wordVec(node->second.index, policy);
+            src_words.push_back({node->second.word, vec / vec.norm()});
+        }
+    }
+    
+    for (auto it = trg_vocab.begin(); it != trg_vocab.end(); ++it) {
+        auto node = trg_model.vocabulary.find(*it);
+        if (node != trg_model.vocabulary.end()) {
+            auto vec = trg_model.wordVec(node->second.index, policy);
+            trg_words.push_back({node->second.word, vec / vec.norm()});
+        }
+    }
+    
+    if (config->threads == 1) {
+        ::dictionaryInduction(src_words, trg_words, dictionary);
+    } else {
+        vector<thread> threads;
+        vector<vector<pair<string, string>>> dictionaries(config->threads);
+        vector<vector<pair<string, vec>>> splits(config->threads);
+
+        for (int i = 0; i < config->threads; ++i) {
+            int size = src_words.size() / config->threads;
+            
+            auto begin = src_words.begin() + i * size;
+            auto end = begin + size;
+            if (i == config->threads - 1) {
+                end = src_words.end();
+            }
+            
+            splits[i] = vector<pair<string, vec>>(begin, end);
+            threads.push_back(thread(::dictionaryInduction, std::ref(splits[i]), std::ref(trg_words),
+                                     std::ref(dictionaries[i])));
+        }
+
+        for (int i = 0; i < config->threads; ++i) {
+            threads[i].join();
+            dictionary.insert(dictionary.end(), dictionaries[i].begin(), dictionaries[i].end());
+        }
+    }
+    
+    return dictionary;
+}
+
+void BilingualModel::learnMapping(const vector<pair<string, string>>& dict) {
+    mapping = mat(trg_model.getDimension(), src_model.getDimension());
+    
+    vector<pair<int, int>> dict_indices;
+    for (auto it = dict.begin(); it != dict.end(); ++it) {
+        auto src_node = src_model.vocabulary.find(it->first);
+        auto trg_node = trg_model.vocabulary.find(it->second);
+        
+        if (src_node != src_model.vocabulary.end() and trg_node != trg_model.vocabulary.end()) {
+            dict_indices.push_back({src_node->second.index, trg_node->second.index});
+        }
+    }
+    
+    mat src_weights = src_model.input_weights;
+    mat trg_weights = trg_model.input_weights;
+    
+    int starting_patience = 10;
+    int patience = starting_patience;
+    float best_loss = -1;
+    float prev_best_loss = -1;
+    float alpha = 0.01;
+    float epsilon = 0.0001;
+    while (alpha > 1e-10) {
+        float loss = 0;
+        
+        random_shuffle<>(dict_indices.begin(), dict_indices.end());
+        
+        for (auto it = dict_indices.begin(); it != dict_indices.end(); ++it) {
+            vec x = src_weights[it->first];
+            vec z = trg_weights[it->second];
+            
+            vec y(mapping.size());
+            for (int i = 0; i < mapping.size(); i++) {
+                y[i] = mapping[i].dot(x);
+            }
+
+            vec e = y - z;
+            loss += e.dot(e) / dict_indices.size();
+            
+            for (int i = 0; i < mapping.size(); i++) {
+                for (int j = 0; j < mapping[0].size(); j++) {
+                    float error = x[j] * e[i] * 2;
+                    mapping[i][j] -= alpha * error;
+                }
+            }
+        }
+        
+        if (best_loss > 0 and loss >= (best_loss - epsilon)) {
+            patience -= 1;
+        }
+        
+        if (best_loss <= 0) {
+            best_loss = loss;
+        } else {
+            best_loss = min(best_loss, loss);
+        }
+        
+        if (patience == 0) {
+            if (prev_best_loss > 0 and best_loss >= (prev_best_loss - epsilon)) {
+                break;
+            } else {
+                prev_best_loss = best_loss;
+                alpha /= 2;
+                cout << "loss: " << best_loss << ", alpha: " << alpha << endl;
+                patience = starting_patience;
+            }
+        }
+    }
+}

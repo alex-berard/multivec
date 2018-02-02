@@ -12,6 +12,7 @@ private:
     // Configuration of the model (monolingual models have the same configuration)
     BilingualConfig* const config;
 
+    mat mapping;
     long long words_processed; // number of words processed so far
     float alpha;
 
@@ -60,4 +61,9 @@ public:
     
     vector<pair<string, float>> trg_closest(const string& src_word, int n = 10, int policy = 0) const; // n closest words to given word
     vector<pair<string, float>> src_closest(const string& trg_word, int n = 10, int policy = 0) const;
+    
+    vector<pair<string, string>> dictionaryInduction(int src_count = 0, int trg_count = 0, int policy = 0) const;
+    vector<pair<string, string>> dictionaryInduction(const vector<string>& src_vocab, const vector<string>& trg_vocab, int policy = 0) const;
+    
+    void learnMapping(const vector<pair<string, string>>& dict);
 };

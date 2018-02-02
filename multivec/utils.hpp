@@ -92,7 +92,7 @@ namespace multivec {
         return std::rand() % max;
     #elif CUSTOM_RAND
         thread_local unsigned long long next_random(time(NULL));
-        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11; // unsafe, but we don't care
+        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11;
         return (next_random >> 16) % max; // with this generator, the most significant bits are bits 47...16
     #else
         thread_local std::mt19937 gen(std::random_device{}());
@@ -107,8 +107,7 @@ namespace multivec {
     #elif CUSTOM_RAND
         return (multivec::rand(ULLONG_MAX) & 0xFFFF) / 65536.0f;
     #else
-        thread_local std::random_device rd;
-        thread_local std::mt19937 gen(rd());
+        thread_local std::mt19937 gen(std::random_device{}());
         std::uniform_real_distribution<float> dis(0, 1.0);
         return dis(gen);
     #endif
