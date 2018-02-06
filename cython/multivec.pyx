@@ -3,6 +3,7 @@ from collections import OrderedDict
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
+from libcpp cimport bool
 
 
 cdef extern from "vec.hpp":
@@ -62,7 +63,7 @@ cdef extern from "monolingual.hpp":
 cdef extern from "bilingual.hpp":
     cdef cppclass BilingualModelCpp "BilingualModel":
         BilingualModelCpp(BilingualConfig*) except +
-        void train(const string&, const string&, bool) except +
+        void train(const string&, const string&, const string&, bool) except +
         void load(const string&) except +
         void save(const string&) except +
         float similarity(const string&, const string&, int) except +
@@ -369,8 +370,9 @@ cdef class BilingualModel:
         del self.model
         del self.config
 
-    def train(self, src_name, trg_name, initialize=True):
-        self.model.train(src_name.encode('utf-8'), trg_name.encode('utf-8'), initialize)
+    def train(self, src_name, trg_name, align_name=None, initialize=True):
+        align_name = align_name or ''
+        self.model.train(src_name.encode('utf-8'), trg_name.encode('utf-8'), align_name.encode('utf-8'), initialize)
     
     def save(self, name):
         self.model.save(name.encode('utf-8'))
