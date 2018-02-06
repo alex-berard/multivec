@@ -174,10 +174,12 @@ public:
     friend std::ostream& operator<<(std::ostream &o, Vec const& self) {
         std::ostringstream ss;
         if (!self._data.empty()) {
-            std::copy(self._data.begin(), self._data.end() - 1, std::ostream_iterator<int>(ss, ","));
+            for (int i = 0; i < self._data.size() - 1; ++i) {
+                ss << self._data[i] << " ";
+            }
             ss << self._data.back();
         }
-        return o << "[" << ss.str() << "]";
+        return o << ss.str();
     }
     
     template <typename E>

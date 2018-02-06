@@ -1,4 +1,4 @@
-all: python2
+all: python3
 
 python2:
 	python2 setup.py build

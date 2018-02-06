@@ -1,5 +1,6 @@
 #include "monolingual.hpp"
 #include <getopt.h>
+#include <signal.h>
 
 struct option_plus { // same as option with an additional description field
     const char *name;
@@ -46,6 +47,8 @@ void print_usage() {
     }
     std::cout << std::endl;
 }
+
+std::function<void(int)> interrupt_handler;
 
 int main(int argc, char **argv) {
     vector<option> options;
@@ -99,11 +102,11 @@ int main(int argc, char **argv) {
             case 'a': config.dimension = atoi(optarg);      break;
             case 'b': config.min_count = atoi(optarg);      break;
             case 'c': config.window_size = atoi(optarg);    break;
-            case 'd': config.threads = atoi(optarg);      break;
-            case 'e': config.iterations = atoi(optarg); break;
+            case 'd': config.threads = atoi(optarg);        break;
+            case 'e': config.iterations = atoi(optarg);     break;
             case 'f': config.negative = atoi(optarg);       break;
             case 'g': saving_policy = atoi(optarg);         break;
-            case 'i': config.learning_rate = atof(optarg); break;
+            case 'i': config.learning_rate = atof(optarg);  break;
             case 'j': config.subsampling = atof(optarg);    break;
             case 'k': config.skip_gram = true;              break;
             case 'l': config.hierarchical_softmax = true;   break;
@@ -130,27 +133,36 @@ int main(int argc, char **argv) {
     std::cout << "MultiVec-mono" << std::endl;
     config.print();
 
+    interrupt_handler = [&](int signum){
+        std::lock_guard<std::mutex> guard(multivec::print_mutex);
+        if (config.verbose and signum != 0)
+            cout << endl;
+        
+        if(!save_file.empty())
+            model.save(save_file);
+        if (!save_vectors.empty())
+            model.saveVectors(save_vectors, saving_policy, norm);
+        if (!save_vectors_bin.empty())
+            model.saveVectorsBin(save_vectors_bin, saving_policy, norm);
+        if (!save_sent_vectors.empty())
+            model.saveSentVectors(save_sent_vectors, norm);
+        exit(1);
+    };
+    
+    struct sigaction sigIntHandler;
+    sigIntHandler.sa_handler = [](int signum) { interrupt_handler(signum); };
+    sigemptyset(&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
+    sigaction(SIGINT, &sigIntHandler, NULL);
+    
     if (!train_file.empty()) {
         model.train(train_file, load_file.empty());
     }
 
     if (!online_train_file.empty()) {
-        throw runtime_error("not implemented");  // TODO
+        model.sentVectors(online_train_file);
     }
     
-    // saving methods (TODO: save model periodically/when training is interrupted)
-    if(!save_file.empty()) {
-        model.save(save_file);
-    }
-    if (!save_vectors.empty()) {
-        model.saveVectors(save_vectors, saving_policy, norm);
-    }
-    if (!save_vectors_bin.empty()) {
-        model.saveVectorsBin(save_vectors_bin, saving_policy, norm);
-    }
-    if (!save_sent_vectors.empty() && config.sent_vector) {
-        model.saveSentVectors(save_sent_vectors, norm);
-    }
-
+    interrupt_handler(0);
     return 0;
 }

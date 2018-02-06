@@ -2,6 +2,7 @@
 #include "serialization.hpp"
 
 const HuffmanNode HuffmanNode::UNK;
+std::mutex multivec::print_mutex;
 
 vector<float> get_exp_table() {
     vector<float> res;
@@ -227,7 +228,7 @@ void MonolingualModel::saveVectorsBin(const string &filename, int policy, bool n
         word.push_back(' ');
         vec embedding = wordVec(it->index, policy);
         if (norm) {
-            embedding = embedding.norm();
+            embedding /= embedding.norm();
         }
 
         outfile.write(word.c_str(), word.size());
@@ -251,7 +252,7 @@ void MonolingualModel::saveVectors(const string &filename, int policy, bool norm
         outfile << it->word << " ";
         vec embedding = wordVec(it->index, policy);
         if (norm) {
-            embedding = embedding.norm();
+            embedding /= embedding.norm();
         }
         
         for (int c = 0; c < config->dimension; ++c) {
@@ -271,7 +272,7 @@ void MonolingualModel::saveSentVectors(const string &filename, bool norm) const 
     for (auto it = sent_weights.begin(); it != sent_weights.end(); ++it) {
         vec embedding = *it;
         if (norm) {
-            embedding = embedding.norm();
+            embedding /= embedding.norm();
         }
         
         for (int c = 0; c < config->dimension; ++c) {
@@ -283,7 +284,7 @@ void MonolingualModel::saveSentVectors(const string &filename, bool norm) const 
 
 void MonolingualModel::load(const string& filename) {
     if (config->verbose)
-        std::cout << "Loading model" << std::endl;
+        std::cout << "Loading model from " << filename << std::endl;
 
     ifstream infile(filename);
     check_is_open(infile, filename);
@@ -296,7 +297,7 @@ void MonolingualModel::load(const string& filename) {
 
 void MonolingualModel::save(const string& filename) const {
     if (config->verbose)
-        std::cout << "Saving model" << std::endl;
+        std::cout << "Saving model as " << filename << std::endl;
 
     ofstream outfile(filename);
     check_is_open(outfile, filename);
@@ -348,19 +349,21 @@ vec MonolingualModel::wordVec(const string& word, int policy) const {
     }
 }
 
-void MonolingualModel::sentVec(istream& input) {
+void MonolingualModel::sentVectors(const string &input_file) {
+    ifstream infile(input_file, ios::binary | ios::out);
+    check_is_open(infile, input_file);
+
     string line;
-    while(getline(input, line)) {
+    sent_weights.clear();
+    while(getline(infile, line)) {
         vec embedding(config->dimension, 0);
         try {
             embedding = sentVec(line);
         } catch (runtime_error) {
             // in case of error (empty sentence, or all words are OOV), print a vector of zeros
         };
-
-        for (int c = 0; c < config->dimension; ++c) {
-            std::cout << embedding[c] << " ";
-        }
+        
+        sent_weights.push_back(embedding);
     }
 }
 
@@ -369,15 +372,12 @@ void MonolingualModel::sentVec(istream& input) {
  * of the model are frozen, while gradient descent is performed on this
  * single sentence. For batch paragraph vector, use the normal training
  * procedure with config->sent_vec set to true.
- * TODO: integrate this in the normal training procedure
  *
  * @param sentence
  * @return sent_vec
  */
 vec MonolingualModel::sentVec(const string& sentence) {
     int dimension = config->dimension;
-    float alpha = config->learning_rate;  // TODO: decreasing learning rate
-
     auto nodes = getNodes(sentence);  // no subsampling here
     nodes.erase(
         remove(nodes.begin(), nodes.end(), HuffmanNode::UNK),
@@ -389,6 +389,8 @@ vec MonolingualModel::sentVec(const string& sentence) {
     vec sent_vec(dimension, 0);
 
     for (int k = 0; k < config->iterations; ++k) {
+        float alpha = config->learning_rate * (1 - static_cast<float>(k) / config->iterations);
+        
         for (int word_pos = 0; word_pos < nodes.size(); ++word_pos) {
             vec hidden(dimension, 0);
             HuffmanNode cur_node = nodes[word_pos];
@@ -449,7 +451,6 @@ void MonolingualModel::train(const string& training_file, bool initialize) {
         readVocab(training_file);
         initNet();
     } else if (vocab_word_count == 0) {
-        // TODO: check that everything is initialized, and dimension is OK
         throw runtime_error("the model needs to be initialized before training");
     }
 
@@ -518,7 +519,7 @@ vector<long long> MonolingualModel::chunkify(const string& filename, int n_chunk
 
     training_lines = line_positions.size() - 1;
     training_words = words;
-    int chunk_size = line_positions.size() / n_chunks;  // number of lines in each chunk
+    int chunk_size = training_lines / n_chunks;  // number of lines in each chunk
 
     for (int i = 0; i < n_chunks; i++) {
         long long chunk_start = line_positions[i * chunk_size];
@@ -553,7 +554,8 @@ void MonolingualModel::trainChunk(const string& training_file,
 
             // update learning rate
             if (word_count - last_count > 10000) {
-                words_processed += word_count - last_count; // asynchronous update
+                std::lock_guard<std::mutex> guard(multivec::print_mutex);
+                words_processed += word_count - last_count;
                 last_count = word_count;
 
                 // decreasing learning rate
@@ -770,9 +772,10 @@ vec MonolingualModel::hierarchicalUpdate(const HuffmanNode& node, const vec& hid
 
 vector<pair<string, int>> MonolingualModel::getWords() const {
     vector<pair<string, int>> res;
+    auto sorted_vocab = getSortedVocab();
 
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
-        res.push_back({it->second.word, it->second.count});
+    for (auto it = sorted_vocab.begin(); it != sorted_vocab.end(); ++it) {
+        res.push_back({it->word, it->count});
     }
 
     return res;

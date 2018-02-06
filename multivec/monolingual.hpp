@@ -14,7 +14,6 @@ private:
     std::mutex input_weights_mutex;
     std::mutex output_weights_mutex;
 #endif
-    
     Config* const config;
 
     mat input_weights;
@@ -71,8 +70,9 @@ public:
     MonolingualModel(Config* config) : config(config) {}  // prefer this constructor
 
     vec wordVec(const string& word, int policy = 0) const; // word embedding
-    vec sentVec(const string& sentence); // paragraph vector (Le & Mikolov), TODO: custom alpha and iterations
-    void sentVec(istream& infile); // compute paragraph vector for all lines in a stream
+    vec sentVec(const string& sentence); // paragraph vector (Le & Mikolov)
+    
+    void sentVectors(const string &input_file);
 
     void train(const string& training_file, bool initialize = true); // training from scratch (resets vocabulary and weights)
 
@@ -104,5 +104,6 @@ public:
 
     vector<pair<string, int>> getWords() const; // get words with their counts
     
-    void analogicalReasoning(const string& filename, int max_voc = 0, int policy = 0) const;
+    // void loadVectors(const string& filename, int policy = 0);
+    // void analogicalReasoning(const string& filename, int max_voc = 0, int policy = 0) const;
 };

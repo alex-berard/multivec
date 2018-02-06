@@ -15,6 +15,7 @@ private:
     mat mapping;
     long long words_processed; // number of words processed so far
     float alpha;
+    vector<vector<int>> alignments;
 
     void trainChunk(const string& src_file,
                     const string& trg_file,
@@ -22,10 +23,10 @@ private:
                     const vector<long long>& trg_chunks,
                     int thread_id);
 
-    // TODO: unsupervised alignment (GIZA)
-    vector<int> uniformAlignment(const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes);
+    void readAlignments(const string& align_file);
+    vector<int> getAlignment(const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes, int sent_id);
 
-    int trainSentence(const string& trg_sent, const string& src_sent);
+    int trainSentence(const string& trg_sent, const string& src_sent, int sent_id);
 
     void trainWord(MonolingualModel& src_params, MonolingualModel& trg_params,
         const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes,
@@ -47,7 +48,7 @@ public:
     // prefer this constructor
     BilingualModel(BilingualConfig* config) : config(config), src_model(config), trg_model(config) {}
 
-    void train(const string& src_file, const string& trg_file, bool initialize = true);
+    void train(const string& src_file, const string& trg_file, const string& align_file, bool initialize = true);
     void load(const string& filename);
     void save(const string& filename) const;
 

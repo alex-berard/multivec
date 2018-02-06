@@ -1,5 +1,6 @@
 #include "bilingual.hpp"
 #include <getopt.h>
+#include <signal.h>
 
 struct option_plus {
     const char *name;
@@ -31,6 +32,9 @@ static vector<option_plus> options_plus = {
     {"save-trg",      required_argument, 0, 'r', "save target model"},
     {"load-src",      required_argument, 0, 's', "load source model"},
     {"load-trg",      required_argument, 0, 't', "load target model"},
+    {"alignment",     required_argument, 0, 'u', "alignment file (fast_align format)"},
+    {"save-src-vec",  required_argument, 0, 'w', "save source language vectors (as text)"},
+    {"save-trg-vec",  required_argument, 0, 'x', "save target language vectors (as text)"},
     {0, 0, 0, 0, 0}
 };
 
@@ -44,6 +48,8 @@ void print_usage() {
     }
     std::cout << std::endl;
 }
+
+std::function<void(int)> interrupt_handler;
 
 int main(int argc, char **argv) {
 
@@ -80,8 +86,12 @@ int main(int argc, char **argv) {
     string save_file;
     string save_src_file;
     string save_trg_file;
+    string align_file;
+    string save_src_vec_file;
+    string save_trg_vec_file;
 
     optind = 0;  // necessary to parse arguments twice
+    opterr = 0;  // don't print errors twice
     while (1) {
         int option_index = 0;
         int opt = getopt_long(argc, argv, "hv", options.data(), &option_index);
@@ -94,10 +104,10 @@ int main(int argc, char **argv) {
             case 'a': config.dimension = atoi(optarg);      break;
             case 'b': config.min_count = atoi(optarg);      break;
             case 'c': config.window_size = atoi(optarg);    break;
-            case 'd': config.threads = atoi(optarg);      break;
-            case 'e': config.iterations = atoi(optarg); break;
+            case 'd': config.threads = atoi(optarg);        break;
+            case 'e': config.iterations = atoi(optarg);     break;
             case 'f': config.negative = atoi(optarg);       break;
-            case 'g': config.learning_rate = atof(optarg); break;
+            case 'g': config.learning_rate = atof(optarg);  break;
             case 'i': config.beta = atof(optarg);           break;
             case 'j': config.subsampling = atof(optarg);    break;
             case 'k': config.skip_gram = true;              break;
@@ -108,6 +118,9 @@ int main(int argc, char **argv) {
             case 'p': save_file = string(optarg);           break;
             case 'q': save_src_file = string(optarg);       break;
             case 'r': save_trg_file = string(optarg);       break;
+            case 'u': align_file = string(optarg);          break;
+            case 'w': save_src_vec_file = string(optarg);   break;
+            case 'x': save_trg_vec_file = string(optarg);   break;
             default:                                        abort();
         }
     }
@@ -120,26 +133,34 @@ int main(int argc, char **argv) {
     std::cout << "MultiVec-bi" << std::endl;
     config.print();
 
+    interrupt_handler = [&](int signum){
+        std::lock_guard<std::mutex> guard(multivec::print_mutex);
+        if (config.verbose and signum != 0)
+            cout << endl;
+        
+        if(!save_file.empty())
+            model.save(save_file);
+        if(!save_src_file.empty())
+            model.src_model.save(save_src_file);
+        if(!save_trg_file.empty())
+            model.trg_model.save(save_trg_file);
+        if (!save_src_vec_file.empty())
+            model.src_model.saveVectors(save_src_vec_file);
+        if (!save_trg_vec_file.empty())
+            model.trg_model.saveVectors(save_trg_vec_file);
+        exit(1);
+    };
+    
+    struct sigaction sigIntHandler;
+    sigIntHandler.sa_handler = [](int signum) { interrupt_handler(signum); };
+    sigemptyset(&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
+    sigaction(SIGINT, &sigIntHandler, NULL);
+    
     if (!train_src_file.empty() && !train_trg_file.empty()) {
-        model.train(train_src_file, train_trg_file, load_file.empty());
+        model.train(train_src_file, train_trg_file, align_file, load_file.empty());
     }
 
-    if(!save_file.empty()) {
-        model.save(save_file);
-    }
-    if(!save_src_file.empty()) {
-        model.src_model.save(save_src_file);
-    }
-    if(!save_trg_file.empty()) {
-        model.trg_model.save(save_trg_file);
-    }
-
-    /*
-    for (int i = 0; i < 10; i++) {
-        std::cout << "Building dict" << std::endl;
-        vector<pair<string, string>> dict = model.dictionaryInduction(10000, 10000, 0);
-        model.learnMapping(dict);
-    }
-    */
+    interrupt_handler(0);
     return 0;
 }

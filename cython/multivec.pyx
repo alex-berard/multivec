@@ -1,4 +1,5 @@
 import numpy as np
+from collections import OrderedDict
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
@@ -158,7 +159,7 @@ cdef class MonolingualModel:
             2) sum of input and output weights
             3) output weights
         """
-        cdef Vec vec = self.model.wordVec(word, policy)
+        cdef Vec vec = self.model.wordVec(word.encode('utf-8'), policy)
         cdef float* data = vec.data()
         return np.array([data[i] for i in range(vec.size())])
 
@@ -171,7 +172,7 @@ cdef class MonolingualModel:
         
         Raise RuntimeError if sequence is empty or all words are OOV.
         """
-        cdef Vec vec = self.model.sentVec(sequence)
+        cdef Vec vec = self.model.sentVec(sequence.encode('utf-8'))
         cdef float* data = vec.data()
         return np.array([data[i] for i in range(vec.size())])
 
@@ -188,7 +189,7 @@ cdef class MonolingualModel:
         Set this value to False to continue training of an existing model (learning rate will
         be reset to its initial value, i.e. self.learning_rate)
         """
-        self.model.train(name, initialize)
+        self.model.train(name.encode('utf-8'), initialize)
         
     def load(self, name):
         """
@@ -200,7 +201,7 @@ cdef class MonolingualModel:
         The entire model, including configuration and vocabulary is loaded, and the existing
         parameters are overwritten.
         """
-        self.model.load(name)
+        self.model.load(name.encode('utf-8'))
 
     def save(self, name):
         """
@@ -210,7 +211,7 @@ cdef class MonolingualModel:
         vocabulary into a binary format, specific to MultiVec. Those models can then be loaded
         from disk using `MonolingualModel.load`.
         """
-        self.model.save(name)
+        self.model.save(name.encode('utf-8'))
 
     def save_vectors(self, name, policy=0):
         """
@@ -221,7 +222,7 @@ cdef class MonolingualModel:
         The `policy` parameters
         decides which weights are used (see `MonolingualModel.word_vec` for details.)
         """
-        self.model.saveVectorsBin(name, policy)
+        self.model.saveVectors(name.encode('utf-8'), policy)
 
     def save_vectors_bin(self, name, policy=0):
         """
@@ -232,43 +233,45 @@ cdef class MonolingualModel:
         The `policy` parameters
         decides which weights are used (see `MonolingualModel.word_vec` for details.)
         """
-        self.model.saveVectorsBin(name, policy)
+        self.model.saveVectorsBin(name.encode('utf-8'), policy)
 
     def save_sent_vectors(self, name):
-        self.model.saveSentVectors(name)
+        self.model.saveSentVectors(name.encode('utf-8'))
     
     def similarity(self, word1, word2, policy=0):
-        return self.model.similarity(word1, word2, policy)
+        return self.model.similarity(word1.encode('utf-8'), word2.encode('utf-8'), policy)
     def distance(self, word1, word2, policy=0):
-        return self.model.distance(word1, word2, policy)
+        return self.model.distance(word1.encode('utf-8'), word2.encode('utf-8'), policy)
             
     def similarity_ngrams(self, seq1, seq2, policy=0):
-        return self.model.similarityNgrams(seq1, seq2, policy)
+        return self.model.similarityNgrams(seq1.encode('utf-8'), seq2.encode('utf-8'), policy)
     def similarity_bag_of_words(self, seq1, seq2, policy=0):
-        return self.model.similaritySentence(seq1, seq2, policy)
+        return self.model.similaritySentence(seq1.encode('utf-8'), seq2.encode('utf-8'), policy)
     def similarity_syntax(self, seq1, seq2, tags1, tags2, idf1, idf2, alpha=0.0, policy=0):
-        return self.model.similaritySentenceSyntax(seq1, seq2, tags1, tags2, idf1, idf2, alpha, policy)
+        return self.model.similaritySentenceSyntax(seq1.encode('utf-8'), seq2.encode('utf-8'),
+                                                   tags1.encode('utf-8'), tags2.encode('utf-8'),
+                                                   idf1, idf2, alpha, policy)
     def soft_word_error_rate(self, seq1, seq2, policy=0):
-        return self.model.softWER(seq1, seq2, policy)
+        return self.model.softWER(seq1.encode('utf-8'), seq2.encode('utf-8'), policy)
     
     def closest(self, word, n=10, policy=0):
-        cdef vector[pair[string, float]] res = self.model.closest(<const string&> word, <int> n, <int> policy)
-        return list(res)
+        cdef vector[pair[string, float]] res = self.model.closest(<const string&> word.encode('utf-8'), <int> n, <int> policy)
+        return [(w.decode('utf-8'), c) for w, c in res]
     def closest_to_vec(self, vec, n=10, policy=0):
         cdef Vec vec_cpp = Vec(<vector[float]> vec)
         res = self.model.closest(<const Vec&> vec_cpp, <int> n, <int> policy)
-        return list(res)
+        return [(w.decode('utf-8'), c) for w, c in res]
     def closest_words(self, word, words, policy=0):
-        cdef vector[pair[string, float]] res = self.model.closest(<const string&> word,
+        cdef vector[pair[string, float]] res = self.model.closest(<const string&> word.encode('utf-8'),
                                                                   <const vector[string]&> words,
                                                                   <int> policy)
-        return list(res)
+        return [(w.decode('utf-8'), c) for w, c in res]
     def get_vocabulary(self):
         cdef vector[pair[string, int]] word_counts = self.model.getWords()
-        return [w for w, _ in word_counts]
+        return [w.decode('utf-8') for w, _ in word_counts]
     def get_counts(self):
         cdef vector[pair[string, int]] word_counts = self.model.getWords()
-        return dict(word_counts)
+        return OrderedDict((w.decode('utf-8'), c) for w, c in word_counts)
         
     property learning_rate:
         def __get__(self): return self.config.learning_rate
@@ -367,32 +370,33 @@ cdef class BilingualModel:
         del self.config
 
     def train(self, src_name, trg_name, initialize=True):
-        self.model.train(src_name, trg_name, initialize)
+        self.model.train(src_name.encode('utf-8'), trg_name.encode('utf-8'), initialize)
     
     def save(self, name):
-        self.model.save(name)
+        self.model.save(name.encode('utf-8'))
     
     def load(self, name):
-        self.model.load(name)
+        self.model.load(name.encode('utf-8'))
 
     def similarity(self, src_word, trg_word, policy=0):
-        return self.model.similarity(src_word, trg_word, policy)
+        return self.model.similarity(src_word.encode('utf-8'), trg_word.encode('utf-8'), policy)
     def distance(self, src_word, trg_word, policy=0):
-        return self.model.similarity(src_word, trg_word, policy)
+        return self.model.similarity(src_word.encode('utf-8'), trg_word.encode('utf-8'), policy)
             
     def similarity_ngrams(self, src_seq, trg_seq, policy=0):
-        return self.model.similarityNgrams(src_seq, trg_seq, policy)
+        return self.model.similarityNgrams(src_seq.encode('utf-8'), trg_seq.encode('utf-8'), policy)
     def similarity_bag_of_words(self, src_seq, trg_seq, policy=0):
-        return self.model.similaritySentence(src_seq, trg_seq, policy)
+        return self.model.similaritySentence(src_seq.encode('utf-8'), trg_seq.encode('utf-8'), policy)
     def similarity_syntax(self, src_seq, trg_seq, src_tags, trg_tags, src_idf, trg_idf, alpha=0.0, policy=0):
-        return self.model.similaritySentenceSyntax(src_seq, trg_seq, src_tags, trg_tags, src_idf, trg_idf, alpha, policy)
-
+        return self.model.similaritySentenceSyntax(src_seq.encode('utf-8'), trg_seq.encode('utf-8'),
+                                                   src_tags.encode('utf-8'), trg_tags.encode('utf-8'),
+                                                   src_idf, trg_idf, alpha, policy)
     def trg_closest(self, src_word, n=10, policy=0):
-        cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word, <int> n, <int> policy)
-        return list(res)    
+        cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word.encode('utf-8'), <int> n, <int> policy)
+        return [(w.decode('utf-8'), c) for w, c in res]
     def src_closest(self, trg_word, n=10, policy=0):
-        cdef vector[pair[string, float]] res = self.model.src_closest(<const string&> trg_word, <int> n, <int> policy)
-        return list(res)
+        cdef vector[pair[string, float]] res = self.model.src_closest(<const string&> trg_word.encode('utf-8'), <int> n, <int> policy)
+        return [(w.decode('utf-8'), c) for w, c in res]
 
     property src_model:
         def __get__(self):

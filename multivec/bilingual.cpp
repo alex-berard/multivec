@@ -1,7 +1,7 @@
 #include "bilingual.hpp"
 #include "serialization.hpp"
 
-void BilingualModel::train(const string& src_file, const string& trg_file, bool initialize) {
+void BilingualModel::train(const string& src_file, const string& trg_file, const string& align_file, bool initialize) {
     std::cout << "Training files: " << src_file << ", " << trg_file << std::endl;
 
     if (initialize) {
@@ -23,6 +23,11 @@ void BilingualModel::train(const string& src_file, const string& trg_file, bool 
     auto src_chunks = src_model.chunkify(src_file, config->threads);
     auto trg_chunks = trg_model.chunkify(trg_file, config->threads);
 
+    check(src_model.training_lines == trg_model.training_lines, "not a parallel corpus");
+    if (not align_file.empty()) {
+        readAlignments(align_file);
+    }
+    
     high_resolution_clock::time_point start = high_resolution_clock::now();
     if (config->threads == 1) {
         trainChunk(src_file, trg_file, src_chunks, trg_chunks, 0);
@@ -73,12 +78,16 @@ void BilingualModel::trainChunk(const string& src_file,
         trg_infile.seekg(trg_chunks[chunk_id], trg_infile.beg);
 
         string src_sent, trg_sent;
+        int sent_id = chunk_id * (src_model.training_lines / src_chunks.size());
+        
         while (getline(src_infile, src_sent) && getline(trg_infile, trg_sent)) {
-            word_count += trainSentence(src_sent, trg_sent);
+            word_count += trainSentence(src_sent, trg_sent, sent_id);
+            sent_id++;
 
             // update learning rate
             if (word_count - last_count > 10000) {
-                words_processed += word_count - last_count; // asynchronous update
+                std::lock_guard<std::mutex> guard(multivec::print_mutex);
+                words_processed += word_count - last_count;
                 last_count = word_count;
 
                 alpha = starting_alpha * (1 - static_cast<float>(words_processed) / (max_iterations * training_words));
@@ -100,28 +109,78 @@ void BilingualModel::trainChunk(const string& src_file,
     }
 }
 
-vector<int> BilingualModel::uniformAlignment(const vector<HuffmanNode>& src_nodes,
-                                             const vector<HuffmanNode>& trg_nodes) {
+vector<int> BilingualModel::getAlignment(const vector<HuffmanNode>& src_nodes,
+                                         const vector<HuffmanNode>& trg_nodes,
+                                         int sent_id) {
+    if (not alignments.empty()) {
+        auto alignment = alignments[sent_id];
+        check(alignment.size() <= src_nodes.size(), "bad alignment for line " + to_string(sent_id));
+        auto max = max_element(alignment.begin(), alignment.end());
+        if (max != alignment.end())
+            check(*max < trg_nodes.size(), "bad alignment for line " + to_string(sent_id));
+    }
+    
     vector<int> alignment; // index = position in src_nodes, value = position in trg_nodes (or -1)
-
     vector<int> trg_mapping; // maps positions in trg_sent to positions in trg_nodes (or -1)
     int k = 0;
     for (auto it = trg_nodes.begin(); it != trg_nodes.end(); ++it) {
         trg_mapping.push_back(*it == HuffmanNode::UNK ? -1 : k++);
     }
-
+    
     for (int i = 0; i < src_nodes.size(); ++i) {
-        int j = i * trg_nodes.size() / src_nodes.size();
+        int j = -1;
+        
+        if (alignments.empty()) {
+            j = i * trg_nodes.size() / src_nodes.size();  // uniform alignment
+        } else if (alignments[sent_id].size() > i) {
+            j = alignments[sent_id][i];
+        }
 
         if (src_nodes[i] != HuffmanNode::UNK) {
-            alignment.push_back(trg_mapping[j]);
+            if (j != -1) {
+                j = trg_mapping[j];
+            }
+            
+            alignment.push_back(j);
         }
     }
 
     return alignment;
 }
 
-int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent) {
+void BilingualModel::readAlignments(const string& align_file) {
+    ifstream align_infile(align_file);
+    check_is_open(align_infile, align_file);
+    
+    alignments.clear();
+    string line;
+    while (getline(align_infile, line)) {
+        if (line.find_first_not_of(' ') == line.npos) {  // if line is empty
+            alignments.push_back(vector<int>());
+            continue;
+        }
+        
+        auto tokens = split(line);
+        vector<int> alignment(tokens.size(), -1);
+        for (auto it = tokens.begin(); it != tokens.end(); ++it) {
+            string token = *it;
+            int pos = token.find_first_of('-');
+            int i = stoi(token.substr(0, pos));
+            int j = stoi(token.substr(pos + 1, token.size() - pos - 1));
+            
+            if (i >= alignment.size()) {
+                alignment.resize(i + 1, -1);
+            }
+            
+            alignment[i] = j;
+        }
+        alignments.push_back(alignment);
+    }
+    
+    check(alignments.size() == src_model.training_lines, "wrong number of lines inside " + align_file);
+}
+
+int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent, int sent_id) {
     auto src_nodes = src_model.getNodes(src_sent);  // same size as src_sent, OOV words are replaced by <UNK>
     auto trg_nodes = trg_model.getNodes(trg_sent);
 
@@ -134,14 +193,14 @@ int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent
         src_model.subsample(src_nodes); // puts <UNK> tokens in place of the discarded tokens
         trg_model.subsample(trg_nodes);
     }
-
+    
     if (src_nodes.empty() || trg_nodes.empty()) {
         return words;
     }
 
     // The <UNK> tokens are necessary to perform the alignment (the nodes vector should have the same size
     // as the original sentence)
-    auto alignment = uniformAlignment(src_nodes, trg_nodes);
+    vector<int> alignment = getAlignment(src_nodes, trg_nodes, sent_id);
 
     // remove <UNK> tokens
     src_nodes.erase(
@@ -166,8 +225,11 @@ int BilingualModel::trainSentence(const string& src_sent, const string& trg_sent
     // Bilingual training
     for (int src_pos = 0; src_pos < src_nodes.size(); ++src_pos) {
         // 1-1 mapping between src_nodes and trg_nodes
+        if (src_pos >= alignment.size()) {
+            continue;
+        }
         int trg_pos = alignment[src_pos];
-
+        
         if (trg_pos != -1) { // target word isn't OOV
             trainWord(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha * config->beta);
             trainWord(trg_model, src_model, trg_nodes, src_nodes, trg_pos, src_pos, alpha * config->beta);
@@ -253,7 +315,7 @@ void BilingualModel::trainWordSkipGram(MonolingualModel& src_model, MonolingualM
 
 void BilingualModel::load(const string& filename) {
     if (config->verbose)
-        std::cout << "Loading model" << std::endl;
+        std::cout << "Loading model from " << filename << std::endl;
 
     ifstream infile(filename);
     check_is_open(infile, filename);
@@ -265,7 +327,7 @@ void BilingualModel::load(const string& filename) {
 
 void BilingualModel::save(const string& filename) const {
     if (config->verbose)
-        std::cout << "Saving model" << std::endl;
+        std::cout << "Saving model as " << filename << std::endl;
 
     ofstream outfile(filename);
     check_is_open(outfile, filename);

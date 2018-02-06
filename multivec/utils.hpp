@@ -15,6 +15,7 @@
 #include <iterator>
 #include <random>
 #include <climits>
+#include <mutex>
 #include "vec.hpp"
 
 using namespace std;
@@ -60,6 +61,12 @@ inline vector<string> split(const string& sequence) {
     }
 
     return words;
+}
+
+inline void check(bool predicate, const string& message) {
+    if (not predicate) {
+        throw runtime_error(message);
+    }
 }
 
 inline void check_is_open(ifstream& infile, const string& filename) {
@@ -112,6 +119,8 @@ namespace multivec {
         return dis(gen);
     #endif
     }
+    
+    extern std::mutex print_mutex;
 }
 
 /**
