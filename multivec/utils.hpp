@@ -180,6 +180,7 @@ struct Config {
     int negative; // number of negative samples used for the negative sampling training algorithm
     bool sent_vector; // includes sentence vectors in the training
     bool no_average; // no context averaging in CBOW
+    bool concat; // concat vectors in CBOW instead of summing them
 
     Config() :
         learning_rate(0.05),
@@ -194,7 +195,8 @@ struct Config {
         skip_gram(false),
         negative(5),
         sent_vector(false),
-        no_average(false)
+        no_average(false),
+        concat(false)
         {}
 
     virtual void print() const {
@@ -211,6 +213,7 @@ struct Config {
         std::cout << "negative:    " << negative << std::endl;
         std::cout << "sent vector: " << sent_vector << std::endl;
         std::cout << "no average:  " << no_average << std::endl;
+        std::cout << "concat:       " << concat << std::endl;
     }
 };
 

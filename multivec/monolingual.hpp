@@ -32,7 +32,6 @@ private:
     std::atomic<float> alpha;
 #else
     long long words_processed;
-    float alpha;
 #endif
     unordered_map<string, HuffmanNode> vocabulary;
     vector<HuffmanNode*> unigram_table;
@@ -55,11 +54,11 @@ private:
 
     void trainChunk(const string& training_file, const vector<long long>& chunks, int chunk_id);
 
-    int trainSentence(const string& sent, int sent_id);
-    void trainWord(const vector<HuffmanNode>& nodes, int word_pos, int sent_id);
-    void trainWordCBOW(const vector<HuffmanNode>& nodes, int word_pos, int sent_id);
-    void trainWordSkipGram(const vector<HuffmanNode>& nodes, int word_pos, int sent_id);
-
+    int trainSentence(const string& sent, vec* sent_vec, float alpha);
+    void trainWord(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
+    void trainWordDBOW(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
+    void trainWordCBOW(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
+    void trainWordSkipGram(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
     vec hierarchicalUpdate(const HuffmanNode& node, const vec& hidden, float alpha, bool update = true);
     vec negSamplingUpdate(const HuffmanNode& node, const vec& hidden, float alpha, bool update = true);
 
@@ -81,8 +80,6 @@ public:
     void saveSentVectors(const string &filename, bool norm = false) const;
     void load(const string& filename); // loads the entire model
     void save(const string& filename) const; // saves the entire model
-
-    void normalizeWeights(); // normalize all weights between 0 and 1
 
     float similarity(const string& word1, const string& word2, int policy = 0) const; // cosine similarity
     float distance(const string& word1, const string& word2, int policy = 0) const; // 1 - cosine similarity

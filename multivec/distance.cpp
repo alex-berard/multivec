@@ -23,7 +23,7 @@ float MonolingualModel::similarity(const string& word1, const string& word2, int
 }
 
 float MonolingualModel::distance(const string& word1, const string& word2, int policy) const {
-    return 1 - similarity(word1, word2, policy);
+    return (1.0 - similarity(word1, word2, policy)) / 2.0;
 }
 
 
@@ -119,38 +119,6 @@ float MonolingualModel::similarityNgrams(const string& seq1, const string& seq2,
     } else {
         return res / n;
     }
-}
-
-void normalizeWeights(mat& weights) {
-    if (weights.empty()) {
-        return;
-    }
-
-    int dim = weights[0].size();
-
-    vec min_values = weights[0];
-    vec max_values = weights[0];
-    for (size_t i = 1; i < weights.size(); ++i) {
-        for (size_t j = 0; j < dim; ++j) {
-            min_values[j] = min(min_values[j], weights[i][j]);
-            max_values[j] = max(max_values[j], weights[i][j]);
-        }
-    }
-
-    for (size_t i = 0; i < weights.size(); ++i) {
-        for (size_t j = 0; j < dim; ++j) {
-            if (max_values[j] != min_values[j]) {
-                weights[i][j] = (weights[i][j] - min_values[j]) / (max_values[j] - min_values[j]);
-            }
-        }
-    }
-}
-
-void MonolingualModel::normalizeWeights() {
-    ::normalizeWeights(input_weights);
-    ::normalizeWeights(output_weights);
-    ::normalizeWeights(output_weights_hs);
-    ::normalizeWeights(sent_weights);
 }
 
 float MonolingualModel::similaritySentence(const string& seq1, const string& seq2, int policy) const {

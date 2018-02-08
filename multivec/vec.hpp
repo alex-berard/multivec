@@ -219,6 +219,21 @@ public:
     void operator-=(VecExpression<E> const& vec) {
         *this = *this - vec;
     }
+    
+    void concat(Vec const& vec) {
+        _data.insert(_data.end(), vec._data.begin(), vec._data.end());
+    }
+    
+    Vec slice(int i, int j) {
+        if (j > _data.size())
+            j = _data.size();
+        
+        Vec v(j - i);
+        for (int k = i; k < j and k < _data.size(); ++k) {
+            v._data[k - i] = _data[k];
+        }
+        return v;
+    }
 
     void operator*=(float alpha) {
         for (size_type i = 0; i != size(); ++i) {

@@ -34,6 +34,7 @@ static vector<option_plus> options_plus = {
     {"train-online",      required_argument, 0, 't', "use existing model to train online sentence vectors"},
     {"no-average",        no_argument,       0, 'u', "no context averaging in CBOW"},
     {"norm",              no_argument,       0, 'w', "normalize the vectors before saving them"},
+    // {"cbow-concat",       no_argument,       0, 'x', "concatenate the context vectors for CBOW"},
     {0, 0, 0, 0, 0}
 };
 
