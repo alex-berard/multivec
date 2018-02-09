@@ -135,7 +135,7 @@ cdef class MonolingualModel:
     
     def __init__(self, name=None, **kwargs):
         if name is not None:
-            self.model.load(name)
+            self.model.load(name.encode('utf-8'))
         
         # overwrites previous configuration
         for key, value in kwargs.items():
@@ -358,7 +358,7 @@ cdef class BilingualModel:
         self.config = new BilingualConfig()
         self.model = new BilingualModelCpp(self.config)
         if name is not None:
-            self.model.load(name)
+            self.model.load(name.encode('utf-8'))
     
         # overwrites previous configuration
         for key, value in kwargs.items():

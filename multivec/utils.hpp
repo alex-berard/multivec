@@ -184,7 +184,7 @@ struct Config {
         std::cout << "negative:    " << negative << std::endl;
         std::cout << "sent vector: " << sent_vector << std::endl;
         std::cout << "no average:  " << no_average << std::endl;
-        std::cout << "concat:       " << concat << std::endl;
+        std::cout << "concat:      " << concat << std::endl;
     }
 };
 

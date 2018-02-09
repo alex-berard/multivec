@@ -24,11 +24,7 @@ C++ implementation of *word2vec*, *bivec*, and *paragraph vector*.
 ## Installation
 
     git clone https://github.com/eske/multivec.git
-    mkdir multivec/build
-    cd multivec/build
-    cmake ..
-    make
-    cd ..
+    ./compile.sh
 
 The `bin` directory should now contain 4 binaries:
 * `multivec` which is used to generate monolingual models;
@@ -40,11 +36,10 @@ The `bin` directory should now contain 4 binaries:
 First create two directories `data` and `models` at the root of the project, where you will put the text corpora and trained models.
 The script `scripts/prepare-data.py` can be used to pre-process a corpus (punctuation normalization, tokenization, etc.)
 
-    mkdir data
-    mkdir models
+    mkdir data models
     wget http://www.statmt.org/wmt14/training-parallel-nc-v9.tgz -P data
     tar xzf data/training-parallel-nc-v9.tgz -C data
-    scripts/prepare-data.py data/training/news-commentary-v9.fr-en data/news fr en --tokenize --normalize-punk
+    scripts/prepare-data.py data/training/news-commentary-v9.fr-en data/news fr en --tokenize --normalize-punk --lowercase
 
 To train a monolingual model using text corpus `data/news.en` (use `-v` option to see the training progress):
 
@@ -65,12 +60,12 @@ To evaluate a trained English model on the analogical reasoning task, first expo
 
 With this example, you should obtain results similar to these:
 
-    Vocabulary size: 25298
+    Vocabulary size: 23004
     Embeddings size: 100
-    ....
-    Total accuracy: 13.2%
-    Syntactic accuracy: 12.8%, Semantic accuracy: 33.3%
-    Questions seen: 6792/19544, 34.8%
+    Total accuracy:     11.3% (1157/10195)
+    Syntactic accuracy: 12.4% (996/8060)
+    Semantic accuracy:  7.54% (161/2135)
+    Balanced score:     10.1% (Syntactic: 10.6%, Semantic: 9.71%)
 
 ### Python wrapper
 
@@ -84,7 +79,7 @@ Use and train models with Python (`multivec.so` must be in the `PYTHONPATH`, e.g
     >>> model = BilingualModel('../models/news.fr-en.bin')
     >>> model.trg_model
     <multivec.MonolingualModel at 0x7fcfe0d59870>
-    >>> model.trg_model.word_vec('France')
+    >>> model.trg_model.word_vec('france')
     array([ 0.2600708 ,  0.72489363, ...,  1.00654161,  0.38837495])
     >>> new_model = BilingualModel(dimension=300, threads=16)
     >>> new_model.train('../data/news.fr', '../data/news.en')
