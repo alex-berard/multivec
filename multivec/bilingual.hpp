@@ -17,26 +17,26 @@ private:
     float alpha;
     vector<vector<int>> alignments;
 
-    void trainChunk(const string& src_file,
+    void train_chunk(const string& src_file,
                     const string& trg_file,
                     const vector<long long>& src_chunks,
                     const vector<long long>& trg_chunks,
                     int thread_id);
 
-    void readAlignments(const string& align_file);
-    vector<int> getAlignment(const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes, int sent_id);
+    void read_alignments(const string& align_file);
+    vector<int> get_alignment(const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes, int sent_id);
 
-    int trainSentence(const string& trg_sent, const string& src_sent, int sent_id);
+    int train_sentence(const string& trg_sent, const string& src_sent, int sent_id);
 
-    void trainWord(MonolingualModel& src_params, MonolingualModel& trg_params,
+    void train_word(MonolingualModel& src_params, MonolingualModel& trg_params,
         const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes,
         int src_pos, int trg_pos, float alpha);
 
-    void trainWordCBOW(MonolingualModel&, MonolingualModel&,
+    void train_word_CBOW(MonolingualModel&, MonolingualModel&,
         const vector<HuffmanNode>&, const vector<HuffmanNode>&,
         int, int, float);
 
-    void trainWordSkipGram(MonolingualModel&, MonolingualModel&,
+    void train_word_skip_gram(MonolingualModel&, MonolingualModel&,
         const vector<HuffmanNode>&, const vector<HuffmanNode>&,
         int, int, float);
 
@@ -54,17 +54,17 @@ public:
 
     float similarity(const string& src_word, const string& trg_word, int policy = 0) const; // cosine similarity
     float distance(const string& src_word, const string& trg_word, int policy = 0) const; // 1 - cosine similarity
-    float similarityNgrams(const string& src_seq, const string& trg_seq, int policy = 0) const; // similarity between two sequences of same size
-    float similaritySentence(const string& src_seq, const string& trg_seq, int policy = 0) const; // similarity between two variable-size sequences
+    float similarity_ngrams(const string& src_seq, const string& trg_seq, int policy = 0) const; // similarity between two sequences of same size
+    float similarity_bag_of_words(const string& src_seq, const string& trg_seq, int policy = 0) const; // similarity between two variable-size sequences
     // similarity between two variable-size sequences taking into account part-of-speech tags and inverse document frequencies of terms in the sequences
-    float similaritySentenceSyntax(const string& src_seq, const string& trg_seq, const string& src_tags, const string& trg_tags,
-                                   const vector<float>& src_idf, const vector<float>& trg_idf, float alpha = 0.0, int policy = 0) const;
+    float similarity_syntax(const string& src_seq, const string& trg_seq, const string& src_tags, const string& trg_tags,
+                                     const vector<float>& src_idf, const vector<float>& trg_idf, float alpha = 0.0, int policy = 0) const;
     
     vector<pair<string, float>> trg_closest(const string& src_word, int n = 10, int policy = 0) const; // n closest words to given word
     vector<pair<string, float>> src_closest(const string& trg_word, int n = 10, int policy = 0) const;
     
-    vector<pair<string, string>> dictionaryInduction(int src_count = 0, int trg_count = 0, int policy = 0) const;
-    vector<pair<string, string>> dictionaryInduction(const vector<string>& src_vocab, const vector<string>& trg_vocab, int policy = 0) const;
+    vector<pair<string, string>> dictionary_induction(int src_count = 0, int trg_count = 0, int policy = 0) const;
+    vector<pair<string, string>> dictionary_induction(const vector<string>& src_vocab, const vector<string>& trg_vocab, int policy = 0) const;
     
-    void learnMapping(const vector<pair<string, string>>& dict);
+    void learn_mapping(const vector<pair<string, string>>& dict);
 };

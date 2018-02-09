@@ -15,27 +15,24 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/word2vec")
 
 set(DEPENDENCIES ${CMAKE_THREAD_LIBS_INIT})
 
-add_definitions()
-add_executable(multivec-mono ${MULTIVEC_MONO})
-target_link_libraries(multivec-mono ${DEPENDENCIES})
+add_executable(multivec ${MULTIVEC})
+target_link_libraries(multivec ${DEPENDENCIES})
 
 add_executable(multivec-bi ${MULTIVEC_BI})
-target_link_libraries( multivec-bi ${DEPENDENCIES})
+target_link_libraries(multivec-bi ${DEPENDENCIES})
 
 add_executable(word2vec ${WORD2VEC})
 target_link_libraries(word2vec ${DEPENDENCIES})
 
-add_executable(compute-accuracy ${COMPUTE_ACC})
-target_link_libraries(compute-accuracy ${DEPENDENCIES})
+add_executable(analogy ${ANALOGY})
+target_link_libraries(analogy ${DEPENDENCIES})
 
-add_library(multivec SHARED ${MULTIVEC_LIB})
-ADD_LIBRARY(multivec-static STATIC ${MULTIVEC_LIB})
+add_library(multivec-lib SHARED ${MULTIVEC_LIB})
+add_library(multivec-static STATIC ${MULTIVEC_LIB})
 
-SET_TARGET_PROPERTIES(multivec-static PROPERTIES OUTPUT_NAME multivec)
-install(TARGETS multivec multivec-static DESTINATION lib)
-install(TARGETS compute-accuracy word2vec multivec-bi multivec-mono DESTINATION bin)
+set_target_properties(multivec-static PROPERTIES OUTPUT_NAME multivec)
+set_target_properties(multivec-lib PROPERTIES OUTPUT_NAME multivec)
+
+install(TARGETS multivec-lib multivec-static DESTINATION lib)
+install(TARGETS analogy word2vec multivec-bi multivec DESTINATION bin)
 install(FILES multivec/bilingual.hpp  multivec/monolingual.hpp  multivec/serialization.hpp  multivec/utils.hpp  multivec/vec.hpp  word2vec/word2vec.hpp DESTINATION include)
-
-#execute_process (
-#    COMMAND rsync -ahzv --no-o --no-g ../scripts ../multivec ../word2vec ../cython ../docs ../benchmarks /mnt/lig/multivec/
-#)

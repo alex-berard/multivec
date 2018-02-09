@@ -28,7 +28,7 @@ inline string lower(string s) {
     return s;
 }
 
-void evaluateTopic(const string& topic, const vector<string>& lines,
+void evaluate_topic(const string& topic, const vector<string>& lines,
     const map<string, vec>& embeddings, pair<int, int>* res, bool cos_mul, bool cased) {
 
     int total = 0, correct = 0;
@@ -96,7 +96,7 @@ void evaluateTopic(const string& topic, const vector<string>& lines,
     *res = pair<int, int>(correct, total);
 }
 
-void computeAccuracy(istream& infile, map<string, vec>& embeddings, bool verbose, bool cos_mul, bool cased)
+void compute_accuracy(istream& infile, map<string, vec>& embeddings, bool verbose, bool cos_mul, bool cased)
 {
     // normalize
     for (auto it = embeddings.begin(); it != embeddings.end(); ++it) {
@@ -128,7 +128,7 @@ void computeAccuracy(istream& infile, map<string, vec>& embeddings, bool verbose
     vector<thread> threads;
     int i = 0;
     for (auto it = topics.begin(); it != topics.end(); ++it, ++i) {
-        threads.push_back(thread(evaluateTopic, it->first, it->second, embeddings, &results[i], cos_mul, cased));
+        threads.push_back(thread(evaluate_topic, it->first, it->second, embeddings, &results[i], cos_mul, cased));
     }
 
     for (auto it = threads.begin(); it != threads.end(); ++it) {
@@ -259,6 +259,6 @@ int main(int argc, char **argv) {
     model_file.close();
     
     ifstream question_file(argv[2]);
-    computeAccuracy(question_file, embeddings, verbose, cos_mul, cased);
+    compute_accuracy(question_file, embeddings, verbose, cos_mul, cased);
     question_file.close();
 }

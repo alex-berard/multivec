@@ -64,7 +64,7 @@ inline void load(ifstream& infile, vec& v) {
 }
 
 inline void save(ofstream& outfile, const Config& cfg) {
-    save(outfile, cfg.learning_rate);
+    save(outfile, cfg.alpha);
     save(outfile, cfg.dimension);
     save(outfile, cfg.min_count);
     save(outfile, cfg.iterations);
@@ -79,7 +79,7 @@ inline void save(ofstream& outfile, const Config& cfg) {
 }
 
 inline void load(ifstream& infile, Config& cfg) {
-   load(infile, cfg.learning_rate);
+   load(infile, cfg.alpha);
    load(infile, cfg.dimension);
    load(infile, cfg.min_count);
    load(infile, cfg.iterations);
@@ -131,7 +131,6 @@ inline void save(ofstream& outfile, const MonolingualModel& model) {
 
     save(outfile, model.input_weights);
     save(outfile, model.output_weights);
-    save(outfile, model.output_weights_hs);
     save(outfile, model.sent_weights);
 }
 
@@ -150,7 +149,6 @@ inline void load(ifstream& infile, MonolingualModel& model) {
 
     load(infile, model.input_weights);
     load(infile, model.output_weights);
-    load(infile, model.output_weights_hs);
     load(infile, model.sent_weights);
 }
 

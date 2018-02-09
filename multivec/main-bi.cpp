@@ -17,7 +17,7 @@ static vector<option_plus> options_plus = {
     {"min-count",     required_argument, 0, 'b', "minimum count of vocabulary words"},
     {"window-size",   required_argument, 0, 'c', "size of the window"},
     {"threads",       required_argument, 0, 'd', "number of threads"},
-    {"iter",          required_argument, 0, 'e', "number of training epochs"},
+    {"iterations",    required_argument, 0, 'e', "number of training epochs"},
     {"negative",      required_argument, 0, 'f', "number of negative samples (0 for no negative sampling)"},
     {"alpha",         required_argument, 0, 'g', "initial learning rate"},
     {"beta",          required_argument, 0, 'i', "bilingual training weight"},
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
             case 'd': config.threads = atoi(optarg);        break;
             case 'e': config.iterations = atoi(optarg);     break;
             case 'f': config.negative = atoi(optarg);       break;
-            case 'g': config.learning_rate = atof(optarg);  break;
+            case 'g': config.alpha = atof(optarg);          break;
             case 'i': config.beta = atof(optarg);           break;
             case 'j': config.subsampling = atof(optarg);    break;
             case 'k': config.skip_gram = true;              break;
@@ -145,17 +145,17 @@ int main(int argc, char **argv) {
         if(!save_trg_file.empty())
             model.trg_model.save(save_trg_file);
         if (!save_src_vec_file.empty())
-            model.src_model.saveVectors(save_src_vec_file);
+            model.src_model.save_vectors(save_src_vec_file);
         if (!save_trg_vec_file.empty())
-            model.trg_model.saveVectors(save_trg_vec_file);
+            model.trg_model.save_vectors(save_trg_vec_file);
         exit(1);
     };
     
-    struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = [](int signum) { interrupt_handler(signum); };
-    sigemptyset(&sigIntHandler.sa_mask);
-    sigIntHandler.sa_flags = 0;
-    sigaction(SIGINT, &sigIntHandler, NULL);
+    struct sigaction sig_int_handler;
+    sig_int_handler.sa_handler = [](int signum) { interrupt_handler(signum); };
+    sigemptyset(&sig_int_handler.sa_mask);
+    sig_int_handler.sa_flags = 0;
+    sigaction(SIGINT, &sig_int_handler, NULL);
     
     if (!train_src_file.empty() && !train_trg_file.empty()) {
         model.train(train_src_file, train_trg_file, align_file, load_file.empty());

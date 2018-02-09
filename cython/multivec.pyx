@@ -17,7 +17,7 @@ cdef extern from "vec.hpp":
 cdef extern from "utils.hpp":
     cdef cppclass Config:
         Config()
-        float learning_rate
+        float alpha
         int dimension
         int min_count
         int iterations
@@ -38,25 +38,25 @@ cdef extern from "utils.hpp":
 cdef extern from "monolingual.hpp":
     cdef cppclass MonolingualModelCpp "MonolingualModel":
         MonolingualModelCpp(Config*) except +
-        Vec wordVec(const string&, int) except +
-        Vec sentVec(const string&) except +
+        Vec word_vec(const string&, int) except +
+        Vec sent_vec(const string&) except +
         void train(const string&, bool) except +
         void load(const string&) except +
         void save(const string&) except +
-        void saveVectors(const string&, int) except +
-        void saveVectorsBin(const string&, int) except +
-        void saveSentVectors(const string&) except +
+        void save_vectors(const string&, int) except +
+        void save_vectors_bin(const string&, int) except +
+        void save_sent_vectors(const string&) except +
         float similarity(const string&, const string&, int) except +
         float distance(const string&, const string&, int) except +
-        float similarityNgrams(const string&, const string&, int) except +
-        float similaritySentence(const string&, const string&, int) except +
-        float similaritySentenceSyntax(const string&, const string&, const string&, const string&,
+        float similarity_ngrams(const string&, const string&, int) except +
+        float similarity_bag_of_words(const string&, const string&, int) except +
+        float similarity_syntax(const string&, const string&, const string&, const string&,
                                        const vector[float]&, const vector[float]&, float, int) except +
-        float softWER(const string&, const string&, int) except +
+        float soft_word_error_rate(const string&, const string&, int) except +
         vector[pair[string, float]] closest(const Vec&, int, int) except +
         vector[pair[string, float]] closest(const string&, const vector[string]&, int) except +
         vector[pair[string, float]] closest(const string&, int, int) except +
-        vector[pair[string, int]] getWords() except +
+        vector[pair[string, int]] get_word_counts() except +
         Config* config
 
 
@@ -68,10 +68,10 @@ cdef extern from "bilingual.hpp":
         void save(const string&) except +
         float similarity(const string&, const string&, int) except +
         float distance(const string&, const string&, int) except +
-        float similarityNgrams(const string&, const string&, int) except +
-        float similaritySentence(const string&, const string&, int) except +
-        float similaritySentenceSyntax(const string&, const string&, const string&, const string&,
-                                       const vector[float]&, const vector[float]&, float, int) except +
+        float similarity_ngrams(const string&, const string&, int) except +
+        float similarity_bag_of_words(const string&, const string&, int) except +
+        float similarity_syntax(const string&, const string&, const string&, const string&,
+                                const vector[float]&, const vector[float]&, float, int) except +
         vector[pair[string, float]] trg_closest(const string&, int, int) except +
         vector[pair[string, float]] src_closest(const string&, int, int) except +
         MonolingualModelCpp src_model
@@ -91,7 +91,7 @@ cdef class MonolingualModel:
     
     Attributes
     ----------
-    learning_rate : initial learning rate, which will decay to zero during training (default: 0.05)
+    alpha : initial learning rate, which will decay to zero during training (default: 0.05)
     dimension : dimension of the embeddings (default: 100)
     min_count : minimum count of a word in the training file to be put in the vocabulary (default: 5)
     iterations : number of training iterations (default: 5)
@@ -160,7 +160,7 @@ cdef class MonolingualModel:
             2) sum of input and output weights
             3) output weights
         """
-        cdef Vec vec = self.model.wordVec(word.encode('utf-8'), policy)
+        cdef Vec vec = self.model.word_vec(word.encode('utf-8'), policy)
         cdef float* data = vec.data()
         return np.array([data[i] for i in range(vec.size())])
 
@@ -173,7 +173,7 @@ cdef class MonolingualModel:
         
         Raise RuntimeError if sequence is empty or all words are OOV.
         """
-        cdef Vec vec = self.model.sentVec(sequence.encode('utf-8'))
+        cdef Vec vec = self.model.sent_vec(sequence.encode('utf-8'))
         cdef float* data = vec.data()
         return np.array([data[i] for i in range(vec.size())])
 
@@ -188,7 +188,7 @@ cdef class MonolingualModel:
         Initialize will create a new vocabulary from training file, and initialize the model's
         weight to random values.
         Set this value to False to continue training of an existing model (learning rate will
-        be reset to its initial value, i.e. self.learning_rate)
+        be reset to its initial value, i.e. self.alpha)
         """
         self.model.train(name.encode('utf-8'), initialize)
         
@@ -223,7 +223,7 @@ cdef class MonolingualModel:
         The `policy` parameters
         decides which weights are used (see `MonolingualModel.word_vec` for details.)
         """
-        self.model.saveVectors(name.encode('utf-8'), policy)
+        self.model.save_vectors(name.encode('utf-8'), policy)
 
     def save_vectors_bin(self, name, policy=0):
         """
@@ -234,10 +234,10 @@ cdef class MonolingualModel:
         The `policy` parameters
         decides which weights are used (see `MonolingualModel.word_vec` for details.)
         """
-        self.model.saveVectorsBin(name.encode('utf-8'), policy)
+        self.model.save_vectors_bin(name.encode('utf-8'), policy)
 
     def save_sent_vectors(self, name):
-        self.model.saveSentVectors(name.encode('utf-8'))
+        self.model.save_sent_vectors(name.encode('utf-8'))
     
     def similarity(self, word1, word2, policy=0):
         return self.model.similarity(word1.encode('utf-8'), word2.encode('utf-8'), policy)
@@ -245,15 +245,15 @@ cdef class MonolingualModel:
         return self.model.distance(word1.encode('utf-8'), word2.encode('utf-8'), policy)
             
     def similarity_ngrams(self, seq1, seq2, policy=0):
-        return self.model.similarityNgrams(seq1.encode('utf-8'), seq2.encode('utf-8'), policy)
+        return self.model.similarity_ngrams(seq1.encode('utf-8'), seq2.encode('utf-8'), policy)
     def similarity_bag_of_words(self, seq1, seq2, policy=0):
-        return self.model.similaritySentence(seq1.encode('utf-8'), seq2.encode('utf-8'), policy)
+        return self.model.similarity_bag_of_words(seq1.encode('utf-8'), seq2.encode('utf-8'), policy)
     def similarity_syntax(self, seq1, seq2, tags1, tags2, idf1, idf2, alpha=0.0, policy=0):
-        return self.model.similaritySentenceSyntax(seq1.encode('utf-8'), seq2.encode('utf-8'),
-                                                   tags1.encode('utf-8'), tags2.encode('utf-8'),
-                                                   idf1, idf2, alpha, policy)
+        return self.model.similarity_syntax(seq1.encode('utf-8'), seq2.encode('utf-8'),
+                                            tags1.encode('utf-8'), tags2.encode('utf-8'),
+                                            idf1, idf2, alpha, policy)
     def soft_word_error_rate(self, seq1, seq2, policy=0):
-        return self.model.softWER(seq1.encode('utf-8'), seq2.encode('utf-8'), policy)
+        return self.model.soft_word_error_rate(seq1.encode('utf-8'), seq2.encode('utf-8'), policy)
     
     def closest(self, word, n=10, policy=0):
         cdef vector[pair[string, float]] res = self.model.closest(<const string&> word.encode('utf-8'), <int> n, <int> policy)
@@ -268,15 +268,15 @@ cdef class MonolingualModel:
                                                                   <int> policy)
         return [(w.decode('utf-8'), c) for w, c in res]
     def get_vocabulary(self):
-        cdef vector[pair[string, int]] word_counts = self.model.getWords()
+        cdef vector[pair[string, int]] word_counts = self.model.get_word_counts()
         return [w.decode('utf-8') for w, _ in word_counts]
-    def get_counts(self):
-        cdef vector[pair[string, int]] word_counts = self.model.getWords()
+    def get_word_counts(self):
+        cdef vector[pair[string, int]] word_counts = self.model.get_word_counts()
         return OrderedDict((w.decode('utf-8'), c) for w, c in word_counts)
         
-    property learning_rate:
-        def __get__(self): return self.config.learning_rate
-        def __set__(self, learning_rate): self.config.learning_rate = learning_rate
+    property alpha:
+        def __get__(self): return self.config.alpha
+        def __set__(self, alpha): self.config.alpha = alpha
     property dimension:
         def __get__(self): return self.config.dimension
         def __set__(self, dimension): self.config.dimension = dimension
@@ -327,7 +327,7 @@ cdef class BilingualModel:
     src_model : source monolingual model
     trg_model : target monolingual model
     beta : weight given to bilingual updates (compared to monolingual updates) (default: 1)
-    learning_rate : initial learning rate, which will decay to zero during training (default: 0.05)
+    alpha : initial learning rate, which will decay to zero during training (default: 0.05)
     dimension : dimension of the embeddings (default: 100)
     min_count : minimum count of a word in the training file to be put in the vocabulary (default: 5)
     iterations : number of training iterations (default: 5)
@@ -344,12 +344,12 @@ cdef class BilingualModel:
     
     Examples
     --------
-    >>> model = MonolingualModel('models/news-commentary.fr-en.bin', learning_rate=0.1)
-    >>> model.learning_rate
+    >>> model = MonolingualModel('models/news-commentary.fr-en.bin', alpha=0.1)
+    >>> model.alpha
     0.1
     >>> model.src_model
     <multivec.MonolingualModel at 0x7f515c0687b0>
-    >>> model.src_model.learning_rate
+    >>> model.src_model.alpha
     0.1
     """
     cdef BilingualConfig* config
@@ -386,13 +386,13 @@ cdef class BilingualModel:
         return self.model.similarity(src_word.encode('utf-8'), trg_word.encode('utf-8'), policy)
             
     def similarity_ngrams(self, src_seq, trg_seq, policy=0):
-        return self.model.similarityNgrams(src_seq.encode('utf-8'), trg_seq.encode('utf-8'), policy)
+        return self.model.similarity_ngrams(src_seq.encode('utf-8'), trg_seq.encode('utf-8'), policy)
     def similarity_bag_of_words(self, src_seq, trg_seq, policy=0):
-        return self.model.similaritySentence(src_seq.encode('utf-8'), trg_seq.encode('utf-8'), policy)
+        return self.model.similarity_bag_of_words(src_seq.encode('utf-8'), trg_seq.encode('utf-8'), policy)
     def similarity_syntax(self, src_seq, trg_seq, src_tags, trg_tags, src_idf, trg_idf, alpha=0.0, policy=0):
-        return self.model.similaritySentenceSyntax(src_seq.encode('utf-8'), trg_seq.encode('utf-8'),
-                                                   src_tags.encode('utf-8'), trg_tags.encode('utf-8'),
-                                                   src_idf, trg_idf, alpha, policy)
+        return self.model.similarity_syntax(src_seq.encode('utf-8'), trg_seq.encode('utf-8'),
+                                            src_tags.encode('utf-8'), trg_tags.encode('utf-8'),
+                                            src_idf, trg_idf, alpha, policy)
     def trg_closest(self, src_word, n=10, policy=0):
         cdef vector[pair[string, float]] res = self.model.trg_closest(<const string&> src_word.encode('utf-8'), <int> n, <int> policy)
         return [(w.decode('utf-8'), c) for w, c in res]
@@ -412,9 +412,9 @@ cdef class BilingualModel:
     property beta:
         def __get__(self): return self.config.beta           
         def __set__(self, beta): self.config.beta = beta
-    property learning_rate:
-        def __get__(self): return self.config.learning_rate
-        def __set__(self, learning_rate): self.config.learning_rate = learning_rate
+    property alpha:
+        def __get__(self): return self.config.alpha
+        def __set__(self, alpha): self.config.alpha = alpha
     property dimension:
         def __get__(self): return self.config.dimension
         def __set__(self, dimension): self.config.dimension = dimension
@@ -448,4 +448,3 @@ cdef class BilingualModel:
     property sent_vector:
         def __get__(self): return self.config.sent_vector
         def __set__(self, sent_vector): self.config.sent_vector = sent_vector
-

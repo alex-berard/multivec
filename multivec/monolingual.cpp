@@ -4,21 +4,7 @@
 const HuffmanNode HuffmanNode::UNK;
 std::mutex multivec::print_mutex;
 
-vector<float> get_exp_table() {
-    vector<float> res;
-    for (int i = 0; i < EXP_TABLE_SIZE; i++) {
-        float x = exp((i / (float) EXP_TABLE_SIZE * 2 - 1) * MAX_EXP);
-        x = x / (x + 1);
-        res.push_back(x);
-    }
-    return res;
-}
-
-#ifdef EXP_TABLE
-const vector<float> Foo::exp_table = get_exp_table();
-#endif
-
-void MonolingualModel::addWordToVocab(const string& word) {
+void MonolingualModel::add_word_to_vocab(const string& word) {
     auto it = vocabulary.find(word);
 
     if (it != vocabulary.end()) {
@@ -29,7 +15,7 @@ void MonolingualModel::addWordToVocab(const string& word) {
     }
 }
 
-void MonolingualModel::reduceVocab() {
+void MonolingualModel::reduce_vocab() {
     int i = 0;
     for (auto it = vocabulary.begin(); it != vocabulary.end(); ) {
         if ((it->second.count) < config->min_count) {
@@ -40,7 +26,7 @@ void MonolingualModel::reduceVocab() {
     }
 }
 
-void MonolingualModel::readVocab(const string& training_file) {
+void MonolingualModel::read_vocab(const string& training_file) {
     ifstream infile(training_file);
 
     check_is_open(infile, training_file);
@@ -50,22 +36,22 @@ void MonolingualModel::readVocab(const string& training_file) {
 
     string word;
     while (infile >> word) {
-        addWordToVocab(word);
+        add_word_to_vocab(word);
     }
 
     if (config->verbose)
         std::cout << "Vocabulary size: " << vocabulary.size() << std::endl;
 
-    reduceVocab();
+    reduce_vocab();
 
     if (config->verbose)
         std::cout << "Reduced vocabulary size: " << vocabulary.size() << std::endl;
 
-    createBinaryTree();
-    initUnigramTable();
+    create_binary_tree();
+    init_unigram_table();
 }
 
-void MonolingualModel::createBinaryTree() {
+void MonolingualModel::create_binary_tree() {
     vector<HuffmanNode*> heap;
     vector<HuffmanNode> parent_nodes;
     parent_nodes.reserve(vocabulary.size());
@@ -90,10 +76,10 @@ void MonolingualModel::createBinaryTree() {
         heap.insert(it, parent);
     }
 
-    assignCodes(heap.front(), {}, {});
+    assign_codes(heap.front(), {}, {});
 }
 
-void MonolingualModel::assignCodes(HuffmanNode* node, vector<int> code, vector<int> parents) const {
+void MonolingualModel::assign_codes(HuffmanNode* node, vector<int> code, vector<int> parents) const {
     if (node->is_leaf) {
         node->code = code;
         node->parents = parents;
@@ -104,12 +90,12 @@ void MonolingualModel::assignCodes(HuffmanNode* node, vector<int> code, vector<i
         vector<int> code_right(code);
         code_right.push_back(1);
 
-        assignCodes(node->left, code_left, parents);
-        assignCodes(node->right, code_right, parents);
+        assign_codes(node->left, code_left, parents);
+        assign_codes(node->right, code_right, parents);
     }
 }
 
-void MonolingualModel::initUnigramTable() {
+void MonolingualModel::init_unigram_table() {
     unigram_table.clear();
     vocab_word_count = 0;
     
@@ -130,12 +116,12 @@ void MonolingualModel::initUnigramTable() {
     }
 }
 
-HuffmanNode* MonolingualModel::getRandomHuffmanNode() {
+HuffmanNode* MonolingualModel::get_random_huffman_node() {
     auto index = multivec::rand(unigram_table.size());
     return unigram_table[index];
 }
 
-void MonolingualModel::initNet() {
+void MonolingualModel::init_net() {
     int v = static_cast<int>(vocabulary.size());
     int d = config->dimension;
 
@@ -147,11 +133,10 @@ void MonolingualModel::initNet() {
         }
     }
 
-    output_weights_hs = mat(v, vec(d));
     output_weights = mat(v, vec(d));
 }
 
-void MonolingualModel::initSentWeights() {
+void MonolingualModel::init_sent_weights() {
     int d = config->dimension;
     sent_weights = mat(training_lines, vec(d));
 
@@ -162,7 +147,7 @@ void MonolingualModel::initSentWeights() {
     }
 }
 
-vector<HuffmanNode> MonolingualModel::getNodes(const string& sentence) const {
+vector<HuffmanNode> MonolingualModel::get_nodes(const string& sentence) const {
     vector<HuffmanNode> nodes;
     istringstream iss(sentence);
     string word;
@@ -181,7 +166,7 @@ vector<HuffmanNode> MonolingualModel::getNodes(const string& sentence) const {
     return nodes;
 }
 
-vector<HuffmanNode> MonolingualModel::getSortedVocab() const {
+vector<HuffmanNode> MonolingualModel::get_sorted_vocab() const {
     vector<HuffmanNode> sorted_vocab;
     for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
         sorted_vocab.push_back(it->second);
@@ -212,7 +197,7 @@ void MonolingualModel::subsample(vector<HuffmanNode>& nodes) const {
     }
 }
 
-void MonolingualModel::saveVectorsBin(const string &filename, int policy, bool norm) const {
+void MonolingualModel::save_vectors_bin(const string &filename, int policy, bool norm) const {
     if (config->verbose)
         std::cout << "Saving embeddings in binary format to " << filename << std::endl;
 
@@ -221,12 +206,12 @@ void MonolingualModel::saveVectorsBin(const string &filename, int policy, bool n
 
     outfile << vocabulary.size() << " " << config->dimension << endl;
 
-    auto sorted_vocab = getSortedVocab();
+    auto sorted_vocab = get_sorted_vocab();
     
     for (auto it = sorted_vocab.begin(); it != sorted_vocab.end(); ++it) {
         string word = it->word;
         word.push_back(' ');
-        vec embedding = wordVec(it->index, policy);
+        vec embedding = word_vec(it->index, policy);
         if (norm) {
             embedding /= embedding.norm();
         }
@@ -237,7 +222,7 @@ void MonolingualModel::saveVectorsBin(const string &filename, int policy, bool n
     }
 }
 
-void MonolingualModel::saveVectors(const string &filename, int policy, bool norm) const {
+void MonolingualModel::save_vectors(const string &filename, int policy, bool norm) const {
     if (config->verbose)
         std::cout << "Saving embeddings in text format to " << filename << std::endl;
 
@@ -246,11 +231,11 @@ void MonolingualModel::saveVectors(const string &filename, int policy, bool norm
 
     outfile << vocabulary.size() << " " << config->dimension << endl;
 
-    auto sorted_vocab = getSortedVocab();
+    auto sorted_vocab = get_sorted_vocab();
     
     for (auto it = sorted_vocab.begin(); it != sorted_vocab.end(); ++it) {
         outfile << it->word << " ";
-        vec embedding = wordVec(it->index, policy);
+        vec embedding = word_vec(it->index, policy);
         if (norm) {
             embedding /= embedding.norm();
         }
@@ -262,7 +247,7 @@ void MonolingualModel::saveVectors(const string &filename, int policy, bool norm
     }
 }
 
-void MonolingualModel::saveSentVectors(const string &filename, bool norm) const {
+void MonolingualModel::save_sent_vectors(const string &filename, bool norm) const {
     if (config->verbose)
         std::cout << "Saving sentence vectors in text format to " << filename << std::endl;
 
@@ -290,7 +275,7 @@ void MonolingualModel::load(const string& filename) {
     check_is_open(infile, filename);
 
     ::load(infile, *this);
-    initUnigramTable();
+    init_unigram_table();
     if (config->verbose)
         std::cout << "Vocabulary size: " << vocabulary.size() << std::endl;
 }
@@ -305,8 +290,12 @@ void MonolingualModel::save(const string& filename) const {
     ::save(outfile, *this);
 }
 
-vec MonolingualModel::wordVec(int index, int policy) const {
-    if (policy == 1 && config->negative > 0) // concat input and output
+vec MonolingualModel::word_vec(int index, int policy) const {
+    if (config->hierarchical_softmax) // only input weights
+    {
+        return input_weights[index];
+    }
+    else if (policy == 1) // concat input and output
     {
         int d = config->dimension;
         vec res(d * 2);
@@ -314,11 +303,11 @@ vec MonolingualModel::wordVec(int index, int policy) const {
         for (int c = 0; c < d; ++c) res[d + c] = output_weights[index][c];
         return res;
     }
-    else if (policy == 2 && config->negative > 0) // sum input and output
+    else if (policy == 2) // sum input and output
     {
         return input_weights[index] + output_weights[index];
     }
-    else if (policy == 3 && config->negative > 0) // only output weights
+    else if (policy == 3) // only output weights
     {
         return output_weights[index];
     }
@@ -339,17 +328,17 @@ vec MonolingualModel::wordVec(int index, int policy) const {
  * 3: output weights only.
  * @return vec
  */
-vec MonolingualModel::wordVec(const string& word, int policy) const {
+vec MonolingualModel::word_vec(const string& word, int policy) const {
     auto it = vocabulary.find(word);
 
     if (it == vocabulary.end()) {
         throw runtime_error("out of vocabulary");
     } else {
-        return wordVec(it->second.index, policy);
+        return word_vec(it->second.index, policy);
     }
 }
 
-void MonolingualModel::sentVectors(const string &input_file) {
+void MonolingualModel::sent_vectors(const string &input_file) {
     ifstream infile(input_file, ios::binary | ios::out);
     check_is_open(infile, input_file);
 
@@ -358,7 +347,7 @@ void MonolingualModel::sentVectors(const string &input_file) {
     while(getline(infile, line)) {
         vec embedding(config->dimension, 0);
         try {
-            embedding = sentVec(line);
+            embedding = sent_vec(line);
         } catch (runtime_error) {
             // in case of error (empty sentence, or all words are OOV), print a vector of zeros
         };
@@ -376,8 +365,8 @@ void MonolingualModel::sentVectors(const string &input_file) {
  * @param sentence
  * @return sent_vec
  */
-vec MonolingualModel::sentVec(const string& sentence) {
-    auto nodes = getNodes(sentence);  // no subsampling here (TODO)
+vec MonolingualModel::sent_vec(const string& sentence) {
+    auto nodes = get_nodes(sentence);  // no subsampling here (TODO)
     nodes.erase(
         remove(nodes.begin(), nodes.end(), HuffmanNode::UNK),
         nodes.end()); // remove UNK tokens
@@ -387,10 +376,10 @@ vec MonolingualModel::sentVec(const string& sentence) {
 
     vec sent_vec(config->dimension, 0);  // TODO: random initialization?
     for (int k = 0; k < config->iterations; ++k) {
-        float alpha = config->learning_rate * (1 - static_cast<float>(k) / config->iterations);
+        float alpha = config->alpha * (1 - static_cast<float>(k) / config->iterations);
         
         for (int pos = 0; pos < nodes.size(); ++pos) {
-            trainWord(nodes, pos, &sent_vec, alpha, false);
+            train_word(nodes, pos, &sent_vec, alpha, false);
         }
     }
 
@@ -416,8 +405,8 @@ void MonolingualModel::train(const string& training_file, bool initialize) {
             std::cout << "Creating new model" << std::endl;
 
         // reads vocab and initializes unigram table
-        readVocab(training_file);
-        initNet();
+        read_vocab(training_file);
+        init_net();
     } else if (vocab_word_count == 0) {
         throw runtime_error("the model needs to be initialized before training");
     }
@@ -435,16 +424,16 @@ void MonolingualModel::train(const string& training_file, bool initialize) {
 
     if (config->sent_vector)
         // no incremental training for paragraph vector
-        initSentWeights();
+        init_sent_weights();
 
     high_resolution_clock::time_point start = high_resolution_clock::now();
     if (config->threads == 1) {
-        trainChunk(training_file, chunks, 0);
+        train_chunk(training_file, chunks, 0);
     } else {
         vector<thread> threads;
 
         for (int i = 0; i < config->threads; ++i) {
-            threads.push_back(thread(&MonolingualModel::trainChunk, this,
+            threads.push_back(thread(&MonolingualModel::train_chunk, this,
                 training_file, chunks, i));
         }
 
@@ -474,31 +463,33 @@ vector<long long> MonolingualModel::chunkify(const string& filename, int n_chunk
     check_is_non_empty(infile, filename);
 
     vector<long long> chunks;
-    vector<long long> line_positions;
+    vector<pair<long long, long long>> positions;
     long long words = 0;
-
+    long long pos = 0;
     string line;
-    do {
-        line_positions.push_back(static_cast<long long>(infile.tellg()));
-        words += split(line).size();
-    } while (getline(infile, line));
-    words += split(line).size();
-
-    training_lines = line_positions.size() - 1;
-    training_words = words;
-    int chunk_size = training_lines / n_chunks;  // number of lines in each chunk
-
-    for (int i = 0; i < n_chunks; i++) {
-        long long chunk_start = line_positions[i * chunk_size];
-        chunks.push_back(chunk_start);
+    while (getline(infile, line)) {
+        words += split(line).size();            // total number of words up to (including) this line
+        positions.push_back({pos, words}); // starting position of this line
+        pos = infile.tellg();
     }
 
+    training_lines = positions.size();
+    training_words = words;
+    int chunk_size = training_words / n_chunks;  // number of lines in each chunk
+
+    int chunk_id = 0;
+    for (auto it = positions.begin(); it != positions.end() and chunk_id < n_chunks; ++it) {
+        if (it->second >= chunk_size * chunk_id) {
+            chunks.push_back(it->first);
+            chunk_id++;
+        }
+    }
     return chunks;
 }
 
-void MonolingualModel::trainChunk(const string& training_file, const vector<long long>& chunks, int chunk_id) {
+void MonolingualModel::train_chunk(const string& training_file, const vector<long long>& chunks, int chunk_id) {
     ifstream infile(training_file);
-    float starting_alpha = config->learning_rate;
+    float starting_alpha = config->alpha;
     float alpha = starting_alpha;
     int max_iterations = config->iterations;
 
@@ -516,7 +507,7 @@ void MonolingualModel::trainChunk(const string& training_file, const vector<long
         string sent;
         while (getline(infile, sent)) {
             vec* sent_vec = config->sent_vector ? &sent_weights[sent_id] : nullptr;
-            word_count += trainSentence(sent, sent_vec, alpha);  // asynchronous update (possible race conditions)
+            word_count += train_sentence(sent, sent_vec, alpha);  // asynchronous update (possible race conditions)
             sent_id++;
                 
             // update learning rate
@@ -547,10 +538,11 @@ void MonolingualModel::trainChunk(const string& training_file, const vector<long
     }
 }
 
-int MonolingualModel::trainSentence(const string& sent, vec* sent_vec, float alpha) {
-    auto nodes = getNodes(sent);  // same size as sent, OOV words are replaced by <UNK>
+int MonolingualModel::train_sentence(const string& sent, vec* sent_vec, float alpha) {
+    auto nodes = get_nodes(sent);  // same size as sent, OOV words are replaced by <UNK>
     // counts the number of words that are in the vocabulary
-    int words = nodes.size() - count(nodes.begin(), nodes.end(), HuffmanNode::UNK);
+    // int words = nodes.size() - count(nodes.begin(), nodes.end(), HuffmanNode::UNK);
+    int words = nodes.size();
 
     if (config->subsampling > 0) {  // disable with sent vector?
         subsample(nodes); // puts <UNK> tokens in place of the discarded tokens
@@ -567,23 +559,23 @@ int MonolingualModel::trainSentence(const string& sent, vec* sent_vec, float alp
 
     // Monolingual training
     for (int pos = 0; pos < nodes.size(); ++pos) {
-        trainWord(nodes, pos, sent_vec, alpha);
+        train_word(nodes, pos, sent_vec, alpha);
     }
 
     return words; // returns the number of words processed, for progress estimation
 }
 
-void MonolingualModel::trainWord(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update) {
+void MonolingualModel::train_word(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update) {
     if (config->skip_gram and sent_vec != nullptr) {  // DBOW model
-        trainWordDBOW(nodes, word_pos, sent_vec, alpha, update);
+        train_word_DBOW(nodes, word_pos, sent_vec, alpha, update);
     } else if (config->skip_gram) {
-        trainWordSkipGram(nodes, word_pos, sent_vec, alpha, update);
+        train_word_skip_gram(nodes, word_pos, sent_vec, alpha, update);
     } else {
-        trainWordCBOW(nodes, word_pos, sent_vec, alpha, update);
+        train_word_CBOW(nodes, word_pos, sent_vec, alpha, update);
     }
 }
 
-void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update) {
+void MonolingualModel::train_word_CBOW(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update) {
     vec hidden(config->dimension, 0);
     const HuffmanNode& cur_node = nodes[word_pos];
 
@@ -591,9 +583,6 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
     int count = 0;
 
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
-#ifdef SYNC_SGD
-        std::lock_guard<std::mutex> guard(input_weights_mutex);
-#endif
         if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
         hidden += input_weights[nodes[pos].index];
         ++count;
@@ -614,18 +603,14 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
 
     vec error(config->dimension, 0);
     if (config->hierarchical_softmax) {
-        error += hierarchicalUpdate(cur_node, hidden, alpha, update);
-    }
-    if (config->negative > 0) {
-        error += negSamplingUpdate(cur_node, hidden, alpha, update);
+        error += hierarchical_update(cur_node, hidden, alpha, update);
+    } else if (config->negative > 0) {
+        error += neg_sampling_update(cur_node, hidden, alpha, update);
     }
     
     // update input weights
     if (update) {
         for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
-#ifdef SYNC_SGD
-            std::lock_guard<std::mutex> guard(input_weights_mutex);
-#endif
             if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
             input_weights[nodes[pos].index] += error / count;
         }
@@ -636,21 +621,20 @@ void MonolingualModel::trainWordCBOW(const vector<HuffmanNode>& nodes, int word_
     }
 }
 
-void MonolingualModel::trainWordDBOW(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update) {
+void MonolingualModel::train_word_DBOW(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update) {
     const HuffmanNode& output_word = nodes[word_pos];
 
     vec error(config->dimension, 0);
     if (config->hierarchical_softmax) {
-        error += hierarchicalUpdate(output_word, *sent_vec, alpha, update);
-    }
-    if (config->negative > 0) {
-        error += negSamplingUpdate(output_word, *sent_vec, alpha, update);
+        error += hierarchical_update(output_word, *sent_vec, alpha, update);
+    } else if (config->negative > 0) {
+        error += neg_sampling_update(output_word, *sent_vec, alpha, update);
     }
 
     *sent_vec += error;
 }
 
-void MonolingualModel::trainWordSkipGram(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update) {
+void MonolingualModel::train_word_skip_gram(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update) {
     const HuffmanNode& input_word = nodes[word_pos]; // use this word to predict surrounding words
 
     int this_window_size = 1 + multivec::rand(config->window_size);
@@ -663,10 +647,9 @@ void MonolingualModel::trainWordSkipGram(const vector<HuffmanNode>& nodes, int w
         
         vec error(config->dimension, 0);
         if (config->hierarchical_softmax) {
-            error += hierarchicalUpdate(output_word, input_weights[input_word.index], alpha, update);
-        }
-        if (config->negative > 0) {
-            error += negSamplingUpdate(output_word, input_weights[input_word.index], alpha, update);
+            error += hierarchical_update(output_word, input_weights[input_word.index], alpha, update);
+        } else  if (config->negative > 0) {
+            error += neg_sampling_update(output_word, input_weights[input_word.index], alpha, update);
         }
 
         if (update) {
@@ -675,7 +658,7 @@ void MonolingualModel::trainWordSkipGram(const vector<HuffmanNode>& nodes, int w
     }
 }
 
-vec MonolingualModel::negSamplingUpdate(const HuffmanNode& node, const vec& hidden, float alpha, bool update) {
+vec MonolingualModel::neg_sampling_update(const HuffmanNode& node, const vec& hidden, float alpha, bool update) {
     vec temp(config->dimension, 0);
 
     for (int d = 0; d < config->negative + 1; ++d) {
@@ -686,18 +669,12 @@ vec MonolingualModel::negSamplingUpdate(const HuffmanNode& node, const vec& hidd
             target = &node;
             label = 1;
         } else { // n negative examples
-            target = getRandomHuffmanNode();
+            target = get_random_huffman_node();
             if (*target == node) continue;
             label = 0;
         }
 
-        float x;
-        {
-#ifdef SYNC_SGD
-        std::lock_guard<std::mutex> guard(output_weights_mutex);
-#endif
-        x = hidden.dot(output_weights[target->index]);
-        }
+        float x = hidden.dot(output_weights[target->index]);
 
         float pred;
         if (x >= MAX_EXP) {
@@ -708,18 +685,9 @@ vec MonolingualModel::negSamplingUpdate(const HuffmanNode& node, const vec& hidd
             pred = sigmoid(x);
         }
         float error = alpha * (label - pred);
-
-        {
-#ifdef SYNC_SGD
-        std::lock_guard<std::mutex> guard(output_weights_mutex);
-#endif
         temp += error * output_weights[target->index];
-        }
 
         if (update) {
-#ifdef SYNC_SGD
-            std::lock_guard<std::mutex> guard(output_weights_mutex);
-#endif
             output_weights[target->index] += error * hidden;
         }
     }
@@ -727,12 +695,12 @@ vec MonolingualModel::negSamplingUpdate(const HuffmanNode& node, const vec& hidd
     return temp;
 }
 
-vec MonolingualModel::hierarchicalUpdate(const HuffmanNode& node, const vec& hidden, float alpha, bool update) {
+vec MonolingualModel::hierarchical_update(const HuffmanNode& node, const vec& hidden, float alpha, bool update) {
     vec temp(config->dimension, 0);
 
     for (int j = 0; j < node.code.size(); ++j) {
         int parent_index = node.parents[j];
-        float x = hidden.dot(output_weights_hs[parent_index]);
+        float x = hidden.dot(output_weights[parent_index]);
 
         if (x <= -MAX_EXP || x >= MAX_EXP) {
             continue;
@@ -741,19 +709,19 @@ vec MonolingualModel::hierarchicalUpdate(const HuffmanNode& node, const vec& hid
         float pred = sigmoid(x);
         float error = -alpha * (pred - node.code[j]);
 
-        temp += error * output_weights_hs[parent_index];
+        temp += error * output_weights[parent_index];
 
         if (update) {
-            output_weights_hs[parent_index] += error * hidden;
+            output_weights[parent_index] += error * hidden;
         }
     }
 
     return temp;
 }
 
-vector<pair<string, int>> MonolingualModel::getWords() const {
+vector<pair<string, int>> MonolingualModel::get_word_counts() const {
     vector<pair<string, int>> res;
-    auto sorted_vocab = getSortedVocab();
+    auto sorted_vocab = get_sorted_vocab();
 
     for (auto it = sorted_vocab.begin(); it != sorted_vocab.end(); ++it) {
         res.push_back({it->word, it->count});

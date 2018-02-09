@@ -17,7 +17,7 @@ static vector<option_plus> options_plus = {
     {"min-count",         required_argument, 0, 'b', "minimum count of vocabulary words"},
     {"window-size",       required_argument, 0, 'c', "size of the window"},
     {"threads",           required_argument, 0, 'd', "number of threads"},
-    {"iter",              required_argument, 0, 'e', "number of training epochs"},
+    {"iterations",        required_argument, 0, 'e', "number of training epochs"},
     {"negative",          required_argument, 0, 'f', "number of negative samples (0 for no negative sampling)"},
     {"saving-policy",     required_argument, 0, 'g', "saving policy (0: only input weights, 1: concat, 2: sum, 3: only output weights)"},
     {"alpha",             required_argument, 0, 'i', "initial learning rate"},
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
             case 'e': config.iterations = atoi(optarg);     break;
             case 'f': config.negative = atoi(optarg);       break;
             case 'g': saving_policy = atoi(optarg);         break;
-            case 'i': config.learning_rate = atof(optarg);  break;
+            case 'i': config.alpha = atof(optarg);          break;
             case 'j': config.subsampling = atof(optarg);    break;
             case 'k': config.skip_gram = true;              break;
             case 'l': config.hierarchical_softmax = true;   break;
@@ -142,26 +142,26 @@ int main(int argc, char **argv) {
         if(!save_file.empty())
             model.save(save_file);
         if (!save_vectors.empty())
-            model.saveVectors(save_vectors, saving_policy, norm);
+            model.save_vectors(save_vectors, saving_policy, norm);
         if (!save_vectors_bin.empty())
-            model.saveVectorsBin(save_vectors_bin, saving_policy, norm);
+            model.save_vectors_bin(save_vectors_bin, saving_policy, norm);
         if (!save_sent_vectors.empty())
-            model.saveSentVectors(save_sent_vectors, norm);
+            model.save_sent_vectors(save_sent_vectors, norm);
         exit(1);
     };
     
-    struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = [](int signum) { interrupt_handler(signum); };
-    sigemptyset(&sigIntHandler.sa_mask);
-    sigIntHandler.sa_flags = 0;
-    sigaction(SIGINT, &sigIntHandler, NULL);
+    struct sigaction sig_int_handler;
+    sig_int_handler.sa_handler = [](int signum) { interrupt_handler(signum); };
+    sigemptyset(&sig_int_handler.sa_mask);
+    sig_int_handler.sa_flags = 0;
+    sigaction(SIGINT, &sig_int_handler, NULL);
     
     if (!train_file.empty()) {
         model.train(train_file, load_file.empty());
     }
 
     if (!online_train_file.empty()) {
-        model.sentVectors(online_train_file);
+        model.sent_vectors(online_train_file);
     }
     
     interrupt_handler(0);

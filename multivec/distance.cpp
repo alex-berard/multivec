@@ -16,9 +16,9 @@ float MonolingualModel::similarity(const string& word1, const string& word2, int
     } else if (it1->second.index == it2->second.index) {
         return 1.0;
     } else {
-        vec v1 = wordVec(it1->second.index, policy);
-        vec v2 = wordVec(it2->second.index, policy);
-        return cosineSimilarity(v1, v2);
+        vec v1 = word_vec(it1->second.index, policy);
+        vec v2 = word_vec(it2->second.index, policy);
+        return cosine_similarity(v1, v2);
     }
 }
 
@@ -43,12 +43,12 @@ vector<pair<string, float>> MonolingualModel::closest(const string& word, int n,
     }
 
     int index = it->second.index;
-    vec v1 = wordVec(index, policy);
+    vec v1 = word_vec(index, policy);
 
     for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
         if (it->second.index != index) {
-            vec v2 = wordVec(it->second.index, policy);
-            res.push_back({it->second.word, cosineSimilarity(v1, v2)});
+            vec v2 = word_vec(it->second.index, policy);
+            res.push_back({it->second.word, cosine_similarity(v1, v2)});
         }
     }
 
@@ -61,8 +61,8 @@ vector<pair<string, float>> MonolingualModel::closest(const vec& v, int n, int p
     vector<pair<string, float>> res;
 
     for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
-        vec v2 = wordVec(it->second.index, policy);
-        res.push_back({it->second.word, cosineSimilarity(v, v2)});
+        vec v2 = word_vec(it->second.index, policy);
+        res.push_back({it->second.word, cosine_similarity(v, v2)});
     }
 
     std::partial_sort(res.begin(), res.begin() + n, res.end(), comp);
@@ -82,13 +82,13 @@ vector<pair<string, float>> MonolingualModel::closest(const string& word, const 
     }
 
     int index = it->second.index;
-    vec v1 = wordVec(index, policy);
+    vec v1 = word_vec(index, policy);
 
     for (auto it = words.begin(); it != words.end(); ++it) {
         auto node_it = vocabulary.find(*it);
         if (node_it != vocabulary.end()) {
-            vec v2 = wordVec(node_it->second.index, policy);
-            res.push_back({node_it->second.word, cosineSimilarity(v1, v2)});
+            vec v2 = word_vec(node_it->second.index, policy);
+            res.push_back({node_it->second.word, cosine_similarity(v1, v2)});
         }
     }
 
@@ -96,7 +96,7 @@ vector<pair<string, float>> MonolingualModel::closest(const string& word, const 
     return res;
 }
 
-float MonolingualModel::similarityNgrams(const string& seq1, const string& seq2, int policy) const {
+float MonolingualModel::similarity_ngrams(const string& seq1, const string& seq2, int policy) const {
     auto words1 = split(seq1);
     auto words2 = split(seq2);
 
@@ -121,7 +121,7 @@ float MonolingualModel::similarityNgrams(const string& seq1, const string& seq2,
     }
 }
 
-float MonolingualModel::similaritySentence(const string& seq1, const string& seq2, int policy) const {
+float MonolingualModel::similarity_bag_of_words(const string& seq1, const string& seq2, int policy) const {
     auto words1 = split(seq1);
     auto words2 = split(seq2);
     
@@ -130,14 +130,14 @@ float MonolingualModel::similaritySentence(const string& seq1, const string& seq
     
     for (auto it = words1.begin(); it != words1.end(); ++it) {
         try {
-            vec1 += wordVec(*it, policy);
+            vec1 += word_vec(*it, policy);
         }
         catch (runtime_error) {}
     }
     
     for (auto it = words2.begin(); it != words2.end(); ++it) {
         try {
-            vec2 += wordVec(*it, policy);
+            vec2 += word_vec(*it, policy);
         }
         catch (runtime_error) {}
     }
@@ -198,8 +198,8 @@ const static std::map<std::string, float> syntax_weights = {
 * @param policy Indice for determining the weights to use in the word embeddings.
 * @return Return a float between 0 and 1 representing the similarity between the two sequences.
 */
-float MonolingualModel::similaritySentenceSyntax(const string& seq1, const string& seq2, const string& tags1, const string& tags2,
-                                                 const vector<float>& idf1, const vector<float>& idf2, float alpha, int policy) const {
+float MonolingualModel::similarity_syntax(const string& seq1, const string& seq2, const string& tags1, const string& tags2,
+                                          const vector<float>& idf1, const vector<float>& idf2, float alpha, int policy) const {
     auto words1 = split(seq1);
     auto words2 = split(seq2);
     auto pos_tags1 = split(tags1);
@@ -210,14 +210,14 @@ float MonolingualModel::similaritySentenceSyntax(const string& seq1, const strin
     
     for (size_t i = 0; i < words1.size() && i < pos_tags1.size() && i < idf1.size(); ++i) {
         try {
-            vec1 += wordVec(words1[i], policy) * pow(syntax_weights.at(pos_tags1[i]), 1 - alpha) * pow(idf1[i], alpha);
+            vec1 += word_vec(words1[i], policy) * pow(syntax_weights.at(pos_tags1[i]), 1 - alpha) * pow(idf1[i], alpha);
         }
         catch (runtime_error) {}
     }
     
     for (size_t i = 0; i < words2.size() && i < pos_tags2.size() && i < idf2.size(); ++i) {
         try {
-            vec2 += wordVec(words2[i], policy) * pow(syntax_weights.at(pos_tags2[i]), 1 - alpha) * pow(idf2[i], alpha);
+            vec2 += word_vec(words2[i], policy) * pow(syntax_weights.at(pos_tags2[i]), 1 - alpha) * pow(idf2[i], alpha);
         }
         catch (runtime_error) {}
     }
@@ -231,7 +231,7 @@ float MonolingualModel::similaritySentenceSyntax(const string& seq1, const strin
     }
 }
 
-float MonolingualModel::softWER(const string& hyp, const string& ref, int policy) const {
+float MonolingualModel::soft_word_error_rate(const string& hyp, const string& ref, int policy) const {
     auto s1 = split(hyp);
     auto s2 = split(ref);
 	const size_t len1 = s1.size(), len2 = s2.size();
@@ -278,9 +278,9 @@ float BilingualModel::similarity(const string& src_word, const string& trg_word,
     if (it1 == src_model.vocabulary.end() || it2 == trg_model.vocabulary.end()) {
         return 0.0;
     } else {
-        vec v1 = src_model.wordVec(it1->second.index, policy);
-        vec v2 = trg_model.wordVec(it2->second.index, policy);
-        return cosineSimilarity(v1, v2);
+        vec v1 = src_model.word_vec(it1->second.index, policy);
+        vec v2 = trg_model.word_vec(it2->second.index, policy);
+        return cosine_similarity(v1, v2);
     }
 }
 
@@ -298,7 +298,7 @@ vector<pair<string, float>> BilingualModel::trg_closest(const string& src_word, 
         throw runtime_error("OOV word");
     }
 
-    vec v = src_model.wordVec(it->second.index, policy);
+    vec v = src_model.word_vec(it->second.index, policy);
     return trg_model.closest(v, n, policy);
 }
 
@@ -311,12 +311,12 @@ vector<pair<string, float>> BilingualModel::src_closest(const string& trg_word, 
         throw runtime_error("OOV word");
     }
 
-    vec v = trg_model.wordVec(it->second.index, policy);
+    vec v = trg_model.word_vec(it->second.index, policy);
     return src_model.closest(v, n, policy);
 }
 
 
-float BilingualModel::similarityNgrams(const string& src_seq, const string& trg_seq, int policy) const {
+float BilingualModel::similarity_ngrams(const string& src_seq, const string& trg_seq, int policy) const {
     auto src_words = split(src_seq);
     auto trg_words = split(trg_seq);
 
@@ -341,7 +341,7 @@ float BilingualModel::similarityNgrams(const string& src_seq, const string& trg_
     }
 }
 
-float BilingualModel::similaritySentence(const string& src_seq, const string& trg_seq, int policy) const {
+float BilingualModel::similarity_bag_of_words(const string& src_seq, const string& trg_seq, int policy) const {
     auto src_words = split(src_seq);
     auto trg_words = split(trg_seq);
     
@@ -350,14 +350,14 @@ float BilingualModel::similaritySentence(const string& src_seq, const string& tr
     
     for (auto it = src_words.begin(); it != src_words.end(); ++it) {
         try {
-            src_vec += src_model.wordVec(*it, policy);
+            src_vec += src_model.word_vec(*it, policy);
         }
         catch (runtime_error) {}
     }
     
     for (auto it = trg_words.begin(); it != trg_words.end(); ++it) {
         try {
-            trg_vec += trg_model.wordVec(*it, policy);
+            trg_vec += trg_model.word_vec(*it, policy);
         }
         catch (runtime_error) {}
     }
@@ -383,8 +383,8 @@ float BilingualModel::similaritySentence(const string& src_seq, const string& tr
 * @param policy Indice for determining the weights to use in the word embeddings.
 * @return Return a float between 0 and 1 representing the similarity between the two sequences.
 */
-float BilingualModel::similaritySentenceSyntax(const string& src_seq, const string& trg_seq, const string& src_tags, const string& trg_tags,
-                                               const vector<float>& src_idf, const vector<float>& trg_idf, float alpha, int policy) const {    
+float BilingualModel::similarity_syntax(const string& src_seq, const string& trg_seq, const string& src_tags, const string& trg_tags,
+                                        const vector<float>& src_idf, const vector<float>& trg_idf, float alpha, int policy) const {    
     auto src_words = split(src_seq);
     auto trg_words = split(trg_seq);
     auto src_pos_tags = split(src_tags);
@@ -395,13 +395,13 @@ float BilingualModel::similaritySentenceSyntax(const string& src_seq, const stri
     
     for (size_t i = 0; i < src_words.size() && i < src_pos_tags.size() && i < src_idf.size(); ++i) {
         try {
-            src_vec += src_model.wordVec(src_words[i], policy) * pow(syntax_weights.at(src_pos_tags[i]), 1 - alpha) * pow(src_idf[i], alpha);
+            src_vec += src_model.word_vec(src_words[i], policy) * pow(syntax_weights.at(src_pos_tags[i]), 1 - alpha) * pow(src_idf[i], alpha);
         }
         catch (runtime_error) {}
     }
     for (size_t i = 0; i < trg_words.size() && i < trg_pos_tags.size() && i < trg_idf.size(); ++i) {
         try {
-            trg_vec += trg_model.wordVec(trg_words[i], policy) * pow(syntax_weights.at(trg_pos_tags[i]), 1 - alpha) * pow(trg_idf[i], alpha);
+            trg_vec += trg_model.word_vec(trg_words[i], policy) * pow(syntax_weights.at(trg_pos_tags[i]), 1 - alpha) * pow(trg_idf[i], alpha);
         }
         catch (runtime_error) {}
     }
@@ -415,24 +415,24 @@ float BilingualModel::similaritySentenceSyntax(const string& src_seq, const stri
     }
 }
 
-vector<pair<string, string>> BilingualModel::dictionaryInduction(int src_count, int trg_count, int policy) const {
+vector<pair<string, string>> BilingualModel::dictionary_induction(int src_count, int trg_count, int policy) const {
     vector<string> src_vocab;
     vector<string> trg_vocab;
     
-    auto vocab = src_model.getSortedVocab();
+    auto vocab = src_model.get_sorted_vocab();
     for (auto it = vocab.begin(); it != vocab.end() and (src_count == 0 or src_vocab.size() < src_count); ++it) {
         src_vocab.push_back(it->word);
     }
     
-    vocab = trg_model.getSortedVocab();
+    vocab = trg_model.get_sorted_vocab();
     for (auto it = vocab.begin(); it != vocab.end() and (trg_count == 0 or trg_vocab.size() < trg_count); ++it) {
         trg_vocab.push_back(it->word);
     }
     
-    return dictionaryInduction(src_vocab, trg_vocab, policy);
+    return dictionary_induction(src_vocab, trg_vocab, policy);
 }
 
-void dictionaryInduction(const vector<pair<string, vec>>& src_words,
+void dictionary_induction(const vector<pair<string, vec>>& src_words,
                          const vector<pair<string, vec>>& trg_words,
                          vector<pair<string, string>>& dictionary) {
     for (auto it = src_words.begin(); it != src_words.end(); ++it) {
@@ -455,7 +455,7 @@ void dictionaryInduction(const vector<pair<string, vec>>& src_words,
     }
 }
 
-vector<pair<string, string>> BilingualModel::dictionaryInduction(const vector<string>& src_vocab,
+vector<pair<string, string>> BilingualModel::dictionary_induction(const vector<string>& src_vocab,
                                                                  const vector<string>& trg_vocab,
                                                                  int policy) const {
     vector<pair<string, string>> dictionary;
@@ -465,7 +465,7 @@ vector<pair<string, string>> BilingualModel::dictionaryInduction(const vector<st
     for (auto it = src_vocab.begin(); it != src_vocab.end(); ++it) {
         auto node = src_model.vocabulary.find(*it);
         if (node != src_model.vocabulary.end()) {
-            auto vec = src_model.wordVec(node->second.index, policy);
+            auto vec = src_model.word_vec(node->second.index, policy);
             src_words.push_back({node->second.word, vec / vec.norm()});
         }
     }
@@ -473,13 +473,13 @@ vector<pair<string, string>> BilingualModel::dictionaryInduction(const vector<st
     for (auto it = trg_vocab.begin(); it != trg_vocab.end(); ++it) {
         auto node = trg_model.vocabulary.find(*it);
         if (node != trg_model.vocabulary.end()) {
-            auto vec = trg_model.wordVec(node->second.index, policy);
+            auto vec = trg_model.word_vec(node->second.index, policy);
             trg_words.push_back({node->second.word, vec / vec.norm()});
         }
     }
     
     if (config->threads == 1) {
-        ::dictionaryInduction(src_words, trg_words, dictionary);
+        ::dictionary_induction(src_words, trg_words, dictionary);
     } else {
         vector<thread> threads;
         vector<vector<pair<string, string>>> dictionaries(config->threads);
@@ -495,7 +495,7 @@ vector<pair<string, string>> BilingualModel::dictionaryInduction(const vector<st
             }
             
             splits[i] = vector<pair<string, vec>>(begin, end);
-            threads.push_back(thread(::dictionaryInduction, std::ref(splits[i]), std::ref(trg_words),
+            threads.push_back(thread(::dictionary_induction, std::ref(splits[i]), std::ref(trg_words),
                                      std::ref(dictionaries[i])));
         }
 
@@ -508,8 +508,8 @@ vector<pair<string, string>> BilingualModel::dictionaryInduction(const vector<st
     return dictionary;
 }
 
-void BilingualModel::learnMapping(const vector<pair<string, string>>& dict) {
-    mapping = mat(trg_model.getDimension(), src_model.getDimension());
+void BilingualModel::learn_mapping(const vector<pair<string, string>>& dict) {
+    mapping = mat(trg_model.get_dimension(), src_model.get_dimension());
     
     vector<pair<int, int>> dict_indices;
     for (auto it = dict.begin(); it != dict.end(); ++it) {

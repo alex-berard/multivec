@@ -12,8 +12,8 @@ set(MULTIVEC_BI
     PARENT_SCOPE
 )
 
-set(MULTIVEC_MONO
-    ${CMAKE_CURRENT_SOURCE_DIR}/main-mono.cpp
+set(MULTIVEC
+    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/monolingual.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/distance.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/monolingual.hpp
@@ -33,4 +33,9 @@ set(MULTIVEC_LIB
     ${CMAKE_CURRENT_SOURCE_DIR}/utils.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/vec.hpp
     PARENT_SCOPE
+)
+
+set(ANALOGY
+        ${CMAKE_CURRENT_SOURCE_DIR}/analogy.cpp
+        PARENT_SCOPE
 )

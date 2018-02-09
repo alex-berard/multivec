@@ -28,21 +28,11 @@ const int EXP_TABLE_SIZE = 1000;
 typedef Vec vec;
 typedef vector<vec> mat;
 
-#ifdef EXP_TABLE
-struct Foo {
-    static const vector<float> exp_table;
-};
-#endif
-
 inline float sigmoid(float x) {
-#ifdef EXP_TABLE
-    return Foo::exp_table[(int)((x + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))];
-#else
     return 1 / (1 + exp(-x));
-#endif
 }
 
-inline float cosineSimilarity(const vec &v1, const vec &v2) {
+inline float cosine_similarity(const vec &v1, const vec &v2) {
     return v1.dot(v2) / (v1.norm() * v2.norm());
 }
 
@@ -70,21 +60,16 @@ inline void check(bool predicate, const string& message) {
 }
 
 inline void check_is_open(ifstream& infile, const string& filename) {
-    if (!infile.is_open()) {
-        throw runtime_error("couldn't open file " + filename);
-    }
+    check(infile.is_open(), "couldn't open file " + filename);
 }
 
 inline void check_is_open(ofstream& outfile, const string& filename) {
-    if (!outfile.is_open()) {
-        throw runtime_error("couldn't open file " + filename);
-    }
+    check(outfile.is_open(), "couldn't open file " + filename);
 }
 
 inline void check_is_non_empty(ifstream& infile, const string& filename) {
-    if (infile.peek() == std::ifstream::traits_type::eof()) {
-        throw runtime_error("training file " + filename + " is empty");
-    }
+    check(infile.peek() != std::ifstream::traits_type::eof(),
+          "training file " + filename + " is empty");
 }
 
 namespace multivec {
@@ -95,29 +80,15 @@ namespace multivec {
      * @return next random number
      */
     inline unsigned long long rand(unsigned long long max) {
-    #if STD_RAND
-        return std::rand() % max;
-    #elif CUSTOM_RAND
-        thread_local unsigned long long next_random(time(NULL));
-        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11;
-        return (next_random >> 16) % max; // with this generator, the most significant bits are bits 47...16
-    #else
         thread_local std::mt19937 gen(std::random_device{}());
         std::uniform_int_distribution<unsigned long long> dis(0, max - 1);
         return dis(gen);
-    #endif
     }
 
     inline float randf() {
-    #if STD_RAND
-        return std::rand() / (static_cast<float>(RAND_MAX) + 1.0);
-    #elif CUSTOM_RAND
-        return (multivec::rand(ULLONG_MAX) & 0xFFFF) / 65536.0f;
-    #else
         thread_local std::mt19937 gen(std::random_device{}());
         std::uniform_real_distribution<float> dis(0, 1.0);
         return dis(gen);
-    #endif
     }
     
     extern std::mutex print_mutex;
@@ -167,7 +138,7 @@ struct HuffmanNode {
 };
 
 struct Config {
-    float learning_rate;
+    float alpha;
     int dimension; // size of the embeddings
     int min_count; // minimum count of each word in the training file to be included in the vocabulary
     int iterations; // number of training epochs
@@ -183,7 +154,7 @@ struct Config {
     bool concat; // concat vectors in CBOW instead of summing them
 
     Config() :
-        learning_rate(0.05),
+        alpha(0.05),
         dimension(100),
         min_count(5),
         iterations(5),
@@ -204,7 +175,7 @@ struct Config {
         std::cout << "dimension:   " << dimension << std::endl;
         std::cout << "window size: " << window_size << std::endl;
         std::cout << "min count:   " << min_count << std::endl;
-        std::cout << "alpha:       " << learning_rate << std::endl;
+        std::cout << "alpha:       " << alpha << std::endl;
         std::cout << "iterations:  " << iterations << std::endl;
         std::cout << "threads:     " << threads << std::endl;
         std::cout << "subsampling: " << subsampling << std::endl;
