@@ -14,7 +14,7 @@ static vector<option_plus> options_plus = {
     {"help",              no_argument,       0, 'h', "print this help message"},
     {"verbose",           no_argument,       0, 'v', "verbose mode"},
     {"dimension",         required_argument, 0, 'a', "dimension of the word embeddings"},
-    {"min-count",         required_argument, 0, 'b', "minimum count of vocabulary words"},
+    {"min-count",         required_argument, 0, 'b', "minimum count of vocabulary_index words"},
     {"window-size",       required_argument, 0, 'c', "size of the window"},
     {"threads",           required_argument, 0, 'd', "number of threads"},
     {"iterations",        required_argument, 0, 'e', "number of training epochs"},

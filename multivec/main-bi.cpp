@@ -14,7 +14,7 @@ static vector<option_plus> options_plus = {
     {"help",          no_argument,       0, 'h', "print this help message"},
     {"verbose",       no_argument,       0, 'v', "verbose mode"},
     {"dimension",     required_argument, 0, 'a', "dimension of the word embeddings"},
-    {"min-count",     required_argument, 0, 'b', "minimum count of vocabulary words"},
+    {"min-count",     required_argument, 0, 'b', "minimum count of vocabulary_index words"},
     {"window-size",   required_argument, 0, 'c', "size of the window"},
     {"threads",       required_argument, 0, 'd', "number of threads"},
     {"iterations",    required_argument, 0, 'e', "number of training epochs"},
@@ -33,8 +33,8 @@ static vector<option_plus> options_plus = {
     {"load-src",      required_argument, 0, 's', "load source model"},
     {"load-trg",      required_argument, 0, 't', "load target model"},
     {"alignment",     required_argument, 0, 'u', "alignment file (fast_align format)"},
-    {"save-src-vec",  required_argument, 0, 'w', "save source language vectors (as text)"},
-    {"save-trg-vec",  required_argument, 0, 'x', "save target language vectors (as text)"},
+    {"save-src-vectors", required_argument, 0, 'w', "save source language vectors (as text)"},
+    {"save-trg-vectors", required_argument, 0, 'x', "save target language vectors (as text)"},
     {0, 0, 0, 0, 0}
 };
 

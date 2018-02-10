@@ -18,26 +18,26 @@ private:
     vector<vector<int>> alignments;
 
     void train_chunk(const string& src_file,
-                    const string& trg_file,
-                    const vector<long long>& src_chunks,
-                    const vector<long long>& trg_chunks,
-                    int thread_id);
+                     const string& trg_file,
+                     const vector<long long>& src_chunks,
+                     const vector<long long>& trg_chunks,
+                     int thread_id);
 
     void read_alignments(const string& align_file);
-    vector<int> get_alignment(const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes, int sent_id);
+    vector<int> get_alignment(const vector<int>& src_nodes, const vector<int>& trg_nodes, int sent_id);
 
     int train_sentence(const string& trg_sent, const string& src_sent, int sent_id);
 
     void train_word(MonolingualModel& src_params, MonolingualModel& trg_params,
-        const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes,
+        const vector<int>& src_nodes, const vector<int>& trg_nodes,
         int src_pos, int trg_pos, float alpha);
 
     void train_word_CBOW(MonolingualModel&, MonolingualModel&,
-        const vector<HuffmanNode>&, const vector<HuffmanNode>&,
+        const vector<int>&, const vector<int>&,
         int, int, float);
 
     void train_word_skip_gram(MonolingualModel&, MonolingualModel&,
-        const vector<HuffmanNode>&, const vector<HuffmanNode>&,
+        const vector<int>&, const vector<int>&,
         int, int, float);
 
 public:

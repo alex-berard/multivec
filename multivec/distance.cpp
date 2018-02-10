@@ -8,16 +8,16 @@
  * Return 0 if word1 or word2 is unknown.
  */
 float MonolingualModel::similarity(const string& word1, const string& word2, int policy) const {
-    auto it1 = vocabulary.find(word1);
-    auto it2 = vocabulary.find(word2);
+    auto it1 = vocabulary_index.find(word1);
+    auto it2 = vocabulary_index.find(word2);
 
-    if (it1 == vocabulary.end() || it2 == vocabulary.end()) {
+    if (it1 == vocabulary_index.end() || it2 == vocabulary_index.end()) {
         return 0.0;
-    } else if (it1->second.index == it2->second.index) {
+    } else if (it1->second == it2->second) {
         return 1.0;
     } else {
-        vec v1 = word_vec(it1->second.index, policy);
-        vec v2 = word_vec(it2->second.index, policy);
+        vec v1 = word_vec(it1->second, policy);
+        vec v2 = word_vec(it2->second, policy);
         return cosine_similarity(v1, v2);
     }
 }
@@ -36,19 +36,19 @@ static bool comp(const pair<string, float>& p1, const pair<string, float>& p2) {
  */
 vector<pair<string, float>> MonolingualModel::closest(const string& word, int n, int policy) const {
     vector<pair<string, float>> res;
-    auto it = vocabulary.find(word);
+    auto it = vocabulary_index.find(word);
 
-    if (it == vocabulary.end()) {
+    if (it == vocabulary_index.end()) {
         throw runtime_error("OOV word");
     }
 
-    int index = it->second.index;
+    int index = it->second;
     vec v1 = word_vec(index, policy);
 
     for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
-        if (it->second.index != index) {
-            vec v2 = word_vec(it->second.index, policy);
-            res.push_back({it->second.word, cosine_similarity(v1, v2)});
+        if (it->index != index) {
+            vec v2 = word_vec(it->index, policy);
+            res.push_back({it->word, cosine_similarity(v1, v2)});
         }
     }
 
@@ -61,8 +61,8 @@ vector<pair<string, float>> MonolingualModel::closest(const vec& v, int n, int p
     vector<pair<string, float>> res;
 
     for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
-        vec v2 = word_vec(it->second.index, policy);
-        res.push_back({it->second.word, cosine_similarity(v, v2)});
+        vec v2 = word_vec(it->index, policy);
+        res.push_back({it->word, cosine_similarity(v, v2)});
     }
 
     std::partial_sort(res.begin(), res.begin() + n, res.end(), comp);
@@ -75,20 +75,21 @@ vector<pair<string, float>> MonolingualModel::closest(const vec& v, int n, int p
  */
 vector<pair<string, float>> MonolingualModel::closest(const string& word, const vector<string>& words, int policy) const {
     vector<pair<string, float>> res;
-    auto it = vocabulary.find(word);
+    auto it = vocabulary_index.find(word);
 
-    if (it == vocabulary.end()) {
+    if (it == vocabulary_index.end()) {
         throw runtime_error("OOV word");
     }
 
-    int index = it->second.index;
+    int index = it->second;
     vec v1 = word_vec(index, policy);
 
     for (auto it = words.begin(); it != words.end(); ++it) {
-        auto node_it = vocabulary.find(*it);
-        if (node_it != vocabulary.end()) {
-            vec v2 = word_vec(node_it->second.index, policy);
-            res.push_back({node_it->second.word, cosine_similarity(v1, v2)});
+        auto node_it = vocabulary_index.find(*it);
+        if (node_it != vocabulary_index.end()) {
+            int index = node_it->second;
+            vec v2 = word_vec(index, policy);
+            res.push_back({vocabulary[index].word, cosine_similarity(v1, v2)});
         }
     }
 
@@ -272,14 +273,14 @@ float MonolingualModel::soft_word_error_rate(const string& hyp, const string& re
  * Return 0 if word1 or word2 is unknown.
  */
 float BilingualModel::similarity(const string& src_word, const string& trg_word, int policy) const {
-    auto it1 = src_model.vocabulary.find(src_word);
-    auto it2 = trg_model.vocabulary.find(trg_word);
+    auto it1 = src_model.vocabulary_index.find(src_word);
+    auto it2 = trg_model.vocabulary_index.find(trg_word);
 
-    if (it1 == src_model.vocabulary.end() || it2 == trg_model.vocabulary.end()) {
+    if (it1 == src_model.vocabulary_index.end() || it2 == trg_model.vocabulary_index.end()) {
         return 0.0;
     } else {
-        vec v1 = src_model.word_vec(it1->second.index, policy);
-        vec v2 = trg_model.word_vec(it2->second.index, policy);
+        vec v1 = src_model.word_vec(it1->second, policy);
+        vec v2 = trg_model.word_vec(it2->second, policy);
         return cosine_similarity(v1, v2);
     }
 }
@@ -292,26 +293,26 @@ float BilingualModel::distance(const string& src_word, const string& trg_word, i
 
 vector<pair<string, float>> BilingualModel::trg_closest(const string& src_word, int n, int policy) const {
     vector<pair<string, float>> res;
-    auto it = src_model.vocabulary.find(src_word);
+    auto it = src_model.vocabulary_index.find(src_word);
 
-    if (it == src_model.vocabulary.end()) {
+    if (it == src_model.vocabulary_index.end()) {
         throw runtime_error("OOV word");
     }
 
-    vec v = src_model.word_vec(it->second.index, policy);
+    vec v = src_model.word_vec(it->second, policy);
     return trg_model.closest(v, n, policy);
 }
 
 
 vector<pair<string, float>> BilingualModel::src_closest(const string& trg_word, int n, int policy) const {
     vector<pair<string, float>> res;
-    auto it = trg_model.vocabulary.find(trg_word);
+    auto it = trg_model.vocabulary_index.find(trg_word);
 
-    if (it == trg_model.vocabulary.end()) {
+    if (it == trg_model.vocabulary_index.end()) {
         throw runtime_error("OOV word");
     }
 
-    vec v = trg_model.word_vec(it->second.index, policy);
+    vec v = trg_model.word_vec(it->second, policy);
     return src_model.closest(v, n, policy);
 }
 
@@ -419,13 +420,11 @@ vector<pair<string, string>> BilingualModel::dictionary_induction(int src_count,
     vector<string> src_vocab;
     vector<string> trg_vocab;
     
-    auto vocab = src_model.get_sorted_vocab();
-    for (auto it = vocab.begin(); it != vocab.end() and (src_count == 0 or src_vocab.size() < src_count); ++it) {
+    for (auto it = src_model.vocabulary.begin(); it != src_model.vocabulary.end() and (src_count == 0 or src_vocab.size() < src_count); ++it) {
         src_vocab.push_back(it->word);
     }
     
-    vocab = trg_model.get_sorted_vocab();
-    for (auto it = vocab.begin(); it != vocab.end() and (trg_count == 0 or trg_vocab.size() < trg_count); ++it) {
+    for (auto it = trg_model.vocabulary.begin(); it != trg_model.vocabulary.end() and (trg_count == 0 or trg_vocab.size() < trg_count); ++it) {
         trg_vocab.push_back(it->word);
     }
     
@@ -433,8 +432,8 @@ vector<pair<string, string>> BilingualModel::dictionary_induction(int src_count,
 }
 
 void dictionary_induction(const vector<pair<string, vec>>& src_words,
-                         const vector<pair<string, vec>>& trg_words,
-                         vector<pair<string, string>>& dictionary) {
+                          const vector<pair<string, vec>>& trg_words,
+                          vector<pair<string, string>>& dictionary) {
     for (auto it = src_words.begin(); it != src_words.end(); ++it) {
         auto src_vec = it->second;
         
@@ -463,18 +462,20 @@ vector<pair<string, string>> BilingualModel::dictionary_induction(const vector<s
     vector<pair<string, vec>> trg_words;
     
     for (auto it = src_vocab.begin(); it != src_vocab.end(); ++it) {
-        auto node = src_model.vocabulary.find(*it);
-        if (node != src_model.vocabulary.end()) {
-            auto vec = src_model.word_vec(node->second.index, policy);
-            src_words.push_back({node->second.word, vec / vec.norm()});
+        auto node = src_model.vocabulary_index.find(*it);
+        if (node != src_model.vocabulary_index.end()) {
+            int index = node->second;
+            auto vec = src_model.word_vec(index, policy);
+            src_words.push_back({src_model.vocabulary[index].word, vec / vec.norm()});
         }
     }
     
     for (auto it = trg_vocab.begin(); it != trg_vocab.end(); ++it) {
-        auto node = trg_model.vocabulary.find(*it);
-        if (node != trg_model.vocabulary.end()) {
-            auto vec = trg_model.word_vec(node->second.index, policy);
-            trg_words.push_back({node->second.word, vec / vec.norm()});
+        auto node = trg_model.vocabulary_index.find(*it);
+        if (node != trg_model.vocabulary_index.end()) {
+            int index = node->second;
+            auto vec = trg_model.word_vec(index, policy);
+            trg_words.push_back({trg_model.vocabulary[index].word, vec / vec.norm()});
         }
     }
     
@@ -513,11 +514,11 @@ void BilingualModel::learn_mapping(const vector<pair<string, string>>& dict) {
     
     vector<pair<int, int>> dict_indices;
     for (auto it = dict.begin(); it != dict.end(); ++it) {
-        auto src_node = src_model.vocabulary.find(it->first);
-        auto trg_node = trg_model.vocabulary.find(it->second);
+        auto src_node = src_model.vocabulary_index.find(it->first);
+        auto trg_node = trg_model.vocabulary_index.find(it->second);
         
-        if (src_node != src_model.vocabulary.end() and trg_node != trg_model.vocabulary.end()) {
-            dict_indices.push_back({src_node->second.index, trg_node->second.index});
+        if (src_node != src_model.vocabulary_index.end() and trg_node != trg_model.vocabulary_index.end()) {
+            dict_indices.push_back({src_node->second, trg_node->second});
         }
     }
     

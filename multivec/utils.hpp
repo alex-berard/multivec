@@ -98,8 +98,6 @@ namespace multivec {
  * @brief Node of a Huffman binary tree, used for the hierarchical softmax algorithm.
  */
 struct HuffmanNode {
-    static const HuffmanNode UNK; // node for out-of-vocabulary words
-
     string word;
 
     vector<int> code; // Huffman code of this node: path from root to leaf (0 for left, 1 for right)

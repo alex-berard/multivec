@@ -109,9 +109,9 @@ void BilingualModel::train_chunk(const string& src_file,
     }
 }
 
-vector<int> BilingualModel::get_alignment(const vector<HuffmanNode>& src_nodes,
-                                         const vector<HuffmanNode>& trg_nodes,
-                                         int sent_id) {
+vector<int> BilingualModel::get_alignment(const vector<int>& src_nodes,
+                                          const vector<int>& trg_nodes,
+                                          int sent_id) {
     if (not alignments.empty()) {
         auto alignment = alignments[sent_id];
         check(alignment.size() <= src_nodes.size(), "bad alignment for line " + to_string(sent_id));
@@ -123,8 +123,8 @@ vector<int> BilingualModel::get_alignment(const vector<HuffmanNode>& src_nodes,
     vector<int> alignment; // index = position in src_nodes, value = position in trg_nodes (or -1)
     vector<int> trg_mapping; // maps positions in trg_sent to positions in trg_nodes (or -1)
     int k = 0;
-    for (auto it = trg_nodes.begin(); it != trg_nodes.end(); ++it) {
-        trg_mapping.push_back(*it == HuffmanNode::UNK ? -1 : k++);
+    for (int i = 0; i < trg_nodes.size(); ++i) {
+        trg_mapping.push_back(trg_nodes[i] == -1 ? -1 : k++);
     }
     
     for (int i = 0; i < src_nodes.size(); ++i) {
@@ -136,7 +136,7 @@ vector<int> BilingualModel::get_alignment(const vector<HuffmanNode>& src_nodes,
             j = alignments[sent_id][i];
         }
 
-        if (src_nodes[i] != HuffmanNode::UNK) {
+        if (src_nodes[i] != -1) {
             if (j != -1) {
                 j = trg_mapping[j];
             }
@@ -184,10 +184,10 @@ int BilingualModel::train_sentence(const string& src_sent, const string& trg_sen
     auto src_nodes = src_model.get_nodes(src_sent);  // same size as src_sent, OOV words are replaced by <UNK>
     auto trg_nodes = trg_model.get_nodes(trg_sent);
 
-    // counts the number of words that are in the vocabulary
+    // counts the number of words that are in the vocabulary_index
     int words = 0;
-    words += src_nodes.size() - count(src_nodes.begin(), src_nodes.end(), HuffmanNode::UNK);
-    words += trg_nodes.size() - count(trg_nodes.begin(), trg_nodes.end(), HuffmanNode::UNK);
+    words += src_nodes.size() - count(src_nodes.begin(), src_nodes.end(), -1);
+    words += trg_nodes.size() - count(trg_nodes.begin(), trg_nodes.end(), -1);
 
     if (config->subsampling > 0) {
         src_model.subsample(src_nodes); // puts <UNK> tokens in place of the discarded tokens
@@ -204,10 +204,10 @@ int BilingualModel::train_sentence(const string& src_sent, const string& trg_sen
 
     // remove <UNK> tokens
     src_nodes.erase(
-        std::remove(src_nodes.begin(), src_nodes.end(), HuffmanNode::UNK),
+        std::remove(src_nodes.begin(), src_nodes.end(), -1),
         src_nodes.end());
     trg_nodes.erase(
-        std::remove(trg_nodes.begin(), trg_nodes.end(), HuffmanNode::UNK),
+        std::remove(trg_nodes.begin(), trg_nodes.end(), -1),
         trg_nodes.end());
 
     // Monolingual training
@@ -240,19 +240,18 @@ int BilingualModel::train_sentence(const string& src_sent, const string& trg_sen
 }
 
 void BilingualModel::train_word(MonolingualModel& src_model, MonolingualModel& trg_model,
-                               const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes,
-                               int src_pos, int trg_pos, float alpha) {
-
+                                const vector<int>& src_nodes, const vector<int>& trg_nodes,
+                                int src_pos, int trg_pos, float alpha) {
     if (config->skip_gram) {
-        return train_word_skip_gram(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha);
+        train_word_skip_gram(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha);
     } else {
-        return train_word_CBOW(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha);
+        train_word_CBOW(src_model, trg_model, src_nodes, trg_nodes, src_pos, trg_pos, alpha);
     }
 }
 
 void BilingualModel::train_word_CBOW(MonolingualModel& src_model, MonolingualModel& trg_model,
-                                   const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes,
-                                   int src_pos, int trg_pos, float alpha) {
+                                     const vector<int>& src_nodes, const vector<int>& trg_nodes,
+                                     int src_pos, int trg_pos, float alpha) {
     // Trains the model by predicting a source node from its aligned context in the target sentence.
     // This function can be used in the reverse direction just by reversing the arguments. Likewise,
     // for monolingual training, use the same values for source and target.
@@ -261,14 +260,14 @@ void BilingualModel::train_word_CBOW(MonolingualModel& src_model, MonolingualMod
     // 'trg_pos' is the position of the corresponding node in the target sentence
     int dimension = config->dimension;
     vec hidden(dimension, 0);
-    HuffmanNode cur_node = src_nodes[src_pos];
+    int cur_node = src_nodes[src_pos];
 
     int this_window_size = 1 + multivec::rand(config->window_size);
     int count = 0;
 
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= trg_nodes.size() || pos == trg_pos) continue;
-        hidden += trg_model.input_weights[trg_nodes[pos].index];
+        hidden += trg_model.input_weights[trg_nodes[pos]];
         ++count;
     }
 
@@ -286,30 +285,30 @@ void BilingualModel::train_word_CBOW(MonolingualModel& src_model, MonolingualMod
     // Update input weights
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= trg_nodes.size() || pos == trg_pos) continue;
-        trg_model.input_weights[trg_nodes[pos].index] += error;
+        trg_model.input_weights[trg_nodes[pos]] += error;
     }
 }
 
 void BilingualModel::train_word_skip_gram(MonolingualModel& src_model, MonolingualModel& trg_model,
-                                       const vector<HuffmanNode>& src_nodes, const vector<HuffmanNode>& trg_nodes,
-                                       int src_pos, int trg_pos, float alpha) {
-    HuffmanNode input_word = src_nodes[src_pos];
+                                          const vector<int>& src_nodes, const vector<int>& trg_nodes,
+                                          int src_pos, int trg_pos, float alpha) {
+    int input_word = src_nodes[src_pos];
 
     int this_window_size = 1 + multivec::rand(config->window_size);
 
     for (int pos = trg_pos - this_window_size; pos <= trg_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= trg_nodes.size() || pos == trg_pos) continue;
-        HuffmanNode output_word = trg_nodes[pos];
+        int output_word = trg_nodes[pos];
 
         vec error(config->dimension, 0);
         if (config->hierarchical_softmax) {
-            error += trg_model.hierarchical_update(output_word, src_model.input_weights[input_word.index], alpha);
+            error += trg_model.hierarchical_update(output_word, src_model.input_weights[input_word], alpha);
         }
         if (config->negative > 0) {
-            error += trg_model.neg_sampling_update(output_word, src_model.input_weights[input_word.index], alpha);
+            error += trg_model.neg_sampling_update(output_word, src_model.input_weights[input_word], alpha);
         }
 
-        src_model.input_weights[input_word.index] += error;
+        src_model.input_weights[input_word] += error;
     }
 }
 

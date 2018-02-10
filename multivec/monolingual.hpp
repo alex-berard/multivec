@@ -14,7 +14,7 @@ private:
     mat output_weights;
     mat sent_weights;
 
-    long long vocab_word_count; // property of vocabulary (sum of all word counts)
+    long long vocab_word_count; // property of vocabulary_index (sum of all word counts)
 
     // training file stats (properties of this training instance)
     long long training_words; // total number of words in training file (used for progress estimation)
@@ -22,8 +22,9 @@ private:
     // training state
     long long words_processed;
     
-    unordered_map<string, HuffmanNode> vocabulary;
-    vector<HuffmanNode*> unigram_table;
+    unordered_map<string, int> vocabulary_index;
+    vector<HuffmanNode> vocabulary;
+    vector<int> unigram_table;
 
     void add_word_to_vocab(const string& word);
     void reduce_vocab();
@@ -31,11 +32,10 @@ private:
     void assign_codes(HuffmanNode* node, vector<int> code, vector<int> parents) const;
     void init_unigram_table();
 
-    HuffmanNode* get_random_huffman_node(); // uses the unigram frequency table to sample a random node
+    int get_random_huffman_node(); // uses the unigram frequency table to sample a random node
 
-    vector<HuffmanNode> get_nodes(const string& sentence) const;
-    vector<HuffmanNode> get_sorted_vocab() const;
-    void subsample(vector<HuffmanNode>& node) const;
+    vector<int> get_nodes(const string& sentence) const;
+    void subsample(vector<int>& node) const;
 
     void read_vocab(const string& training_file);
     void init_net();
@@ -44,12 +44,12 @@ private:
     void train_chunk(const string& training_file, const vector<long long>& chunks, int chunk_id);
 
     int train_sentence(const string& sent, vec* sent_vec, float alpha);
-    void train_word(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
-    void train_word_DBOW(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
-    void train_word_CBOW(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
-    void train_word_skip_gram(const vector<HuffmanNode>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
-    vec hierarchical_update(const HuffmanNode& node, const vec& hidden, float alpha, bool update = true);
-    vec neg_sampling_update(const HuffmanNode& node, const vec& hidden, float alpha, bool update = true);
+    void train_word(const vector<int>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
+    void train_word_DBOW(const vector<int>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
+    void train_word_CBOW(const vector<int>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
+    void train_word_skip_gram(const vector<int>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
+    vec hierarchical_update(int node, const vec& hidden, float alpha, bool update = true);
+    vec neg_sampling_update(int node, const vec& hidden, float alpha, bool update = true);
 
     vector<long long> chunkify(const string& filename, int n_chunks);
     vec word_vec(int index, int policy) const;
@@ -62,7 +62,7 @@ public:
     
     void sent_vectors(const string &input_file);
 
-    void train(const string& training_file, bool initialize = true); // training from scratch (resets vocabulary and weights)
+    void train(const string& training_file, bool initialize = true); // training from scratch (resets vocabulary_index and weights)
 
     void save_vectors_bin(const string &filename, int policy = 0, bool norm = false) const; // saves word embeddings in the word2vec binary format
     void save_vectors(const string &filename, int policy = 0, bool norm = false) const; // saves word embeddings in the word2vec text format

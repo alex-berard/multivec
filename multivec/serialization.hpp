@@ -123,10 +123,8 @@ inline void save(ofstream& outfile, const MonolingualModel& model) {
     save(outfile, *model.config);
     save(outfile, model.vocabulary.size());
 
-    // transform into map to save in lexicographical order (for consistency)
-    map<string, HuffmanNode> voc_ordered(model.vocabulary.begin(), model.vocabulary.end());
-    for (auto it = voc_ordered.begin(); it != voc_ordered.end(); ++it) {
-        save(outfile, it->second);
+    for (auto it = model.vocabulary.begin(); it != model.vocabulary.end(); ++it) {
+        save(outfile, *it);
     }
 
     save(outfile, model.input_weights);
@@ -139,12 +137,13 @@ inline void load(ifstream& infile, MonolingualModel& model) {
 
     size_t vocabulary_size = 0;
     load(infile, vocabulary_size);
-    model.vocabulary.clear();
 
+    model.vocabulary_index.clear();
     for (size_t i = 0; i < vocabulary_size; ++i) {
         HuffmanNode node(0, ""); // empty constructor creates UNK node
         load(infile, node);
-        model.vocabulary.insert({node.word, node});
+        model.vocabulary.push_back(node);
+        model.vocabulary_index.insert({node.word, node.index});
     }
 
     load(infile, model.input_weights);
