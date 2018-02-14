@@ -1,6 +1,9 @@
 #include "monolingual.hpp"
 #include "serialization.hpp"
 
+const HuffmanNode HuffmanNode::UNK(-1);
+const HuffmanNode HuffmanNode::PAD(0);
+
 std::mutex multivec::print_mutex;
 
 void MonolingualModel::add_word_to_vocab(const string& word) {
@@ -22,11 +25,11 @@ void MonolingualModel::reduce_vocab() {
     auto cmp = [](HuffmanNode a, HuffmanNode b) {
         return a.count > b.count or a.count == b.count and a.word.compare(b.word) <= 0;
     };
-    std::sort(vocabulary.begin(), vocabulary.end(), cmp);
+    std::sort(vocabulary.begin() + HuffmanNode::offset, vocabulary.end(), cmp);
     
     auto cutoff = vocabulary.end();
-    int i = 0;
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+    int i = HuffmanNode::offset;
+    for (auto it = vocabulary.begin() + HuffmanNode::offset; it != vocabulary.end(); ++it) {
         if (it->count < config->min_count) {
             cutoff = it;
             break;
@@ -50,18 +53,20 @@ void MonolingualModel::read_vocab(const string& training_file) {
     vocabulary_index.clear();
     vocabulary.clear();
 
+    vocabulary.push_back(HuffmanNode::PAD);
+    
     string word;
     while (infile >> word) {
         add_word_to_vocab(word);
     }
     
     if (config->verbose)
-        std::cout << "Vocabulary size: " << vocabulary.size() << std::endl;
+        std::cout << "Vocabulary size: " << vocabulary.size() - HuffmanNode::offset << std::endl;
 
     reduce_vocab();
     
     if (config->verbose)
-        std::cout << "Reduced vocabulary size: " << vocabulary.size() << std::endl;
+        std::cout << "Reduced vocabulary size: " << vocabulary.size() - HuffmanNode::offset << std::endl;
 
     create_binary_tree();
     init_unigram_table();
@@ -72,7 +77,7 @@ void MonolingualModel::create_binary_tree() {
     vector<HuffmanNode> parent_nodes;
     parent_nodes.reserve(vocabulary_index.size());
 
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+    for (auto it = vocabulary.begin() + HuffmanNode::offset; it != vocabulary.end(); ++it) {
         heap.push_back(&(*it));
     }
 
@@ -117,12 +122,12 @@ void MonolingualModel::init_unigram_table() {
     
     float power = 0.75; // weird word2vec tweak ('normal' value would be 1.0)
     float total_count = 0.0;
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+    for (auto it = vocabulary.begin() + HuffmanNode::offset; it != vocabulary.end(); ++it) {
         vocab_word_count += it->count;
         total_count += pow(it->count, power);
     }
 
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+    for (auto it = vocabulary.begin() + HuffmanNode::offset; it != vocabulary.end(); ++it) {
         float f = pow(it->count, power) / total_count;
 
         int d = static_cast<int>(f * UNIGRAM_TABLE_SIZE);
@@ -149,6 +154,13 @@ void MonolingualModel::init_net() {
         }
     }
 
+    if (config->concat and not config->skip_gram) {  // CBOW-concat
+        int size = config->window_size * 2;
+        if (config->sent_vector)  // PV-DM-concat
+            size += 1;
+        d *= size;
+    }
+    
     output_weights = mat(v, vec(d));
 }
 
@@ -166,6 +178,13 @@ void MonolingualModel::init_sent_weights() {
 vector<int> MonolingualModel::get_nodes(const string& sentence) const {
     vector<int> nodes;
     istringstream iss(sentence);
+    int pad_id = HuffmanNode::PAD.index;
+    
+    if (config->concat) {
+        for (int i = 0; i < config->window_size; i++) {
+            nodes.push_back(pad_id);
+        }
+    }
     
     string word;
     while (iss >> word) {
@@ -180,6 +199,12 @@ vector<int> MonolingualModel::get_nodes(const string& sentence) const {
         nodes.push_back(node);
     }
 
+    if (config->concat) {
+        for (int i = 0; i < config->window_size; i++) {
+            nodes.push_back(pad_id);
+        }
+    }
+    
     return nodes;
 }
 
@@ -190,7 +215,7 @@ vector<int> MonolingualModel::get_nodes(const string& sentence) const {
  */
 void MonolingualModel::subsample(vector<int>& nodes) const {
     for (int i = 0; i < nodes.size(); ++i) {
-        if (nodes[i] == -1)
+        if (nodes[i] < HuffmanNode::offset)
             continue;
         float f = static_cast<float>(vocabulary[nodes[i]].count) / vocab_word_count; // frequency of this word
         float p = 1 - (1 + sqrt(f / config->subsampling)) * config->subsampling / f; // word2vec formula
@@ -208,9 +233,9 @@ void MonolingualModel::save_vectors_bin(const string &filename, int policy, bool
     ofstream outfile(filename, ios::binary | ios::out);
     check_is_open(outfile, filename);
 
-    outfile << vocabulary.size() << " " << config->dimension << endl;
+    outfile << vocabulary.size() - HuffmanNode::offset << " " << config->dimension << endl;
     
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+    for (auto it = vocabulary.begin() + HuffmanNode::offset; it != vocabulary.end(); ++it) {
         string word = it->word;
         word.push_back(' ');
         vec embedding = word_vec(it->index, policy);
@@ -231,9 +256,9 @@ void MonolingualModel::save_vectors(const string &filename, int policy, bool nor
     ofstream outfile(filename, ios::binary | ios::out);
     check_is_open(outfile, filename);
 
-    outfile << vocabulary.size() << " " << config->dimension << endl;
+    outfile << vocabulary.size() - HuffmanNode::offset << " " << config->dimension << endl;
 
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+    for (auto it = vocabulary.begin() + HuffmanNode::offset; it != vocabulary.end(); ++it) {
         outfile << it->word << " ";
         vec embedding = word_vec(it->index, policy);
         if (norm) {
@@ -291,7 +316,7 @@ void MonolingualModel::save(const string& filename) const {
 }
 
 vec MonolingualModel::word_vec(int index, int policy) const {
-    if (config->hierarchical_softmax) // only input weights
+    if (config->hierarchical_softmax or config->concat) // only input weights
     {
         return input_weights[index];
     }
@@ -455,7 +480,7 @@ void MonolingualModel::train(const string& training_file, bool initialize) {
  *
  * @param filename path of the file
  * @param n_chunks number of chunks
- * @return starting position (in bytes) of each chunk
+ * @return starting position (in bytes) of each chunk (along with line number)
  */
 vector<long long> MonolingualModel::chunkify(const string& filename, int n_chunks) {
     ifstream infile(filename);
@@ -463,27 +488,25 @@ vector<long long> MonolingualModel::chunkify(const string& filename, int n_chunk
     check_is_non_empty(infile, filename);
 
     vector<long long> chunks;
-    vector<pair<long long, long long>> positions;
+    vector<long long> positions;
     long long words = 0;
-    long long pos = 0;
+
     string line;
-    while (getline(infile, line)) {
-        words += split(line).size();            // total number of words up to (including) this line
-        positions.push_back({pos, words}); // starting position of this line
-        pos = infile.tellg();
-    }
+    do {
+        positions.push_back(static_cast<long long>(infile.tellg()));
+        words += split(line).size();
+    } while (getline(infile, line));
+    words += split(line).size();
 
-    training_lines = positions.size();
+    training_lines = positions.size() - 1;
     training_words = words;
-    int chunk_size = training_words / n_chunks;  // number of lines in each chunk
+    int chunk_size = positions.size() / n_chunks;  // number of lines in each chunk
 
-    int chunk_id = 0;
-    for (auto it = positions.begin(); it != positions.end() and chunk_id < n_chunks; ++it) {
-        if (it->second >= chunk_size * chunk_id) {
-            chunks.push_back(it->first);
-            chunk_id++;
-        }
+    for (int i = 0; i < n_chunks; i++) {
+        long long chunk_start = positions[i * chunk_size];
+        chunks.push_back(chunk_start);
     }
+    
     return chunks;
 }
 
@@ -541,7 +564,11 @@ void MonolingualModel::train_chunk(const string& training_file, const vector<lon
 int MonolingualModel::train_sentence(const string& sent, vec* sent_vec, float alpha) {
     auto nodes = get_nodes(sent);  // same size as sent, OOV words are replaced by <UNK>
     // counts the number of words that are in the vocabulary
-    int words = nodes.size();
+    int words = nodes.size(); // TODO
+
+    if (config->concat and not config->skip_gram) {
+        words -= 2 * config->window_size;  // don't count PAD symbols
+    }
 
     if (config->subsampling > 0) {  // disable with sent vector?
         subsample(nodes); // puts <UNK> tokens in place of the discarded tokens
@@ -550,7 +577,7 @@ int MonolingualModel::train_sentence(const string& sent, vec* sent_vec, float al
     if (nodes.empty()) {
         return words;
     }
-
+    
     // remove <UNK> tokens
     nodes.erase(remove(nodes.begin(), nodes.end(), -1), nodes.end());
 
@@ -567,8 +594,51 @@ void MonolingualModel::train_word(const vector<int>& nodes, int word_pos, vec* s
         train_word_DBOW(nodes, word_pos, sent_vec, alpha, update);
     } else if (config->skip_gram) {
         train_word_skip_gram(nodes, word_pos, sent_vec, alpha, update);
+    } else if (config->concat) {
+        train_word_CBOW_concat(nodes, word_pos, sent_vec, alpha, update);
     } else {
         train_word_CBOW(nodes, word_pos, sent_vec, alpha, update);
+    }
+}
+
+void MonolingualModel::train_word_CBOW_concat(const vector<int>& nodes, int word_pos, vec* sent_vec, float alpha, bool update) {
+    if (word_pos < config->window_size or word_pos >= nodes.size() - config->window_size) {
+        return;
+    }
+    if (nodes.size() <= 2 * config->window_size) {
+        return;
+    }
+    
+    vec hidden;
+    int cur_node = nodes[word_pos];
+
+    int count = 0;
+    for (int pos = word_pos - config->window_size; pos <= word_pos + config->window_size; ++pos) {
+        if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
+        hidden.concat(input_weights[nodes[pos]]);
+        count++;
+    }
+    
+    if (sent_vec != nullptr) {
+        hidden.concat(*sent_vec);
+    }
+    
+    vec error = config->hierarchical_softmax ?
+                hierarchical_update(cur_node, hidden, alpha, update) :
+                neg_sampling_update(cur_node, hidden, alpha, update);
+                
+    // update input weights
+    int i = 0;
+    if (update) {
+        for (int pos = word_pos - config->window_size; pos <= word_pos + config->window_size; ++pos) {
+            if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
+            input_weights[nodes[pos]] += error.slice(i * config->dimension, (i + 1) * config->dimension);
+            i++;
+        }
+    }
+    
+    if (sent_vec != nullptr) {
+        *sent_vec += error.slice(i * config->dimension, (i + 1) * config->dimension);
     }
 }
 
@@ -579,6 +649,10 @@ void MonolingualModel::train_word_CBOW(const vector<int>& nodes, int word_pos, v
     int this_window_size = 1 + multivec::rand(config->window_size); // reduced window
     int count = 0;
 
+    if (config->concat) {
+        this_window_size = config->window_size;
+    }
+    
     for (int pos = word_pos - this_window_size; pos <= word_pos + this_window_size; ++pos) {
         if (pos < 0 || pos >= nodes.size() || pos == word_pos) continue;
         hidden += input_weights[nodes[pos]];
@@ -649,7 +723,7 @@ void MonolingualModel::train_word_skip_gram(const vector<int>& nodes, int word_p
 }
 
 vec MonolingualModel::neg_sampling_update(int node, const vec& hidden, float alpha, bool update) {
-    vec temp(config->dimension, 0);
+    vec temp = vec(hidden.size(), 0);
 
     for (int d = 0; d < config->negative + 1; ++d) {
         int label;
@@ -681,7 +755,7 @@ vec MonolingualModel::neg_sampling_update(int node, const vec& hidden, float alp
             output_weights[target] += error * hidden;
         }
     }
-
+    
     return temp;
 }
 
@@ -713,7 +787,7 @@ vec MonolingualModel::hierarchical_update(int node, const vec& hidden, float alp
 vector<pair<string, int>> MonolingualModel::get_word_counts() const {
     vector<pair<string, int>> res;
 
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+    for (auto it = vocabulary.begin() + HuffmanNode::offset; it != vocabulary.end(); ++it) {
         res.push_back({it->word, it->count});
     }
 

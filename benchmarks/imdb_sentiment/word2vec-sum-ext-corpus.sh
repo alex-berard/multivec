@@ -2,7 +2,7 @@
 
 output_dir=`mktemp -d`
 data_dir=benchmarks/imdb_sentiment/data
-liblinear=benchmarks/imdb_sentiment/liblinear-2.1
+liblinear=benchmarks/imdb_sentiment/liblinear-2.20
 rm -rf $output_dir
 mkdir $output_dir
 

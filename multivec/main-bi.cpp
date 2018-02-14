@@ -148,7 +148,9 @@ int main(int argc, char **argv) {
             model.src_model.save_vectors(save_src_vec_file);
         if (!save_trg_vec_file.empty())
             model.trg_model.save_vectors(save_trg_vec_file);
-        exit(1);
+                
+        if (signum != 0)
+            exit(1);
     };
     
     struct sigaction sig_int_handler;

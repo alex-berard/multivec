@@ -19,7 +19,11 @@ cd aclImdb
 
 for j in train/pos train/neg test/pos test/neg train/unsup; do
   rm -f temp
-  for i in `ls $j`; do cat $j/$i >> temp; awk 'BEGIN{print;}' >> temp; done
+  for i in `ls $j`
+  do
+    cat $j/$i >> temp
+    awk 'BEGIN{print;}' >> temp
+  done
   normalize_text temp
   mv temp-norm $j/norm.txt
 done
@@ -43,9 +47,9 @@ shuf $data_dir/train.txt > $data_dir/train.shuf.txt
 cut -d " " -f1,1 $data_dir/alldata-id.shuf.txt | sed s/^..// > $data_dir/just-ids.shuf.txt
 cut -d " " -f2- $data_dir/alldata-id.shuf.txt > $data_dir/alldata.shuf.txt
 
-liblinear=liblinear-2.1
-wget http://www.csie.ntu.edu.tw/~cjlin/liblinear/${liblinear}.zip
-unzip ${liblinear}.zip
+liblinear=liblinear-2.20
+wget http://www.csie.ntu.edu.tw/~cjlin/cgi-bin/liblinear.cgi?+http://www.csie.ntu.edu.tw/~cjlin/liblinear+zip -O liblinear.zip
+unzip liblinear.zip
 cd ${liblinear}
 make
 cd $cur_dir

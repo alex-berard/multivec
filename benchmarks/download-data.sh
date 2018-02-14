@@ -6,10 +6,10 @@ mkdir -p ${raw_data}
 mkdir -p ${data_dir}
 
 function process {
-    scripts/prepare-data.py ${1} ${2} en de --normalize-punk --tokenize --lowercase --shuffle
+    scripts/prepare-data.py ${1} ${2} en de --normalize-punk --tokenize --lowercase --shuffle --min 1
 }
 function process-cldc {
-    scripts/prepare-data.py ${1} ${2} en de --normalize-digits --min-count 5
+    scripts/prepare-data.py ${1} ${2} en de --normalize-digits --min-count 5 --min 1
 }
 
 if [ ! -f ${raw_data}/training-parallel-nc-v9.tgz ]

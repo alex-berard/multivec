@@ -47,6 +47,7 @@ private:
     void train_word(const vector<int>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
     void train_word_DBOW(const vector<int>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
     void train_word_CBOW(const vector<int>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
+    void train_word_CBOW_concat(const vector<int>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
     void train_word_skip_gram(const vector<int>& nodes, int word_pos, vec* sent_vec, float alpha, bool update = true);
     vec hierarchical_update(int node, const vec& hidden, float alpha, bool update = true);
     vec neg_sampling_update(int node, const vec& hidden, float alpha, bool update = true);

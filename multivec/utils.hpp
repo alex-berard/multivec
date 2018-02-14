@@ -23,7 +23,6 @@ using namespace std::chrono;
 
 const float MAX_EXP = 6;
 const int UNIGRAM_TABLE_SIZE = 1e8; // size of the frequency table
-const int EXP_TABLE_SIZE = 1000;
 
 typedef Vec vec;
 typedef vector<vec> mat;
@@ -80,15 +79,13 @@ namespace multivec {
      * @return next random number
      */
     inline unsigned long long rand(unsigned long long max) {
-        thread_local std::mt19937 gen(std::random_device{}());
-        std::uniform_int_distribution<unsigned long long> dis(0, max - 1);
-        return dis(gen);
+        thread_local unsigned long long next_random(time(NULL) + std::hash<thread::id>()(this_thread::get_id()));
+        next_random = next_random * static_cast<unsigned long long>(25214903917) + 11;
+        return (next_random >> 16) % max; // with this generator, the most significant bits are bits 47...16
     }
 
     inline float randf() {
-        thread_local std::mt19937 gen(std::random_device{}());
-        std::uniform_real_distribution<float> dis(0, 1.0);
-        return dis(gen);
+        return (multivec::rand(ULLONG_MAX) & 0xFFFF) / 65536.0f;
     }
     
     extern std::mutex print_mutex;
@@ -98,6 +95,10 @@ namespace multivec {
  * @brief Node of a Huffman binary tree, used for the hierarchical softmax algorithm.
  */
 struct HuffmanNode {
+    static const HuffmanNode UNK; // node for out-of-vocabulary words
+    static const HuffmanNode PAD; // node for out-of-vocabulary words
+    static const int offset = 1;  // vocabulary index offset due to special symbols
+    
     string word;
 
     vector<int> code; // Huffman code of this node: path from root to leaf (0 for left, 1 for right)
@@ -108,18 +109,16 @@ struct HuffmanNode {
 
     int index;
     int count;
-
     bool is_leaf;
-    bool is_unk;
 
-    HuffmanNode() : index(-1), is_unk(true) {}
+    HuffmanNode(int index) : index(index) {}
 
     HuffmanNode(int index, const string& word) :
-            word(word), index(index), count(1), is_leaf(true), is_unk(false)
+            word(word), index(index), count(1), is_leaf(true)
     {}
 
     HuffmanNode(int index, HuffmanNode* left, HuffmanNode* right) :
-            left(left), right(right), index(index), count(left->count + right->count), is_leaf(false), is_unk(false)
+            left(left), right(right), index(index), count(left->count + right->count), is_leaf(false)
     {}
 
     bool operator==(const HuffmanNode& node) const {

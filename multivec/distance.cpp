@@ -45,7 +45,7 @@ vector<pair<string, float>> MonolingualModel::closest(const string& word, int n,
     int index = it->second;
     vec v1 = word_vec(index, policy);
 
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+    for (auto it = vocabulary.begin() + HuffmanNode::offset; it != vocabulary.end(); ++it) {
         if (it->index != index) {
             vec v2 = word_vec(it->index, policy);
             res.push_back({it->word, cosine_similarity(v1, v2)});
@@ -60,7 +60,7 @@ vector<pair<string, float>> MonolingualModel::closest(const string& word, int n,
 vector<pair<string, float>> MonolingualModel::closest(const vec& v, int n, int policy) const {
     vector<pair<string, float>> res;
 
-    for (auto it = vocabulary.begin(); it != vocabulary.end(); ++it) {
+    for (auto it = vocabulary.begin() + HuffmanNode::offset; it != vocabulary.end(); ++it) {
         vec v2 = word_vec(it->index, policy);
         res.push_back({it->word, cosine_similarity(v, v2)});
     }
@@ -420,11 +420,15 @@ vector<pair<string, string>> BilingualModel::dictionary_induction(int src_count,
     vector<string> src_vocab;
     vector<string> trg_vocab;
     
-    for (auto it = src_model.vocabulary.begin(); it != src_model.vocabulary.end() and (src_count == 0 or src_vocab.size() < src_count); ++it) {
+    for (auto it = src_model.vocabulary.begin() + HuffmanNode::offset; it != src_model.vocabulary.end(); ++it) {
+        if (src_count > 0 and src_vocab.size() >= src_count)
+            break;
         src_vocab.push_back(it->word);
     }
     
-    for (auto it = trg_model.vocabulary.begin(); it != trg_model.vocabulary.end() and (trg_count == 0 or trg_vocab.size() < trg_count); ++it) {
+    for (auto it = trg_model.vocabulary.begin() + HuffmanNode::offset; it != trg_model.vocabulary.end(); ++it) {
+        if (trg_count > 0 and trg_vocab.size() >= trg_count)
+            break;
         trg_vocab.push_back(it->word);
     }
     

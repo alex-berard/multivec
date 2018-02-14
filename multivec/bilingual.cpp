@@ -277,8 +277,7 @@ void BilingualModel::train_word_CBOW(MonolingualModel& src_model, MonolingualMod
     vec error(dimension, 0); // compute error & update output weights
     if (config->hierarchical_softmax) {
         error += src_model.hierarchical_update(cur_node, hidden, alpha);
-    }
-    if (config->negative > 0) {
+    } else if (config->negative > 0) {
         error += src_model.neg_sampling_update(cur_node, hidden, alpha);
     }
 
@@ -303,8 +302,7 @@ void BilingualModel::train_word_skip_gram(MonolingualModel& src_model, Monolingu
         vec error(config->dimension, 0);
         if (config->hierarchical_softmax) {
             error += trg_model.hierarchical_update(output_word, src_model.input_weights[input_word], alpha);
-        }
-        if (config->negative > 0) {
+        } else if (config->negative > 0) {
             error += trg_model.neg_sampling_update(output_word, src_model.input_weights[input_word], alpha);
         }
 

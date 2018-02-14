@@ -1,19 +1,22 @@
 #!/usr/bin/env bash
+
 corpus=$1
 threads=$2
 iter=10
-alpha=0.05
+alpha=0.1
 subsampling=1e-03
 negative=10
 window_size=5
 min_count=5
 dim=100
-sg=--sg
+sg=
 cos_mul=
 
-runs=3
+runs=10
 
-for bin in bin/word2vec bin/multivec-mono-v{0,1,2,3,4,5,6}
+params="--train data/${corpus}.en ${sg} --threads ${threads} --alpha ${alpha} --iter ${iter} --subsampling ${subsampling} --negative ${negative} --window-size ${window_size} --min-count ${min_count} --dim ${dim}"
+
+for bin in bin/word2vec bin/multivec bin/multivec-v{1,2,3,4,5,6}
 do
     log_filename=`mktemp`
     vec_filename=`mktemp`
@@ -22,8 +25,9 @@ do
     
     for i in `seq ${runs}`
     do
-        ${bin} --train data/${corpus}.en ${sg} --threads ${threads} --alpha ${alpha} --iter ${iter} --subsampling ${subsampling} --negative ${negative} --window-size ${window_size} --min-count ${min_count} --dim ${dim} --save-vectors ${vec_filename} >> ${log_filename}
-        bin/compute-accuracy ${vec_filename} word2vec/questions-words.txt ${cos_mul} >> ${log_filename}
+        rm -f ${vec_filename}
+        ${bin} ${params} --save-vectors ${vec_filename} >> ${log_filename}
+        bin/analogy ${vec_filename} word2vec/questions-words.txt ${cos_mul} >> ${log_filename}
     done
     
     total_time=0

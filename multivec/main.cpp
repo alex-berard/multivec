@@ -31,10 +31,10 @@ static vector<option_plus> options_plus = {
     {"save-vectors",      required_argument, 0, 'q', "save word vectors"},
     {"save-sent-vectors", required_argument, 0, 'r', "save sentence vectors"},
     {"save-vectors-bin",  required_argument, 0, 's', "save word vectors in binary format"},
-    {"train-online",      required_argument, 0, 't', "use existing model to train online sentence vectors"},
+    {"online-sent-vector", required_argument, 0, 't', "use existing model to train online sentence vectors"},
     {"no-average",        no_argument,       0, 'u', "no context averaging in CBOW"},
     {"norm",              no_argument,       0, 'w', "normalize the vectors before saving them"},
-    // {"cbow-concat",       no_argument,       0, 'x', "concatenate the context vectors for CBOW"},
+    {"concat",            no_argument,       0, 'x', "concatenate the context vectors for CBOW"},
     {0, 0, 0, 0, 0}
 };
 
@@ -121,6 +121,7 @@ int main(int argc, char **argv) {
             case 't': online_train_file = string(optarg);   break;
             case 'u': config.no_average = true;             break;
             case 'w': norm = true;                          break;
+            case 'x': config.concat = true;                 break;
             default:                                        abort();
         }
     }
@@ -131,7 +132,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    std::cout << "MultiVec-mono" << std::endl;
+    std::cout << "MultiVec" << std::endl;
     config.print();
 
     interrupt_handler = [&](int signum){
@@ -147,7 +148,9 @@ int main(int argc, char **argv) {
             model.save_vectors_bin(save_vectors_bin, saving_policy, norm);
         if (!save_sent_vectors.empty())
             model.save_sent_vectors(save_sent_vectors, norm);
-        exit(1);
+        
+        if (signum != 0)
+            exit(1);
     };
     
     struct sigaction sig_int_handler;

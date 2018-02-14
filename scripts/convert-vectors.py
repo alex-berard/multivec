@@ -49,7 +49,9 @@ if __name__ == '__main__':
             f.writelines('{0} {1} \n'.format(w, ' '.join(map(str, vec))) for w, vec in embeddings)
     else:
         with open(args.output, 'wb') as f:
-            # FIXME: seems to work, but not exactly same format as MultiVec
             f.write('{0} {1}\n'.format(vocab_size, dimension))
-            f.writelines(b'{0} {1}\n'.format(w, vec.tostring()) for w, vec in embeddings)
+            fmt = b'{0} {1}'
+            if not args.no_eol:
+                fmt += '\n'
+            f.writelines(fmt.format(w, vec.tostring()) for w, vec in embeddings)
 
